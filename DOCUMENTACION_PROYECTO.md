@@ -58,6 +58,11 @@
 - Se usaron colores principales negro, azul profundo, cyan, blanco y grises secundarios.
 - No se instalaron dependencias nuevas para la base visual.
 - No se agregaron rutas, autenticacion, base de datos, videos, pagos ni integraciones externas.
+- Se refino la composicion de la portada sin redisenarla por completo.
+- Se redujo el espacio vertical entre el encabezado y la seccion principal.
+- Se unifico el ancho maximo y la alineacion lateral de header, hero, tarjetas y footer.
+- Se reemplazo el bloque derecho simple por un panel institucional con grafico abstracto hecho solo con HTML y CSS.
+- Se mejoro el comportamiento responsive para escritorio ancho, aproximadamente 1024 px y movil.
 
 ## Comandos ejecutados
 
@@ -185,6 +190,18 @@ npm.cmd run build
 
 Resultado: build de produccion finalizado correctamente despues de crear la base visual institucional.
 
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues del refinamiento visual de composicion.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues del refinamiento visual de composicion.
+
 ## Archivos importantes creados
 
 - package.json
@@ -232,6 +249,25 @@ La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la c
 - Dependencias:
   - No se instalaron dependencias nuevas.
 
+## Refinamiento visual de portada
+
+- Archivos modificados:
+  - src/app/page.tsx
+  - src/app/globals.css
+  - DOCUMENTACION_PROYECTO.md
+- Problemas visuales corregidos:
+  - Exceso de espacio vertical entre header y seccion principal.
+  - Alineacion lateral poco uniforme entre header, hero, tarjetas y footer.
+  - Bloque derecho demasiado simple para la direccion institucional aprobada.
+  - Separacion visual mejorable entre la seccion principal y las tarjetas.
+  - Necesidad de mejor adaptacion del menu, titulo, botones, panel y tarjetas en movil.
+- Decision de grafico abstracto:
+  - Se creo un panel decorativo con niveles horizontales, cuadricula sutil, puntos y linea abstracta usando solamente HTML y CSS.
+  - No se usaron datos reales, precios, resultados, canvas, imagenes externas ni SVG complejo.
+  - El movimiento es minimo y respeta prefers-reduced-motion.
+- Dependencias:
+  - No se instalaron dependencias nuevas.
+
 ## Historial de cambios
 
 ### 2026-07-18 - Inicializacion tecnica base
@@ -249,3 +285,7 @@ Se configuro el remoto origin con el repositorio privado https://github.com/invi
 ### 2026-07-18 - Base visual institucional
 
 Se reemplazo la pagina generica de Next.js por una portada profesional, sobria y responsive para Invictus Trading Academy. Se actualizaron los metadatos del proyecto, se definieron variables CSS reutilizables para la identidad visual y se documento que no se instalaron dependencias ni se agregaron funciones externas.
+
+### 2026-07-18 - Refinamiento de composicion de portada
+
+Se ajustaron espaciado, alineacion lateral, equilibrio de columnas y relacion visual entre la seccion principal y las tarjetas. Se incorporo un panel institucional con grafico abstracto construido solo con HTML y CSS, sin dependencias nuevas ni funcionalidad adicional.
