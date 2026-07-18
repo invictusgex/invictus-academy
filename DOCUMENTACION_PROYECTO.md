@@ -53,6 +53,11 @@
 - Se conecto la rama local main con origin/main.
 - No se uso force push.
 - No se registraron credenciales, contrasenas, tokens ni secretos en archivos.
+- Se reemplazo la pagina inicial generica de Next.js por una portada institucional para Invictus Trading Academy.
+- Se definio una base visual sobria, oscura, tecnologica y responsive.
+- Se usaron colores principales negro, azul profundo, cyan, blanco y grises secundarios.
+- No se instalaron dependencias nuevas para la base visual.
+- No se agregaron rutas, autenticacion, base de datos, videos, pagos ni integraciones externas.
 
 ## Comandos ejecutados
 
@@ -168,6 +173,18 @@ git log --oneline --decorate -5
 
 Resultado: el commit inicial 41c031c aparece en main y origin/main.
 
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues de crear la base visual institucional.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues de crear la base visual institucional.
+
 ## Archivos importantes creados
 
 - package.json
@@ -186,7 +203,34 @@ Resultado: el commit inicial 41c031c aparece en main y origin/main.
 
 ## Estado actual del proyecto
 
-La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la carpeta raiz del proyecto. La aplicacion mantiene la pagina inicial basica creada por Next.js. Git fue inicializado localmente en la rama main con identidad local del repositorio configurada. El repositorio local quedo conectado al repositorio remoto privado de GitHub https://github.com/invictusgex/invictus-academy.git mediante origin, y main quedo conectada con origin/main. Las comprobaciones npm run lint y npm run build finalizaron correctamente.
+La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la carpeta raiz del proyecto. La aplicacion cuenta con una primera portada institucional sobria, oscura, tecnologica y adaptable a movil y escritorio. Git fue inicializado localmente en la rama main con identidad local del repositorio configurada. El repositorio local quedo conectado al repositorio remoto privado de GitHub https://github.com/invictusgex/invictus-academy.git mediante origin, y main quedo conectada con origin/main. Las comprobaciones npm run lint y npm run build finalizaron correctamente.
+
+## Base visual institucional
+
+- Archivos modificados:
+  - src/app/page.tsx
+  - src/app/globals.css
+  - src/app/layout.tsx
+  - DOCUMENTACION_PROYECTO.md
+- Decisiones de diseno:
+  - Portada de una sola pagina con estructura semantica header, main, section y footer.
+  - Estilo institucional y tecnologico, con fondo oscuro y contraste alto.
+  - Navegacion visual simple con Inicio, Programa y Acceder.
+  - Botones visuales sin funcionalidad real todavia.
+  - Tres tarjetas de enfoque: Datos, no opiniones; Lectura de liquidez; Gestion del riesgo.
+  - Mensaje discreto de estado: Plataforma educativa en desarrollo.
+  - Sin testimonios, precios, estadisticas falsas, logos de terceros ni imagenes externas.
+- Colores principales utilizados:
+  - Fondo principal: #05070c
+  - Fondo secundario: #080f1a
+  - Texto principal: #f8fbff
+  - Texto secundario: #a7b0bf
+  - Borde: #1c2b3e
+  - Azul: #1d4ed8
+  - Cyan: #22d3ee
+  - Hover: #0f2238 y #67e8f9
+- Dependencias:
+  - No se instalaron dependencias nuevas.
 
 ## Historial de cambios
 
@@ -201,3 +245,7 @@ Se inicializo el repositorio Git local en la carpeta raiz del proyecto, se estab
 ### 2026-07-18 - Conexion privada con GitHub
 
 Se configuro el remoto origin con el repositorio privado https://github.com/invictusgex/invictus-academy.git y se subio la rama main mediante git push -u origin main. La rama local main quedo conectada con origin/main. No se uso force push y no se registraron credenciales en archivos.
+
+### 2026-07-18 - Base visual institucional
+
+Se reemplazo la pagina generica de Next.js por una portada profesional, sobria y responsive para Invictus Trading Academy. Se actualizaron los metadatos del proyecto, se definieron variables CSS reutilizables para la identidad visual y se documento que no se instalaron dependencias ni se agregaron funciones externas.
