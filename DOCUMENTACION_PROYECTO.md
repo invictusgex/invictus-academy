@@ -48,6 +48,11 @@
 - Se configuro la identidad Git solo a nivel local del repositorio:
   - user.name: invictusgex
   - user.email: invictusgex@gmail.com
+- Se conecto el repositorio local con el repositorio remoto privado de GitHub.
+- Se configuro el remoto origin con la URL https://github.com/invictusgex/invictus-academy.git.
+- Se conecto la rama local main con origin/main.
+- No se uso force push.
+- No se registraron credenciales, contrasenas, tokens ni secretos en archivos.
 
 ## Comandos ejecutados
 
@@ -127,6 +132,42 @@ git status --short
 
 Resultado: archivos del proyecto pendientes de preparar para el primer commit.
 
+```powershell
+git remote -v
+```
+
+Resultado inicial: no habia remotos configurados.
+
+```powershell
+git remote add origin https://github.com/invictusgex/invictus-academy.git
+```
+
+Resultado: remoto origin configurado correctamente con la URL autorizada.
+
+```powershell
+git push -u origin main
+```
+
+Resultado: la rama main fue subida correctamente al repositorio privado y quedo configurada para seguir origin/main.
+
+```powershell
+git remote -v
+```
+
+Resultado: origin apunta a https://github.com/invictusgex/invictus-academy.git para fetch y push.
+
+```powershell
+git branch -vv
+```
+
+Resultado: main sigue origin/main.
+
+```powershell
+git log --oneline --decorate -5
+```
+
+Resultado: el commit inicial 41c031c aparece en main y origin/main.
+
 ## Archivos importantes creados
 
 - package.json
@@ -145,7 +186,7 @@ Resultado: archivos del proyecto pendientes de preparar para el primer commit.
 
 ## Estado actual del proyecto
 
-La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la carpeta raiz del proyecto. La aplicacion mantiene la pagina inicial basica creada por Next.js. Git fue inicializado localmente en la rama main con identidad local del repositorio configurada. Las comprobaciones npm run lint y npm run build finalizaron correctamente.
+La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la carpeta raiz del proyecto. La aplicacion mantiene la pagina inicial basica creada por Next.js. Git fue inicializado localmente en la rama main con identidad local del repositorio configurada. El repositorio local quedo conectado al repositorio remoto privado de GitHub https://github.com/invictusgex/invictus-academy.git mediante origin, y main quedo conectada con origin/main. Las comprobaciones npm run lint y npm run build finalizaron correctamente.
 
 ## Historial de cambios
 
@@ -156,3 +197,7 @@ Se inicializo el proyecto invictus-academy directamente en C:\Users\ariel\Deskto
 ### 2026-07-18 - Inicializacion de Git local
 
 Se inicializo el repositorio Git local en la carpeta raiz del proyecto, se establecio la rama principal main y se configuro la identidad Git local con user.name invictusgex y user.email invictusgex@gmail.com. Se preparo el proyecto para crear el primer punto de restauracion estable sin conectar repositorios remotos.
+
+### 2026-07-18 - Conexion privada con GitHub
+
+Se configuro el remoto origin con el repositorio privado https://github.com/invictusgex/invictus-academy.git y se subio la rama main mediante git push -u origin main. La rama local main quedo conectada con origin/main. No se uso force push y no se registraron credenciales en archivos.
