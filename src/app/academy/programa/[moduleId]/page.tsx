@@ -8,7 +8,7 @@ import { ModulePurpose } from "@/components/academy/module/ModulePurpose";
 import { ModuleResources } from "@/components/academy/module/ModuleResources";
 import { TrainingSession } from "@/components/academy/module/TrainingSession";
 import { AcademyShell } from "@/components/layout/academy-shell";
-import { getAcademyModule, getProvisionalCourse } from "@/lib/academy-content";
+import { getAcademyModule, getAcademyProgram } from "@/lib/academy";
 
 type ModulePageProps = {
   params: Promise<{
@@ -22,7 +22,7 @@ function normalizePurposeText(value: string) {
 
 export default async function AcademyModulePage({ params }: ModulePageProps) {
   const { moduleId } = await params;
-  const course = getProvisionalCourse();
+  const course = getAcademyProgram();
   const academyModule = getAcademyModule(moduleId);
 
   if (!academyModule) {

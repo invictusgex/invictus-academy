@@ -1,7 +1,7 @@
 import { AcademyHeader } from "@/components/layout/academy-header";
 import { AcademySidebar } from "@/components/layout/academy-sidebar";
 import { AcademySupport } from "@/components/support/AcademySupport";
-import { academyNavigation } from "@/lib/academy-content";
+import { academyNavigation } from "@/lib/academy";
 
 type AcademyShellProps = {
   children: React.ReactNode;

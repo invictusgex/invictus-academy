@@ -3,10 +3,10 @@ import { FormationTrajectory } from "@/components/academy/FormationTrajectory";
 import { ModuleProgramCard } from "@/components/academy/ModuleProgramCard";
 import { ProgramHeader } from "@/components/academy/ProgramHeader";
 import { ProgramSummary } from "@/components/academy/ProgramSummary";
-import { getProvisionalCourse } from "@/lib/academy-content";
+import { getAcademyProgram } from "@/lib/academy";
 
 export default function AcademyProgramPage() {
-  const course = getProvisionalCourse();
+  const course = getAcademyProgram();
 
   return (
     <AcademyShell>

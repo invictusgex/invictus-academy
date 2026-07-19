@@ -91,6 +91,11 @@
 - Se creo .env.local solo en el entorno local para probar el canal de soporte y se confirmo que permanece ignorado por Git.
 - Se transformo la vista individual de modulo en un espacio secuencial profesional de formacion.
 - La pagina /academy/programa/[moduleId] quedo como orquestadora de componentes enfocados.
+- Se separo el contenido academico editorial bajo src/content/programs.
+- Cada modulo del programa Trading Basado en Datos quedo definido en su propio archivo.
+- program.ts quedo como fuente unica de verdad para el orden de modulos.
+- src/lib/academy.ts quedo como adaptador publico de academia.
+- Los helpers de consulta getAcademyProgram, getAcademyModules y getAcademyModule pertenecen ahora al dominio del programa.
 
 ## Comandos ejecutados
 
@@ -344,6 +349,18 @@ npm.cmd run build
 ```
 
 Resultado final: build de produccion finalizado correctamente despues de transformar la vista individual de modulo.
+
+```powershell
+npm.cmd run lint
+```
+
+Resultado final: ESLint finalizo correctamente despues de separar el contenido academico en el dominio del programa.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado final: build de produccion finalizado correctamente despues de separar el contenido academico en el dominio del programa.
 
 ## Archivos importantes creados
 
@@ -817,3 +834,54 @@ Se creo un componente global AcademySupport para mostrar un acceso flotante de s
 ### 2026-07-19 - Espacio profesional de formacion por modulo
 
 Se refactorizo /academy/programa/[moduleId] para convertir la vista individual de modulo en un espacio profesional y secuencial de formacion. La pagina conserva los datos existentes y ahora orquesta breadcrumb, encabezado, proposito, competencias, sesion de formacion, recursos y navegacion entre modulos mediante componentes enfocados.
+
+## Fase 4 - Arquitectura de contenido por programa
+
+- Objetivo:
+  - Separar el contenido editorial de academia para preparar multiples programas futuros sin cambiar rutas, ids, UI ni comportamiento visible.
+- Estructura creada:
+  - src/content/programs/trading-basado-en-datos/program.ts
+  - src/content/programs/trading-basado-en-datos/index.ts
+  - src/content/programs/trading-basado-en-datos/modules/module-01.ts
+  - src/content/programs/trading-basado-en-datos/modules/module-02.ts
+  - src/content/programs/trading-basado-en-datos/modules/module-03.ts
+  - src/content/programs/trading-basado-en-datos/modules/module-04.ts
+  - src/content/programs/trading-basado-en-datos/modules/module-05.ts
+  - src/content/programs/trading-basado-en-datos/modules/module-06.ts
+  - src/content/programs/trading-basado-en-datos/modules/module-07.ts
+- Decisiones de arquitectura:
+  - Cada modulo exporta exactamente una definicion Module autocontenida.
+  - Los modulos no importan otros modulos ni el programa.
+  - program.ts importa explicitamente los siete modulos y define modules en orden manual.
+  - program.ts es la fuente unica de verdad para el orden del programa.
+  - Se elimino la generacion de modulos con Array.from en el contenido academico.
+  - Los ids del programa y de los modulos se conservaron sin cambios.
+  - Las rutas actuales se conservaron sin cambios.
+- Adaptador publico:
+  - src/lib/academy-content.ts fue reemplazado por src/lib/academy.ts.
+  - src/lib/academy.ts conserva la API publica usada por la aplicacion.
+  - src/lib/academy.ts reexporta los helpers de consulta del dominio del programa.
+  - src/lib/academy.ts mantiene academyNavigation como dato de navegacion de academia.
+- Helpers del dominio:
+  - getAcademyProgram vive en src/content/programs/trading-basado-en-datos/program.ts.
+  - getAcademyModules vive en src/content/programs/trading-basado-en-datos/program.ts.
+  - getAcademyModule vive en src/content/programs/trading-basado-en-datos/program.ts.
+  - El lookup de modulos se deriva del mismo arreglo modules definido por program.ts.
+- Archivos modificados:
+  - src/app/academy/page.tsx
+  - src/app/academy/programa/page.tsx
+  - src/app/academy/programa/[moduleId]/page.tsx
+  - src/components/layout/academy-shell.tsx
+  - src/lib/academy.ts
+  - DOCUMENTACION_PROYECTO.md
+- Archivos eliminados:
+  - src/lib/academy-content.ts
+- Restricciones mantenidas:
+  - No se modificaron los modelos TypeScript.
+  - No se modifico la UI.
+  - No se instalaron dependencias.
+  - No se agregaron autenticacion, Supabase, base de datos, CMS ni rutas nuevas.
+
+### 2026-07-19 - Contenido academico en dominio de programa
+
+Se separo el contenido editorial de academia bajo src/content/programs/trading-basado-en-datos. Cada modulo quedo en su propio archivo, program.ts define explicitamente el orden del programa y src/lib/academy.ts funciona como adaptador publico del area de academia. Los helpers de consulta quedaron en el dominio del programa y la aplicacion conserva rutas, ids y comportamiento visible.

@@ -3,10 +3,10 @@ import Link from "next/link";
 import { DashboardHero } from "@/components/academy/DashboardHero";
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { getProvisionalCourse } from "@/lib/academy-content";
+import { getAcademyProgram } from "@/lib/academy";
 
 export default function AcademyPage() {
-  const course = getProvisionalCourse();
+  const course = getAcademyProgram();
 
   return (
     <AcademyShell>
