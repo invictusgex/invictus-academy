@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { formationCtaHref } from "@/config/public-cta";
 import {
   publicGlobalCompetencies,
   publicMethodologySteps,
@@ -13,9 +14,6 @@ import type { Course } from "@/types/academy";
 type PublicProgramPageProps = {
   course: Course;
 };
-
-// Destino temporal hasta incorporar checkout público.
-const formationCtaHref = "/academy/programa";
 
 function getTotalSessions(course: Course) {
   return course.modules.reduce(

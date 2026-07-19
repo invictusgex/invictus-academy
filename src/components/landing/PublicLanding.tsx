@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { formationCtaHref } from "@/config/public-cta";
 import type { Course } from "@/types/academy";
 
 type PublicLandingProps = {
@@ -75,9 +76,6 @@ const marketPoints = [
   "left-[67%] top-[32%]",
   "left-[82%] top-[46%]",
 ];
-
-// Destino temporal hasta incorporar checkout público.
-const formationCtaHref = "/academy/programa";
 
 function Header() {
   return (
