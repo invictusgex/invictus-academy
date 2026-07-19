@@ -1,10 +1,13 @@
+import Link from "next/link";
+
 import type { AcademyModule } from "@/types/academy";
 
 type ModuleCardProps = {
   module: AcademyModule;
+  showAction?: boolean;
 };
 
-export function ModuleCard({ module }: ModuleCardProps) {
+export function ModuleCard({ module, showAction = false }: ModuleCardProps) {
   return (
     <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5">
       <div className="flex items-start justify-between gap-4">
@@ -23,6 +26,14 @@ export function ModuleCard({ module }: ModuleCardProps) {
       <p className="mt-5 text-sm leading-6 text-[var(--color-text-secondary)]">
         {module.description}
       </p>
+      {showAction ? (
+        <Link
+          href={`/academy/programa/${module.id}`}
+          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
+        >
+          Entrar
+        </Link>
+      ) : null}
     </article>
   );
 }

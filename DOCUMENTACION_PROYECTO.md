@@ -68,6 +68,10 @@
 - Se separo la base visual de la academia en componentes reutilizables pequenos.
 - Se crearon carpetas preparadas para futuras funciones de autenticacion y progreso, sin implementar esas funciones todavia.
 - No se instalaron dependencias nuevas para la estructura de academia.
+- Se construyo la navegacion principal completa de aprendizaje con datos provisionales.
+- Se crearon las rutas /academy/programa, /academy/programa/[moduleId] y /academy/programa/[moduleId]/[lessonId].
+- Se mantuvieron exactamente siete modulos provisionales y diez clases por modulo, sin nombres especificos.
+- No se implemento reproductor funcional, progreso real, guardado de estado, autenticacion, Supabase ni base de datos.
 
 ## Comandos ejecutados
 
@@ -225,6 +229,18 @@ npm.cmd run build
 
 Resultado: build de produccion finalizado correctamente despues de crear la estructura inicial de la academia. La ruta /academy fue generada como contenido estatico.
 
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues de crear la navegacion completa de aprendizaje.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues de crear la navegacion completa de aprendizaje. Las rutas /academy/programa, /academy/programa/[moduleId] y /academy/programa/[moduleId]/[lessonId] compilaron correctamente.
+
 ## Archivos importantes creados
 
 - package.json
@@ -337,6 +353,41 @@ La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la c
   - En escritorio, la academia usa una barra lateral izquierda y contenido principal a la derecha.
   - En movil, la navegacion se apila de forma simple y las tarjetas se muestran en una sola columna, sin menu hamburguesa funcional.
 
+## Fase 3 - Navegacion completa de aprendizaje
+
+- Rutas creadas:
+  - /academy/programa
+  - /academy/programa/[moduleId]
+  - /academy/programa/[moduleId]/[lessonId]
+- Archivos creados:
+  - src/app/academy/programa/page.tsx
+  - src/app/academy/programa/[moduleId]/page.tsx
+  - src/app/academy/programa/[moduleId]/[lessonId]/page.tsx
+  - src/components/layout/academy-shell.tsx
+  - src/features/academy/lesson-card.tsx
+- Archivos modificados:
+  - src/app/academy/page.tsx
+  - src/features/academy/module-card.tsx
+  - src/lib/academy-content.ts
+  - src/types/academy.ts
+  - DOCUMENTACION_PROYECTO.md
+- Navegacion:
+  - Mi programa apunta a /academy/programa.
+  - Los botones Entrar llevan desde cada modulo provisional hacia su ruta de modulo.
+  - Los botones Abrir clase llevan desde cada clase provisional hacia su ruta de clase.
+  - Clase anterior y Clase siguiente respetan los limites de Clase 1 a Clase 10.
+- Datos provisionales:
+  - Siete modulos: Modulo 1 a Modulo 7.
+  - Diez clases por modulo: Clase 1 a Clase 10.
+  - Estado de modulo: No iniciado.
+  - Texto de modulo: Contenido pendiente de definicion.
+  - Progreso real no implementado.
+- Restricciones mantenidas:
+  - No se instalo ninguna dependencia.
+  - No se agrego autenticacion, login, Supabase, base de datos, YouTube, reproductor funcional, guardado de estado, videos ni pagos.
+  - No se modifico la landing publica.
+  - No se cambiaron colores, configuracion Git ni repositorio remoto.
+
 ## Historial de cambios
 
 ### 2026-07-18 - Inicializacion tecnica base
@@ -362,3 +413,7 @@ Se ajustaron espaciado, alineacion lateral, equilibrio de columnas y relacion vi
 ### 2026-07-19 - Estructura inicial de academia
 
 Se inicio la Fase 3 creando la arquitectura interna inicial y la ruta publica temporal /academy. Se agrego un dashboard estructural con barra lateral, encabezado superior, tarjeta de bienvenida, progreso general en 0 % y siete tarjetas provisionales de modulos sin nombres especificos. No se agregaron autenticacion, Supabase, base de datos, rutas de modulos, rutas de lecciones ni dependencias nuevas.
+
+### 2026-07-19 - Navegacion completa de aprendizaje
+
+Se crearon las rutas /academy/programa, /academy/programa/[moduleId] y /academy/programa/[moduleId]/[lessonId] con datos provisionales. El programa muestra siete modulos, cada modulo lista diez clases y cada clase muestra un area reservada para futuro reproductor con navegacion anterior/siguiente dentro de sus limites. No se agregaron autenticacion, Supabase, base de datos, reproductor funcional, progreso real ni dependencias nuevas.
