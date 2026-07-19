@@ -1,11 +1,12 @@
 import type { ModuleVideo } from "@/types/academy";
 
 type TrainingSessionProps = {
+  isAvailable: boolean;
   video?: ModuleVideo;
 };
 
-export function TrainingSession({ video }: TrainingSessionProps) {
-  const hasAvailableVideo = Boolean(video?.placeholder.trim());
+export function TrainingSession({ isAvailable, video }: TrainingSessionProps) {
+  const hasAvailableVideo = isAvailable && Boolean(video?.placeholder.trim());
 
   return (
     <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">

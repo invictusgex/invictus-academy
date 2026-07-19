@@ -13,7 +13,7 @@ export const module03: Module = {
     "Objetivo de aprendizaje 3",
     "Objetivo de aprendizaje 4",
   ],
-  status: "No iniciado",
+  availability: "coming-soon",
   video: {
     id: "modulo-3-video",
     title: "Video principal del Módulo 3",

@@ -52,7 +52,7 @@ export function DashboardHero({ userName }: DashboardHeroProps) {
         <p className="mt-6 max-w-2xl text-base leading-7 text-[var(--color-text-primary)]">
           La disciplina construye consistencia.
           <br />
-          La consistencia construye resultados.
+          La consistencia fortalece el proceso.
         </p>
         <Link
           href="/academy/programa"

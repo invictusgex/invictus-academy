@@ -14,6 +14,8 @@ export type ModuleResource = {
   title: string;
 };
 
+export type ModuleAvailability = "available" | "coming-soon";
+
 export type Module = {
   id: string;
   number: number;
@@ -21,7 +23,7 @@ export type Module = {
   description: string;
   overview: string;
   learningObjectives: string[];
-  status: "No iniciado";
+  availability: ModuleAvailability;
   video: ModuleVideo;
   resources: ModuleResource[];
 };

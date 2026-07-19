@@ -48,11 +48,15 @@ export default async function AcademyModulePage({ params }: ModulePageProps) {
           number={academyModule.number}
           title={academyModule.title}
           description={academyModule.description}
+          availability={academyModule.availability}
           competenciesCount={academyModule.learningObjectives.length}
         />
         <ModulePurpose purpose={purpose} />
         <LearningObjectives objectives={academyModule.learningObjectives} />
-        <TrainingSession video={academyModule.video} />
+        <TrainingSession
+          isAvailable={academyModule.availability === "available"}
+          video={academyModule.video}
+        />
         <ModuleResources resources={academyModule.resources} />
         <ModuleNavigation
           previousModule={previousModule}

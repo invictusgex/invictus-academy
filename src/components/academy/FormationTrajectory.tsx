@@ -1,4 +1,5 @@
 import type { Course } from "@/types/academy";
+import { formatModuleAvailabilityLabel } from "@/utils/module-availability";
 
 type FormationTrajectoryProps = {
   course: Course;
@@ -22,7 +23,7 @@ export function FormationTrajectory({ course }: FormationTrajectoryProps) {
                 Módulo {module.number}
               </p>
               <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                {module.status}
+                {formatModuleAvailabilityLabel(module.availability)}
               </p>
             </div>
           </div>

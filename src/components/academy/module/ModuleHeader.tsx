@@ -1,7 +1,11 @@
+import type { ModuleAvailability } from "@/types/academy";
+import { formatModuleAvailabilityLabel } from "@/utils/module-availability";
+
 type ModuleHeaderProps = {
   number: number;
   title: string;
   description: string;
+  availability: ModuleAvailability;
   competenciesCount: number;
 };
 
@@ -9,6 +13,7 @@ export function ModuleHeader({
   number,
   title,
   description,
+  availability,
   competenciesCount,
 }: ModuleHeaderProps) {
   const formattedModuleNumber = String(number).padStart(2, "0");
@@ -29,7 +34,7 @@ export function ModuleHeader({
         </div>
         <div className="flex flex-wrap gap-3 text-sm">
           <span className="rounded-full border border-[var(--color-cyan-line)] px-3 py-1 font-medium text-[var(--color-cyan)]">
-            Disponible
+            {formatModuleAvailabilityLabel(availability)}
           </span>
           <span className="rounded-full border border-[var(--color-border)] px-3 py-1 text-[var(--color-text-secondary)]">
             {competenciesCount} competencias

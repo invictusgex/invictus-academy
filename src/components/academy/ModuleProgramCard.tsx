@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { Module } from "@/types/academy";
+import { formatModuleAvailabilityLabel } from "@/utils/module-availability";
 
 type ModuleProgramCardProps = {
   module: Module;
@@ -22,7 +23,7 @@ export function ModuleProgramCard({ module }: ModuleProgramCardProps) {
           </p>
         </div>
         <span className="w-fit rounded-full border border-[var(--color-border)] px-3 py-1 text-xs font-medium text-[var(--color-cyan)]">
-          Disponible
+          {formatModuleAvailabilityLabel(module.availability)}
         </span>
       </div>
 

@@ -11,7 +11,7 @@ export function ProgramHeader({ course }: ProgramHeaderProps) {
         Programa de Formación
       </p>
       <h1 className="mt-5 text-3xl font-semibold text-white sm:text-4xl">
-        Trading Basado en Datos
+        {course.title}
       </h1>
       <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
         {course.description}

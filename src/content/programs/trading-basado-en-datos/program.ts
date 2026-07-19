@@ -10,9 +10,9 @@ import { module07 } from "./modules/module-07";
 
 export const academyProgram: Course = {
   id: "invictus-provisional",
-  title: "Invictus Trading Academy",
+  title: "Trading Basado en Datos",
   description:
-    "Estructura provisional de aprendizaje. Los contenidos se definirán en una fase posterior.",
+    "Programa de formación profesional orientado a interpretar estructura, liquidez, volumen, Order Flow y exposición de gamma para construir decisiones basadas en evidencia.",
   modules: [
     module01,
     module02,

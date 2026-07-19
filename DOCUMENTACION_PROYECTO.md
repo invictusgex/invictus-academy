@@ -885,3 +885,46 @@ Se refactorizo /academy/programa/[moduleId] para convertir la vista individual d
 ### 2026-07-19 - Contenido academico en dominio de programa
 
 Se separo el contenido editorial de academia bajo src/content/programs/trading-basado-en-datos. Cada modulo quedo en su propio archivo, program.ts define explicitamente el orden del programa y src/lib/academy.ts funciona como adaptador publico del area de academia. Los helpers de consulta quedaron en el dominio del programa y la aplicacion conserva rutas, ids y comportamiento visible.
+
+## Fase 5 - Identidad oficial y disponibilidad editorial
+
+- Objetivo:
+  - Separar la disponibilidad editorial del contenido respecto al progreso futuro del usuario.
+  - Establecer la identidad oficial del programa sin cambiar rutas, ids ni arquitectura visual.
+- Identidad:
+  - Institucion oficial: Invictus Trading Academy.
+  - Programa oficial: Trading Basado en Datos.
+  - Descriptor institucional: Programa de Formacion Profesional.
+  - Descripcion oficial del programa: Programa de formacion profesional orientado a interpretar estructura, liquidez, volumen, Order Flow y exposicion de gamma para construir decisiones basadas en evidencia.
+  - El id del programa permanece temporalmente como invictus-provisional.
+- Disponibilidad editorial:
+  - El campo editorial status fue reemplazado por availability.
+  - ModuleAvailability admite los valores available y coming-soon.
+  - available representa contenido editorial disponible.
+  - coming-soon representa contenido editorial aun no disponible.
+  - No se guarda progreso de usuario dentro de los archivos de contenido.
+- Estado actual de los modulos:
+  - Los siete modulos actuales permanecen en coming-soon.
+  - Motivo: los modulos todavia contienen contenido provisional y no tienen una sesion de formacion real consumible.
+  - La vista del modulo conserva un estado honesto de sesion no disponible.
+- Distincion conceptual:
+  - Invictus Trading Academy identifica la institucion y plataforma.
+  - Trading Basado en Datos identifica el programa de formacion.
+  - La disponibilidad editorial no equivale a inicio, avance ni finalizacion del usuario.
+  - El progreso de usuario queda reservado para fases futuras con autenticacion, persistencia o reglas reales.
+- Archivos principales:
+  - src/types/academy.ts
+  - src/utils/module-availability.ts
+  - src/content/programs/trading-basado-en-datos/program.ts
+  - src/content/programs/trading-basado-en-datos/modules/module-01.ts a module-07.ts
+  - src/app/academy/page.tsx
+  - src/components/academy/ProgramHeader.tsx
+  - src/components/academy/ProgramSummary.tsx
+  - src/components/academy/FormationTrajectory.tsx
+  - src/components/academy/ModuleProgramCard.tsx
+  - src/components/academy/module/ModuleHeader.tsx
+  - src/components/academy/module/TrainingSession.tsx
+
+### 2026-07-19 - Identidad oficial y disponibilidad editorial
+
+Se establecio Trading Basado en Datos como nombre oficial del programa y se mantuvo Invictus Trading Academy como identidad institucional. Se reemplazo el estado editorial anterior por ModuleAvailability con available y coming-soon, dejando los siete modulos actuales en coming-soon porque aun no tienen contenido real consumible. El progreso del usuario queda separado para futuras fases.

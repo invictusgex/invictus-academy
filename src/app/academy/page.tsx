@@ -7,6 +7,13 @@ import { getAcademyProgram } from "@/lib/academy";
 
 export default function AcademyPage() {
   const course = getAcademyProgram();
+  const availableModules = course.modules.filter(
+    (module) => module.availability === "available",
+  );
+  const availabilityPercentage =
+    course.modules.length > 0
+      ? Math.round((availableModules.length / course.modules.length) * 100)
+      : 0;
 
   return (
     <AcademyShell>
@@ -22,7 +29,7 @@ export default function AcademyPage() {
               Programa de Formación
             </p>
             <h2 className="mt-3 text-2xl font-semibold text-white">
-              Trading Basado en Datos
+              {course.title}
             </h2>
             <p className="mt-4 text-base leading-7 text-[var(--color-text-secondary)]">
               {course.modules.length} módulos estructurados
@@ -41,21 +48,25 @@ export default function AcademyPage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-              Estado de formación
+              Disponibilidad
             </p>
             <h2 className="mt-3 text-2xl font-semibold text-white">
-              No iniciado
+              Próximamente
             </h2>
           </div>
           <p className="text-sm text-[var(--color-text-muted)]">
-            0 de {course.modules.length} módulos completados
+            {availableModules.length} de {course.modules.length} módulos
+            disponibles
           </p>
         </div>
         <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-          Aún no has comenzado ningún módulo.
+          El contenido principal del programa está en preparación.
         </p>
         <div className="mt-6">
-          <ProgressBar label="Estado de formación" value={0} />
+          <ProgressBar
+            label="Disponibilidad del programa"
+            value={availabilityPercentage}
+          />
         </div>
       </section>
 
@@ -66,7 +77,7 @@ export default function AcademyPage() {
         <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-2xl font-semibold text-white">
-              Trading Basado en Datos
+              {course.title}
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
               Programa de Formación Profesional
@@ -76,7 +87,7 @@ export default function AcademyPage() {
                 {course.modules.length} módulos
               </span>
               <span className="rounded-full border border-[var(--color-border)] px-3 py-1 text-[var(--color-text-muted)]">
-                Estado: No iniciado
+                Disponibilidad: Próximamente
               </span>
             </div>
           </div>
