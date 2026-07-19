@@ -57,6 +57,30 @@ export default async function AcademyModulePage({ params }: ModulePageProps) {
         </div>
       </section>
 
+      <section className="mb-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-8">
+        <h2 className="text-xl font-semibold text-white">
+          ¿Qué aprenderás en este módulo?
+        </h2>
+        <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
+          {academyModule.overview}
+        </p>
+        <div className="mt-6">
+          <p className="text-sm font-semibold text-white">
+            Al finalizar este módulo podrás:
+          </p>
+          <ul className="mt-4 grid gap-3 text-sm leading-6 text-[var(--color-text-secondary)] sm:grid-cols-2">
+            {academyModule.learningObjectives.map((objective) => (
+              <li key={objective} className="flex gap-3">
+                <span className="text-[var(--color-cyan)]" aria-hidden="true">
+                  ✓
+                </span>
+                <span>{objective}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-8">
         <div className="flex aspect-video min-h-56 items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 text-center">
           <p className="text-lg font-semibold text-white">

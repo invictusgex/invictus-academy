@@ -25,6 +25,7 @@ export default function AcademyProgramPage() {
             key={module.number}
             module={module}
             showAction
+            showLearningDetails
           />
         ))}
       </section>

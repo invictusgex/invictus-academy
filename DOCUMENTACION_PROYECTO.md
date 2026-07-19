@@ -80,6 +80,8 @@
 - Se introdujo el concepto Course con la jerarquia Academy -> Course -> Module -> Resource.
 - El proyecto mantiene un unico curso provisional con siete modulos.
 - Cada modulo contiene video provisional estructural y resources como lista vacia.
+- Se incorporaron los campos overview y learningObjectives al modelo Module.
+- Se mejoro la experiencia del estudiante mostrando que aprendera en cada modulo desde el programa y desde la vista del modulo.
 
 ## Comandos ejecutados
 
@@ -284,6 +286,18 @@ npm.cmd run build
 ```
 
 Resultado: build de produccion finalizado correctamente despues de introducir la arquitectura de cursos. Las rutas de academia se mantienen sin cambios visibles significativos.
+
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues de mostrar objetivos de aprendizaje por modulo.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues de mostrar objetivos de aprendizaje por modulo.
 
 ## Archivos importantes creados
 
@@ -599,3 +613,38 @@ Se corrigio la arquitectura de aprendizaje para reflejar la decision del propiet
 ### 2026-07-19 - Arquitectura academica de cursos
 
 Se introdujo el concepto Course para preparar soporte futuro de multiples cursos bajo la jerarquia Academy -> Course -> Module -> Resource. Actualmente existe un unico curso provisional con siete modulos; cada modulo contiene datos estructurales de video provisional y una lista resources vacia. No se agregaron dependencias, autenticacion, Supabase, base de datos, URLs reales ni recursos ficticios.
+
+## Fase 4 - Objetivos de aprendizaje por modulo
+
+- Campos incorporados al modelo Module:
+  - overview
+  - learningObjectives
+- Datos provisionales:
+  - Cada modulo incluye un overview neutro.
+  - Cada modulo incluye exactamente cuatro objetivos de aprendizaje provisionales.
+  - Los siete modulos comparten temporalmente la misma estructura neutral.
+- Visualizacion en /academy/programa:
+  - Cada tarjeta muestra nombre del modulo, estado, overview y cuatro objetivos bajo el texto Aprenderas.
+  - No se muestra duracion, progreso individual ni cantidad de recursos.
+- Visualizacion en /academy/programa/[moduleId]:
+  - Se agrego la seccion Que aprenderas en este modulo.
+  - Se muestra el overview del modulo.
+  - Se muestran los cuatro objetivos bajo Al finalizar este modulo podras.
+- Arquitectura:
+  - Toda la informacion proviene de academy-content.ts mediante el modelo Course.
+  - No se duplicaron arrays de objetivos en componentes.
+  - Los objetivos forman parte del modulo, no de resources.
+- Archivos modificados:
+  - src/types/academy.ts
+  - src/lib/academy-content.ts
+  - src/features/academy/module-card.tsx
+  - src/app/academy/programa/page.tsx
+  - src/app/academy/programa/[moduleId]/page.tsx
+  - DOCUMENTACION_PROYECTO.md
+- Restricciones mantenidas:
+  - No se instalaron dependencias.
+  - No se agregaron recursos reales, videos reales, YouTube, Supabase, autenticacion ni base de datos.
+
+### 2026-07-19 - Objetivos de aprendizaje por modulo
+
+Se agregaron overview y learningObjectives al modelo Module para explicar de forma provisional que aprendera el estudiante en cada modulo. La pagina del programa muestra estos objetivos en cada tarjeta y la vista del modulo incluye una seccion especifica de aprendizaje, todo alimentado desde academy-content.ts sin duplicar datos ni agregar recursos reales.

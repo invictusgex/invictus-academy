@@ -19,6 +19,8 @@ export type Module = {
   number: number;
   title: string;
   description: string;
+  overview: string;
+  learningObjectives: string[];
   status: "No iniciado";
   video: ModuleVideo;
   resources: ModuleResource[];

@@ -5,9 +5,14 @@ import type { Module } from "@/types/academy";
 type ModuleCardProps = {
   module: Module;
   showAction?: boolean;
+  showLearningDetails?: boolean;
 };
 
-export function ModuleCard({ module, showAction = false }: ModuleCardProps) {
+export function ModuleCard({
+  module,
+  showAction = false,
+  showLearningDetails = false,
+}: ModuleCardProps) {
   return (
     <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5">
       <div className="flex items-start justify-between gap-4">
@@ -24,8 +29,23 @@ export function ModuleCard({ module, showAction = false }: ModuleCardProps) {
         </span>
       </div>
       <p className="mt-5 text-sm leading-6 text-[var(--color-text-secondary)]">
-        {module.description}
+        {showLearningDetails ? module.overview : module.description}
       </p>
+      {showLearningDetails ? (
+        <div className="mt-5">
+          <p className="text-sm font-semibold text-white">Aprenderás:</p>
+          <ul className="mt-3 grid gap-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+            {module.learningObjectives.map((objective) => (
+              <li key={objective} className="flex gap-2">
+                <span className="text-[var(--color-cyan)]" aria-hidden="true">
+                  •
+                </span>
+                <span>{objective}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       {showAction ? (
         <Link
           href={`/academy/programa/${module.id}`}
