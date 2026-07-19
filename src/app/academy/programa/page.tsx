@@ -21,7 +21,7 @@ export default function AcademyProgramPage() {
       <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {academyModules.map((module) => (
           <ModuleCard
-            key={module.moduleNumber}
+            key={module.number}
             module={module}
             showAction
           />

@@ -13,7 +13,7 @@ export function ModuleCard({ module, showAction = false }: ModuleCardProps) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Módulo {module.moduleNumber}
+            Módulo {module.number}
           </p>
           <h3 className="mt-3 text-lg font-semibold text-white">
             {module.title}
@@ -31,7 +31,7 @@ export function ModuleCard({ module, showAction = false }: ModuleCardProps) {
           href={`/academy/programa/${module.id}`}
           className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
         >
-          Entrar
+          Abrir módulo
         </Link>
       ) : null}
     </article>

@@ -38,7 +38,7 @@ export default function AcademyPage() {
             </h2>
           </div>
           <p className="text-sm text-[var(--color-text-muted)]">
-            Aún no has comenzado ninguna lección.
+            Aún no has comenzado ningún módulo.
           </p>
         </div>
         <div className="mt-6">
@@ -60,7 +60,7 @@ export default function AcademyPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {academyModules.map((module) => (
-            <ModuleCard key={module.moduleNumber} module={module} />
+            <ModuleCard key={module.number} module={module} />
           ))}
         </div>
       </section>

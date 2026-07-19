@@ -68,13 +68,14 @@
 - Se separo la base visual de la academia en componentes reutilizables pequenos.
 - Se crearon carpetas preparadas para futuras funciones de autenticacion y progreso, sin implementar esas funciones todavia.
 - No se instalaron dependencias nuevas para la estructura de academia.
-- Se construyo la navegacion principal completa de aprendizaje con datos provisionales.
-- Se crearon las rutas /academy/programa, /academy/programa/[moduleId] y /academy/programa/[moduleId]/[lessonId].
-- Se mantuvieron exactamente siete modulos provisionales y diez clases por modulo, sin nombres especificos.
+- Se construyo una navegacion principal de aprendizaje con datos provisionales.
+- Se corrigio la arquitectura de aprendizaje: cada modulo contiene directamente un video principal.
+- Las rutas actuales de contenido educativo son /academy, /academy/programa y /academy/programa/[moduleId].
+- No existen clases internas dentro de los modulos.
+- Se elimino la ruta /academy/programa/[moduleId]/[lessonId].
 - No se implemento reproductor funcional, progreso real, guardado de estado, autenticacion, Supabase ni base de datos.
-- Se mejoro la navegacion interna de la vista de clase con migas de pan e indice lateral de clases.
 - Se mantuvo shadcn/ui pospuesto y no se instalaron dependencias nuevas.
-- Se valido que moduleId y lessonId usen los valores provisionales existentes mediante notFound() para parametros invalidos.
+- Se valido que moduleId use los valores provisionales existentes mediante notFound() para parametros invalidos.
 
 ## Comandos ejecutados
 
@@ -256,6 +257,18 @@ npm.cmd run build
 
 Resultado: build de produccion finalizado correctamente despues de mejorar la navegacion de clases. Las rutas validas de academia siguen generandose correctamente.
 
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues de corregir la arquitectura a un video por modulo.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues de corregir la arquitectura a un video por modulo. El build incluye /academy, /academy/programa y /academy/programa/[moduleId], y ya no genera /academy/programa/[moduleId]/[lessonId].
+
 ## Archivos importantes creados
 
 - package.json
@@ -370,6 +383,8 @@ La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la c
 
 ## Fase 3 - Navegacion completa de aprendizaje
 
+Nota de arquitectura: esta seccion documenta una implementacion historica que fue corregida posteriormente. La estructura vigente ya no contiene clases internas ni ruta /academy/programa/[moduleId]/[lessonId].
+
 - Rutas creadas:
   - /academy/programa
   - /academy/programa/[moduleId]
@@ -405,6 +420,8 @@ La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la c
 
 ## Fase 3 - Mejora de navegacion de clases
 
+Nota de arquitectura: esta seccion documenta una mejora historica sobre una estructura de clases que fue corregida posteriormente por decision del propietario. La estructura vigente usa un video principal por modulo.
+
 - Alcance principal:
   - src/app/academy/programa/[moduleId]/[lessonId]/page.tsx
 - Archivos creados:
@@ -436,6 +453,54 @@ La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la c
   - shadcn/ui queda pospuesto.
   - No se instalaron dependencias nuevas.
   - No se agregaron videos, reproductor, autenticacion, Supabase, base de datos, progreso real, recursos descargables ni notas.
+
+## Correccion de arquitectura de aprendizaje
+
+- Estructura vigente:
+  - Existen exactamente siete modulos.
+  - Cada modulo contiene inicialmente un solo video principal.
+  - No existen clases internas dentro de los modulos.
+- Rutas actuales de contenido educativo:
+  - /academy
+  - /academy/programa
+  - /academy/programa/[moduleId]
+- Ruta eliminada:
+  - /academy/programa/[moduleId]/[lessonId]
+- Archivos eliminados:
+  - src/app/academy/programa/[moduleId]/[lessonId]/page.tsx
+  - src/features/academy/lesson-card.tsx
+  - src/features/academy/lesson-navigation.tsx
+- Archivos modificados:
+  - src/app/academy/page.tsx
+  - src/app/academy/programa/page.tsx
+  - src/app/academy/programa/[moduleId]/page.tsx
+  - src/features/academy/module-card.tsx
+  - src/lib/academy-content.ts
+  - src/types/academy.ts
+  - DOCUMENTACION_PROYECTO.md
+- Datos eliminados:
+  - AcademyLesson
+  - academyLessons
+  - getAcademyLesson
+  - lessonId
+  - Clase 1 a Clase 10
+  - navegacion anterior/siguiente entre clases
+- Vista de modulo:
+  - Muestra migas de pan Programa > Modulo X.
+  - Muestra etiqueta y titulo provisional Modulo X.
+  - Muestra estado No iniciado.
+  - Muestra un area reservada para el video del modulo.
+  - Incluye Volver al programa.
+  - Permite navegar entre modulos sin salir del rango 1 a 7.
+- Validacion:
+  - moduleId solo acepta valores provisionales del 1 al 7.
+  - Valores invalidos usan notFound().
+- Responsive:
+  - El area audiovisual usa proporcion visual amplia en escritorio.
+  - En movil se mantiene una sola columna y botones adaptables sin scroll horizontal previsto.
+- Dependencias:
+  - No se instalaron dependencias nuevas.
+  - shadcn/ui sigue pospuesto.
 
 ## Historial de cambios
 
@@ -470,3 +535,7 @@ Se crearon las rutas /academy/programa, /academy/programa/[moduleId] y /academy/
 ### 2026-07-19 - Mejora de navegacion de clases
 
 Se mejoro la vista de clase con migas de pan, encabezado basado en el nombre provisional de la clase, distribucion en dos columnas para escritorio, indice lateral de clases del modulo y navegacion anterior/siguiente con destino explicito. Los parametros moduleId y lessonId se mantienen validados contra los datos provisionales y shadcn/ui queda pospuesto sin instalar dependencias nuevas.
+
+### 2026-07-19 - Correccion a un video por modulo
+
+Se corrigio la arquitectura de aprendizaje para reflejar la decision del propietario: existen siete modulos y cada modulo contiene directamente un video principal, sin clases internas. Se elimino la ruta /academy/programa/[moduleId]/[lessonId], se retiraron los componentes y datos de clases, y se adapto /academy/programa/[moduleId] como pantalla audiovisual directa del modulo.

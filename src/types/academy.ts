@@ -5,14 +5,8 @@ export type AcademyNavItem = {
 
 export type AcademyModule = {
   id: string;
-  moduleNumber: number;
+  number: number;
   title: string;
   description: string;
   status: "No iniciado";
-};
-
-export type AcademyLesson = {
-  id: string;
-  lessonNumber: number;
-  title: string;
 };
