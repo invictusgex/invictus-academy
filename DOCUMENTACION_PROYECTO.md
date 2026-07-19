@@ -72,6 +72,9 @@
 - Se crearon las rutas /academy/programa, /academy/programa/[moduleId] y /academy/programa/[moduleId]/[lessonId].
 - Se mantuvieron exactamente siete modulos provisionales y diez clases por modulo, sin nombres especificos.
 - No se implemento reproductor funcional, progreso real, guardado de estado, autenticacion, Supabase ni base de datos.
+- Se mejoro la navegacion interna de la vista de clase con migas de pan e indice lateral de clases.
+- Se mantuvo shadcn/ui pospuesto y no se instalaron dependencias nuevas.
+- Se valido que moduleId y lessonId usen los valores provisionales existentes mediante notFound() para parametros invalidos.
 
 ## Comandos ejecutados
 
@@ -241,6 +244,18 @@ npm.cmd run build
 
 Resultado: build de produccion finalizado correctamente despues de crear la navegacion completa de aprendizaje. Las rutas /academy/programa, /academy/programa/[moduleId] y /academy/programa/[moduleId]/[lessonId] compilaron correctamente.
 
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues de mejorar la navegacion de clases.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues de mejorar la navegacion de clases. Las rutas validas de academia siguen generandose correctamente.
+
 ## Archivos importantes creados
 
 - package.json
@@ -388,6 +403,40 @@ La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la c
   - No se modifico la landing publica.
   - No se cambiaron colores, configuracion Git ni repositorio remoto.
 
+## Fase 3 - Mejora de navegacion de clases
+
+- Alcance principal:
+  - src/app/academy/programa/[moduleId]/[lessonId]/page.tsx
+- Archivos creados:
+  - src/features/academy/lesson-navigation.tsx
+- Archivos modificados:
+  - src/app/academy/programa/[moduleId]/[lessonId]/page.tsx
+  - DOCUMENTACION_PROYECTO.md
+- Migas de pan:
+  - Programa enlaza a /academy/programa.
+  - Modulo X enlaza al modulo actual.
+  - Clase Y representa la clase actual y usa aria-current.
+- Indice lateral de clases:
+  - LessonNavigation muestra Clase 1 a Clase 10 usando academy-content.ts.
+  - La clase actual se distingue con borde/fondo cyan discreto, texto Actual y aria-current="page".
+  - Incluye enlace Volver al modulo.
+- Navegacion anterior y siguiente:
+  - Los enlaces muestran el destino: Clase anterior: Clase X y Clase siguiente: Clase Y.
+  - Clase 1 no muestra control anterior.
+  - Clase 10 no muestra control siguiente.
+  - No se permite navegar fuera del rango provisional de Clase 1 a Clase 10.
+- Validacion de parametros:
+  - moduleId se valida contra los modulos provisionales 1 a 7.
+  - lessonId se valida contra las clases provisionales 1 a 10.
+  - Valores invalidos usan notFound().
+- Responsive:
+  - En escritorio, el area reservada para video queda a la izquierda y el indice de clases a la derecha.
+  - En pantallas medianas y moviles, todo queda en una sola columna, con indice debajo y sin scroll horizontal previsto.
+- Decisiones:
+  - shadcn/ui queda pospuesto.
+  - No se instalaron dependencias nuevas.
+  - No se agregaron videos, reproductor, autenticacion, Supabase, base de datos, progreso real, recursos descargables ni notas.
+
 ## Historial de cambios
 
 ### 2026-07-18 - Inicializacion tecnica base
@@ -417,3 +466,7 @@ Se inicio la Fase 3 creando la arquitectura interna inicial y la ruta publica te
 ### 2026-07-19 - Navegacion completa de aprendizaje
 
 Se crearon las rutas /academy/programa, /academy/programa/[moduleId] y /academy/programa/[moduleId]/[lessonId] con datos provisionales. El programa muestra siete modulos, cada modulo lista diez clases y cada clase muestra un area reservada para futuro reproductor con navegacion anterior/siguiente dentro de sus limites. No se agregaron autenticacion, Supabase, base de datos, reproductor funcional, progreso real ni dependencias nuevas.
+
+### 2026-07-19 - Mejora de navegacion de clases
+
+Se mejoro la vista de clase con migas de pan, encabezado basado en el nombre provisional de la clase, distribucion en dos columnas para escritorio, indice lateral de clases del modulo y navegacion anterior/siguiente con destino explicito. Los parametros moduleId y lessonId se mantienen validados contra los datos provisionales y shadcn/ui queda pospuesto sin instalar dependencias nuevas.
