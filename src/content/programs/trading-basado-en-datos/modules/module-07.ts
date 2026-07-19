@@ -14,10 +14,12 @@ export const module07: Module = {
     "Objetivo de aprendizaje 4",
   ],
   availability: "coming-soon",
-  video: {
-    id: "modulo-7-video",
-    title: "Video principal del Módulo 7",
-    placeholder: "Área reservada para el video del módulo.",
-  },
+  videos: [
+    {
+      id: "modulo-7-video",
+      title: "Video principal del Módulo 7",
+      placeholder: "Área reservada para el video del módulo.",
+    },
+  ],
   resources: [],
 };

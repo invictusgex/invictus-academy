@@ -14,10 +14,17 @@ export const module04: Module = {
     "Objetivo de aprendizaje 4",
   ],
   availability: "coming-soon",
-  video: {
-    id: "modulo-4-video",
-    title: "Video principal del Módulo 4",
-    placeholder: "Área reservada para el video del módulo.",
-  },
+  videos: [
+    {
+      id: "modulo-4-video-1",
+      title: "Lectura de GEX y fundamentos",
+      placeholder: "Área reservada para el video del módulo.",
+    },
+    {
+      id: "modulo-4-video-2",
+      title: "GEXBot: Classic, State y Orderflow",
+      placeholder: "Área reservada para el video del módulo.",
+    },
+  ],
   resources: [],
 };

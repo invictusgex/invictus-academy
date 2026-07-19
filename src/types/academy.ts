@@ -16,6 +16,31 @@ export type ModuleResource = {
 
 export type ModuleAvailability = "available" | "coming-soon";
 
+export type VideoProgressStatus =
+  | "not-started"
+  | "in-progress"
+  | "completed";
+
+export type StoredVideoProgress = {
+  status: VideoProgressStatus;
+  updatedAt: string;
+};
+
+export type AcademyProgressState = {
+  version: 1;
+  programs: Record<
+    string,
+    {
+      modules: Record<
+        string,
+        {
+          videos: Record<string, StoredVideoProgress>;
+        }
+      >;
+    }
+  >;
+};
+
 export type Module = {
   id: string;
   number: number;
@@ -24,7 +49,7 @@ export type Module = {
   overview: string;
   learningObjectives: string[];
   availability: ModuleAvailability;
-  video: ModuleVideo;
+  videos: ModuleVideo[];
   resources: ModuleResource[];
 };
 

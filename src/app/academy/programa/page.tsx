@@ -25,7 +25,11 @@ export default function AcademyProgramPage() {
           </p>
           <div className="mt-5 grid gap-4">
             {course.modules.map((module) => (
-              <ModuleProgramCard key={module.number} module={module} />
+              <ModuleProgramCard
+                key={module.number}
+                module={module}
+                programId={course.id}
+              />
             ))}
           </div>
         </section>

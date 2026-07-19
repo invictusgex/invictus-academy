@@ -9,10 +9,14 @@ import { ModuleResources } from "@/components/academy/module/ModuleResources";
 import { TrainingSession } from "@/components/academy/module/TrainingSession";
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { getAcademyModule, getAcademyProgram } from "@/lib/academy";
+import type { ModuleVideo } from "@/types/academy";
 
 type ModulePageProps = {
   params: Promise<{
     moduleId: string;
+  }>;
+  searchParams?: Promise<{
+    video?: string | string[];
   }>;
 };
 
@@ -20,8 +24,26 @@ function normalizePurposeText(value: string) {
   return value.trim().replace(/\s+/g, " ").toLocaleLowerCase("es");
 }
 
-export default async function AcademyModulePage({ params }: ModulePageProps) {
+function getSelectedVideoId(
+  videos: ModuleVideo[],
+  videoParam?: string | string[],
+) {
+  const rawVideoParam = Array.isArray(videoParam) ? videoParam[0] : videoParam;
+  const videoNumber = Number.parseInt(rawVideoParam ?? "1", 10);
+  const selectedIndex =
+    Number.isInteger(videoNumber) && videoNumber >= 1 && videoNumber <= videos.length
+      ? videoNumber - 1
+      : 0;
+
+  return videos[selectedIndex]?.id;
+}
+
+export default async function AcademyModulePage({
+  params,
+  searchParams,
+}: ModulePageProps) {
   const { moduleId } = await params;
+  const resolvedSearchParams = await searchParams;
   const course = getAcademyProgram();
   const academyModule = getAcademyModule(moduleId);
 
@@ -39,6 +61,10 @@ export default async function AcademyModulePage({ params }: ModulePageProps) {
     moduleOverview && normalizedOverview !== normalizedDescription
       ? moduleOverview
       : "";
+  const selectedVideoId = getSelectedVideoId(
+    academyModule.videos,
+    resolvedSearchParams?.video,
+  );
 
   return (
     <AcademyShell>
@@ -54,8 +80,10 @@ export default async function AcademyModulePage({ params }: ModulePageProps) {
         <ModulePurpose purpose={purpose} />
         <LearningObjectives objectives={academyModule.learningObjectives} />
         <TrainingSession
+          academyModule={academyModule}
           isAvailable={academyModule.availability === "available"}
-          video={academyModule.video}
+          programId={course.id}
+          selectedVideoId={selectedVideoId}
         />
         <ModuleResources resources={academyModule.resources} />
         <ModuleNavigation
