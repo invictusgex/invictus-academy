@@ -89,6 +89,8 @@
 - Se uso NEXT_PUBLIC_SUPPORT_EMAIL como configuracion publica para el canal de soporte.
 - Se agrego .env.example para documentar la configuracion publica esperada.
 - Se creo .env.local solo en el entorno local para probar el canal de soporte y se confirmo que permanece ignorado por Git.
+- Se transformo la vista individual de modulo en un espacio secuencial profesional de formacion.
+- La pagina /academy/programa/[moduleId] quedo como orquestadora de componentes enfocados.
 
 ## Comandos ejecutados
 
@@ -330,6 +332,18 @@ npm.cmd run build
 
 Resultado inicial: fallo por un conflicto de tipos entre KeyboardEvent de React y el evento nativo del documento en AcademySupport.
 Resultado final: build de produccion finalizado correctamente despues de corregir el tipo del evento de teclado.
+
+```powershell
+npm.cmd run lint
+```
+
+Resultado final: ESLint finalizo correctamente despues de transformar la vista individual de modulo.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado final: build de produccion finalizado correctamente despues de transformar la vista individual de modulo.
 
 ## Archivos importantes creados
 
@@ -755,3 +769,51 @@ Se redefinio /academy como centro de control del estudiante, eliminando la secci
 ### 2026-07-19 - Sistema global de soporte de academia
 
 Se creo un componente global AcademySupport para mostrar un acceso flotante de soporte en todas las paginas que usan AcademyShell. El canal de contacto se configura mediante NEXT_PUBLIC_SUPPORT_EMAIL, documentado en .env.example, y el panel mantiene comportamiento accesible con foco controlado, cierre con Escape y restauracion del foco al disparador.
+
+## Fase 4 - Espacio profesional de formacion por modulo
+
+- Objetivo:
+  - Transformar /academy/programa/[moduleId] en un espacio secuencial de formacion profesional, sin agregar nuevas funciones ni modificar datos.
+- Estructura final de la pagina:
+  - ModuleBreadcrumb
+  - ModuleHeader
+  - ModulePurpose
+  - LearningObjectives
+  - TrainingSession
+  - ModuleResources
+  - ModuleNavigation
+- Componentes creados:
+  - src/components/academy/module/ModuleBreadcrumb.tsx
+  - src/components/academy/module/ModuleHeader.tsx
+  - src/components/academy/module/ModulePurpose.tsx
+  - src/components/academy/module/LearningObjectives.tsx
+  - src/components/academy/module/TrainingSession.tsx
+  - src/components/academy/module/ModuleResources.tsx
+  - src/components/academy/module/ModuleNavigation.tsx
+- Archivos modificados:
+  - src/app/academy/programa/[moduleId]/page.tsx
+  - DOCUMENTACION_PROYECTO.md
+- Decisiones:
+  - La pagina de modulo accede al curso y al modulo, valida moduleId con notFound() y delega la presentacion a componentes enfocados.
+  - Los componentes hijos reciben solo los valores necesarios.
+  - La navegacion anterior y siguiente se deriva del orden existente en course.modules.
+  - No se duplico ningun arreglo de navegacion.
+  - No se agregaron duraciones, porcentajes, estados de finalizacion, instructores, certificados ni contenido nuevo.
+  - No se modifico el modelo Course, Module, ModuleVideo ni ModuleResource.
+  - No se instalaron dependencias nuevas.
+- Reglas de contenido vacio:
+  - ModulePurpose no se renderiza si no existe un overview significativo o si duplicaria la descripcion visible del encabezado.
+  - LearningObjectives no se renderiza si la lista esta vacia.
+  - ModuleResources no se renderiza si resources esta vacio.
+  - TrainingSession siempre mantiene un estado visible; si falta configuracion de video, muestra un mensaje sobrio de no disponibilidad.
+- Accesibilidad y responsive:
+  - La pagina conserva un unico h1.
+  - El breadcrumb usa navegacion semantica con aria-label="Navegacion contextual".
+  - La sesion de formacion mantiene proporcion 16:9 con aspect-video.
+  - Los enlaces mantienen estados de foco visibles.
+  - No se deshabilito zoom de navegador ni de movil.
+  - AcademySupport permanece integrado globalmente una sola vez desde AcademyShell.
+
+### 2026-07-19 - Espacio profesional de formacion por modulo
+
+Se refactorizo /academy/programa/[moduleId] para convertir la vista individual de modulo en un espacio profesional y secuencial de formacion. La pagina conserva los datos existentes y ahora orquesta breadcrumb, encabezado, proposito, competencias, sesion de formacion, recursos y navegacion entre modulos mediante componentes enfocados.

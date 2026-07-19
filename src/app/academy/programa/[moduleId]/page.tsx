@@ -1,6 +1,12 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { LearningObjectives } from "@/components/academy/module/LearningObjectives";
+import { ModuleBreadcrumb } from "@/components/academy/module/ModuleBreadcrumb";
+import { ModuleHeader } from "@/components/academy/module/ModuleHeader";
+import { ModuleNavigation } from "@/components/academy/module/ModuleNavigation";
+import { ModulePurpose } from "@/components/academy/module/ModulePurpose";
+import { ModuleResources } from "@/components/academy/module/ModuleResources";
+import { TrainingSession } from "@/components/academy/module/TrainingSession";
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { getAcademyModule, getProvisionalCourse } from "@/lib/academy-content";
 
@@ -9,6 +15,10 @@ type ModulePageProps = {
     moduleId: string;
   }>;
 };
+
+function normalizePurposeText(value: string) {
+  return value.trim().replace(/\s+/g, " ").toLocaleLowerCase("es");
+}
 
 export default async function AcademyModulePage({ params }: ModulePageProps) {
   const { moduleId } = await params;
@@ -21,110 +31,34 @@ export default async function AcademyModulePage({ params }: ModulePageProps) {
 
   const previousModule = course.modules[academyModule.number - 2];
   const nextModule = course.modules[academyModule.number];
+  const moduleOverview = academyModule.overview.trim();
+  const moduleDescription = academyModule.description.trim();
+  const normalizedOverview = normalizePurposeText(moduleOverview);
+  const normalizedDescription = normalizePurposeText(moduleDescription);
+  const purpose =
+    moduleOverview && normalizedOverview !== normalizedDescription
+      ? moduleOverview
+      : "";
 
   return (
     <AcademyShell>
-      <nav aria-label="Migas de pan" className="mb-5 text-sm">
-        <ol className="flex flex-wrap items-center gap-2 text-[var(--color-text-muted)]">
-          <li>
-            <Link
-              href="/academy/programa"
-              className="transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-            >
-              Programa
-            </Link>
-          </li>
-          <li aria-hidden="true">&gt;</li>
-          <li aria-current="page" className="text-white">
-            {academyModule.title}
-          </li>
-        </ol>
-      </nav>
-
-      <section className="mb-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-              {academyModule.title}
-            </p>
-            <h1 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">
-              {academyModule.title}
-            </h1>
-          </div>
-          <span className="w-fit rounded-full border border-[var(--color-border)] px-3 py-1 text-sm font-medium text-[var(--color-text-muted)]">
-            {academyModule.status}
-          </span>
-        </div>
-      </section>
-
-      <section className="mb-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-8">
-        <h2 className="text-xl font-semibold text-white">
-          ¿Qué aprenderás en este módulo?
-        </h2>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          {academyModule.overview}
-        </p>
-        <div className="mt-6">
-          <p className="text-sm font-semibold text-white">
-            Al finalizar este módulo podrás:
-          </p>
-          <ul className="mt-4 grid gap-3 text-sm leading-6 text-[var(--color-text-secondary)] sm:grid-cols-2">
-            {academyModule.learningObjectives.map((objective) => (
-              <li key={objective} className="flex gap-3">
-                <span className="text-[var(--color-cyan)]" aria-hidden="true">
-                  ✓
-                </span>
-                <span>{objective}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-8">
-        <div className="flex aspect-video min-h-56 items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 text-center">
-          <p className="text-lg font-semibold text-white">
-            {academyModule.video.placeholder}
-          </p>
-        </div>
-        <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Aquí se mostrará el contenido audiovisual y los recursos
-          correspondientes a este módulo.
-        </p>
-      </section>
-
-      <nav
-        aria-label="Navegación entre módulos"
-        className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-      >
-        <div>
-          {previousModule ? (
-            <Link
-              href={`/academy/programa/${previousModule.id}`}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-            >
-              Módulo anterior: {previousModule.title}
-            </Link>
-          ) : null}
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Link
-            href="/academy/programa"
-            className="inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-          >
-            Volver al programa
-          </Link>
-          {nextModule ? (
-            <Link
-              href={`/academy/programa/${nextModule.id}`}
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-            >
-              Módulo siguiente: {nextModule.title}
-            </Link>
-          ) : null}
-        </div>
-      </nav>
+      <div className="space-y-6">
+        <ModuleBreadcrumb moduleNumber={academyModule.number} />
+        <ModuleHeader
+          number={academyModule.number}
+          title={academyModule.title}
+          description={academyModule.description}
+          competenciesCount={academyModule.learningObjectives.length}
+        />
+        <ModulePurpose purpose={purpose} />
+        <LearningObjectives objectives={academyModule.learningObjectives} />
+        <TrainingSession video={academyModule.video} />
+        <ModuleResources resources={academyModule.resources} />
+        <ModuleNavigation
+          previousModule={previousModule}
+          nextModule={nextModule}
+        />
+      </div>
     </AcademyShell>
   );
 }
