@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { ModuleCard } from "@/features/academy/module-card";
 import { getProvisionalCourse } from "@/lib/academy-content";
 
 export default function AcademyPage() {
@@ -48,22 +47,34 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      <section className="mt-6">
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <section className="mt-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
+        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+          Curso
+        </p>
+        <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-              Programa
-            </p>
-            <h2 className="mt-3 text-2xl font-semibold text-white">
-              Mi programa
+            <h2 className="text-2xl font-semibold text-white">
+              Trading basado en datos
             </h2>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
+              Curso principal de Invictus Trading Academy.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3 text-sm">
+              <span className="rounded-full border border-[var(--color-border)] px-3 py-1 text-[var(--color-text-secondary)]">
+                {course.modules.length} módulos
+              </span>
+              <span className="rounded-full border border-[var(--color-border)] px-3 py-1 text-[var(--color-text-muted)]">
+                Estado: No iniciado
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {course.modules.map((module) => (
-            <ModuleCard key={module.number} module={module} />
-          ))}
+          <Link
+            href="/academy/programa"
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
+          >
+            Ver programa completo
+          </Link>
         </div>
       </section>
     </AcademyShell>

@@ -82,6 +82,9 @@
 - Cada modulo contiene video provisional estructural y resources como lista vacia.
 - Se incorporaron los campos overview y learningObjectives al modelo Module.
 - Se mejoro la experiencia del estudiante mostrando que aprendera en cada modulo desde el programa y desde la vista del modulo.
+- Se redefinio el dashboard como centro de control del estudiante.
+- Se elimino del dashboard la duplicacion del programa y sus tarjetas de modulos.
+- Se incorporo una tarjeta institucional del curso con acceso al programa completo.
 
 ## Comandos ejecutados
 
@@ -298,6 +301,18 @@ npm.cmd run build
 ```
 
 Resultado: build de produccion finalizado correctamente despues de mostrar objetivos de aprendizaje por modulo.
+
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues de redefinir el dashboard como centro de control.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues de redefinir el dashboard como centro de control.
 
 ## Archivos importantes creados
 
@@ -648,3 +663,37 @@ Se introdujo el concepto Course para preparar soporte futuro de multiples cursos
 ### 2026-07-19 - Objetivos de aprendizaje por modulo
 
 Se agregaron overview y learningObjectives al modelo Module para explicar de forma provisional que aprendera el estudiante en cada modulo. La pagina del programa muestra estos objetivos en cada tarjeta y la vista del modulo incluye una seccion especifica de aprendizaje, todo alimentado desde academy-content.ts sin duplicar datos ni agregar recursos reales.
+
+## Fase 4 - Dashboard como centro de control
+
+- Cambio de UX:
+  - El dashboard deja de duplicar el programa.
+  - La pagina Mi programa queda como unico lugar donde se muestra el contenido completo del curso.
+  - El dashboard se enfoca en bienvenida, progreso general y acceso institucional al curso.
+- Secciones eliminadas del dashboard:
+  - Mi programa.
+  - Tarjetas de los siete modulos.
+  - Duplicacion del listado completo del programa.
+- Nueva tarjeta institucional:
+  - Titulo: Trading basado en datos.
+  - Descripcion: Curso principal de Invictus Trading Academy.
+  - Informacion: 7 modulos.
+  - Estado: No iniciado.
+  - Boton: Ver programa completo.
+- Arquitectura:
+  - La cantidad de modulos se lee desde el Course provisional en academy-content.ts.
+  - No se duplico informacion del programa.
+  - Continuar aprendiendo sigue apuntando a /academy/programa y queda preparado para futura logica de siguiente modulo.
+- Archivos modificados:
+  - src/app/academy/page.tsx
+  - DOCUMENTACION_PROYECTO.md
+- Restricciones mantenidas:
+  - No se modifico la landing.
+  - No se modifico la pagina del programa.
+  - No se modifico la pagina del modulo.
+  - No se instalaron dependencias.
+  - No se agregaron autenticacion, Supabase, base de datos, reproduccion de video ni recursos reales.
+
+### 2026-07-19 - Dashboard como centro de control
+
+Se redefinio /academy como centro de control del estudiante, eliminando la seccion Mi programa y las tarjetas de modulos para evitar duplicar el contenido del curso. Se agrego una tarjeta institucional de curso con acceso a /academy/programa, manteniendo el progreso general en 0 % y sin implementar logica adicional.
