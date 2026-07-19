@@ -76,6 +76,10 @@
 - No se implemento reproductor funcional, progreso real, guardado de estado, autenticacion, Supabase ni base de datos.
 - Se mantuvo shadcn/ui pospuesto y no se instalaron dependencias nuevas.
 - Se valido que moduleId use los valores provisionales existentes mediante notFound() para parametros invalidos.
+- Se inicio la arquitectura academica para soportar multiples cursos en el futuro.
+- Se introdujo el concepto Course con la jerarquia Academy -> Course -> Module -> Resource.
+- El proyecto mantiene un unico curso provisional con siete modulos.
+- Cada modulo contiene video provisional estructural y resources como lista vacia.
 
 ## Comandos ejecutados
 
@@ -268,6 +272,18 @@ npm.cmd run build
 ```
 
 Resultado: build de produccion finalizado correctamente despues de corregir la arquitectura a un video por modulo. El build incluye /academy, /academy/programa y /academy/programa/[moduleId], y ya no genera /academy/programa/[moduleId]/[lessonId].
+
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues de introducir la arquitectura de cursos.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues de introducir la arquitectura de cursos. Las rutas de academia se mantienen sin cambios visibles significativos.
 
 ## Archivos importantes creados
 
@@ -502,6 +518,46 @@ Nota de arquitectura: esta seccion documenta una mejora historica sobre una estr
   - No se instalaron dependencias nuevas.
   - shadcn/ui sigue pospuesto.
 
+## Fase 4 - Arquitectura academica de cursos
+
+- Objetivo:
+  - Preparar el modelo academico interno para soportar multiples cursos en el futuro sin cambiar de forma significativa el diseno visible.
+- Jerarquia logica:
+  - Academy
+  - Course
+  - Module
+  - Resource
+- Estado actual:
+  - Existe un unico Course provisional.
+  - El curso contiene exactamente siete modulos.
+  - Cada modulo contiene un video provisional estructural.
+  - Cada modulo contiene resources: [].
+- Tipos creados:
+  - Course
+  - Module
+  - ModuleVideo
+  - ModuleResource
+- Video provisional:
+  - Contiene solamente id, title y placeholder.
+  - No contiene URL real.
+  - No contiene YouTube.
+- Resources:
+  - Cada modulo mantiene una lista vacia.
+  - No se agregaron recursos ficticios.
+- Archivos modificados:
+  - src/types/academy.ts
+  - src/lib/academy-content.ts
+  - src/app/academy/page.tsx
+  - src/app/academy/programa/page.tsx
+  - src/app/academy/programa/[moduleId]/page.tsx
+  - src/features/academy/module-card.tsx
+  - DOCUMENTACION_PROYECTO.md
+- Decisiones:
+  - Las paginas del dashboard, programa y modulo leen primero el curso provisional y luego sus modulos.
+  - Se evita duplicacion de datos manteniendo la informacion academica en academy-content.ts.
+  - No se agregaron tipos de usuarios ni base de datos.
+  - No se instalo ninguna dependencia.
+
 ## Historial de cambios
 
 ### 2026-07-18 - Inicializacion tecnica base
@@ -539,3 +595,7 @@ Se mejoro la vista de clase con migas de pan, encabezado basado en el nombre pro
 ### 2026-07-19 - Correccion a un video por modulo
 
 Se corrigio la arquitectura de aprendizaje para reflejar la decision del propietario: existen siete modulos y cada modulo contiene directamente un video principal, sin clases internas. Se elimino la ruta /academy/programa/[moduleId]/[lessonId], se retiraron los componentes y datos de clases, y se adapto /academy/programa/[moduleId] como pantalla audiovisual directa del modulo.
+
+### 2026-07-19 - Arquitectura academica de cursos
+
+Se introdujo el concepto Course para preparar soporte futuro de multiples cursos bajo la jerarquia Academy -> Course -> Module -> Resource. Actualmente existe un unico curso provisional con siete modulos; cada modulo contiene datos estructurales de video provisional y una lista resources vacia. No se agregaron dependencias, autenticacion, Supabase, base de datos, URLs reales ni recursos ficticios.

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AcademyShell } from "@/components/layout/academy-shell";
-import { academyModules, getAcademyModule } from "@/lib/academy-content";
+import { getAcademyModule, getProvisionalCourse } from "@/lib/academy-content";
 
 type ModulePageProps = {
   params: Promise<{
@@ -12,14 +12,15 @@ type ModulePageProps = {
 
 export default async function AcademyModulePage({ params }: ModulePageProps) {
   const { moduleId } = await params;
+  const course = getProvisionalCourse();
   const academyModule = getAcademyModule(moduleId);
 
   if (!academyModule) {
     notFound();
   }
 
-  const previousModule = academyModules[academyModule.number - 2];
-  const nextModule = academyModules[academyModule.number];
+  const previousModule = course.modules[academyModule.number - 2];
+  const nextModule = course.modules[academyModule.number];
 
   return (
     <AcademyShell>
@@ -59,7 +60,7 @@ export default async function AcademyModulePage({ params }: ModulePageProps) {
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-8">
         <div className="flex aspect-video min-h-56 items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 text-center">
           <p className="text-lg font-semibold text-white">
-            Área reservada para el video del módulo.
+            {academyModule.video.placeholder}
           </p>
         </div>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">

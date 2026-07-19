@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-import type { AcademyModule } from "@/types/academy";
+import type { Module } from "@/types/academy";
 
 type ModuleCardProps = {
-  module: AcademyModule;
+  module: Module;
   showAction?: boolean;
 };
 

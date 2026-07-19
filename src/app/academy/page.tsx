@@ -3,9 +3,11 @@ import Link from "next/link";
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { ModuleCard } from "@/features/academy/module-card";
-import { academyModules } from "@/lib/academy-content";
+import { getProvisionalCourse } from "@/lib/academy-content";
 
 export default function AcademyPage() {
+  const course = getProvisionalCourse();
+
   return (
     <AcademyShell>
       <section className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(180deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8">
@@ -59,7 +61,7 @@ export default function AcademyPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {academyModules.map((module) => (
+          {course.modules.map((module) => (
             <ModuleCard key={module.number} module={module} />
           ))}
         </div>
