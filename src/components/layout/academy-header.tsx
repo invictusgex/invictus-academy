@@ -2,11 +2,11 @@ export function AcademyHeader() {
   return (
     <header className="flex flex-col gap-5 border-b border-[var(--color-border)] px-5 py-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
       <div>
-        <h1 className="text-2xl font-semibold text-white sm:text-3xl">
-          Panel del estudiante
-        </h1>
+        <p className="text-2xl font-semibold text-white sm:text-3xl">
+          Centro de control
+        </p>
         <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-          Continúa tu formación desde donde la dejaste.
+          Gestiona tu formación y accede al programa principal.
         </p>
       </div>
 

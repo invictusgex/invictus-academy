@@ -85,6 +85,10 @@
 - Se redefinio el dashboard como centro de control del estudiante.
 - Se elimino del dashboard la duplicacion del programa y sus tarjetas de modulos.
 - Se incorporo una tarjeta institucional del curso con acceso al programa completo.
+- Se incorporo un sistema global de soporte dentro del shell compartido de academia.
+- Se uso NEXT_PUBLIC_SUPPORT_EMAIL como configuracion publica para el canal de soporte.
+- Se agrego .env.example para documentar la configuracion publica esperada.
+- Se creo .env.local solo en el entorno local para probar el canal de soporte y se confirmo que permanece ignorado por Git.
 
 ## Comandos ejecutados
 
@@ -313,6 +317,19 @@ npm.cmd run build
 ```
 
 Resultado: build de produccion finalizado correctamente despues de redefinir el dashboard como centro de control.
+
+```powershell
+npm.cmd run lint
+```
+
+Resultado final: ESLint finalizo correctamente despues de crear el sistema global de soporte.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado inicial: fallo por un conflicto de tipos entre KeyboardEvent de React y el evento nativo del documento en AcademySupport.
+Resultado final: build de produccion finalizado correctamente despues de corregir el tipo del evento de teclado.
 
 ## Archivos importantes creados
 
@@ -697,3 +714,44 @@ Se agregaron overview y learningObjectives al modelo Module para explicar de for
 ### 2026-07-19 - Dashboard como centro de control
 
 Se redefinio /academy como centro de control del estudiante, eliminando la seccion Mi programa y las tarjetas de modulos para evitar duplicar el contenido del curso. Se agrego una tarjeta institucional de curso con acceso a /academy/programa, manteniendo el progreso general en 0 % y sin implementar logica adicional.
+
+## Fase 4 - Sistema global de soporte de academia
+
+- Objetivo:
+  - Incorporar un punto de soporte reutilizable y global dentro del area privada provisional de academia.
+- Integracion:
+  - AcademySupport se integra una sola vez en AcademyShell.
+  - Las paginas /academy, /academy/programa y /academy/programa/[moduleId] heredan el soporte desde el shell compartido.
+  - No se agregaron botones de soporte duplicados dentro de paginas individuales.
+- Configuracion:
+  - Se creo .env.example con NEXT_PUBLIC_SUPPORT_EMAIL=invictusgex@gmail.com.
+  - Se creo .env.local solo como configuracion local ignorada por Git.
+  - No se registraron contrasenas, tokens ni secretos.
+- Accesibilidad:
+  - El disparador usa button semantico con aria-label, aria-haspopup, aria-expanded y aria-controls.
+  - El panel usa role dialog y aria-labelledby.
+  - Escape cierra el panel.
+  - Al abrir, el foco pasa a la accion principal o al boton de cierre.
+  - Al cerrar, el foco vuelve al disparador flotante.
+- Comportamiento responsive:
+  - El disparador queda fijo en la esquina inferior derecha.
+  - En movil respeta env(safe-area-inset-bottom).
+  - El contenido principal de academia incluye espacio inferior para evitar superposiciones.
+- Decisiones:
+  - No se instalo una libreria de iconos; package.json no contiene una dependencia de iconos existente.
+  - Se uso un SVG inline pequeno y decorativo para el icono de soporte.
+  - Se uso un dialogo personalizado accesible para controlar foco, Escape y posicion responsive sin depender de librerias externas.
+  - No se agrego chat en vivo, tickets, analytics, autenticacion, Supabase, base de datos ni rutas nuevas.
+- Archivos creados:
+  - src/components/support/AcademySupport.tsx
+  - .env.example
+- Archivos modificados:
+  - src/components/layout/academy-shell.tsx
+  - .gitignore
+  - DOCUMENTACION_PROYECTO.md
+- Dependencias:
+  - No se instalaron dependencias nuevas.
+
+### 2026-07-19 - Sistema global de soporte de academia
+
+Se creo un componente global AcademySupport para mostrar un acceso flotante de soporte en todas las paginas que usan AcademyShell. El canal de contacto se configura mediante NEXT_PUBLIC_SUPPORT_EMAIL, documentado en .env.example, y el panel mantiene comportamiento accesible con foco controlado, cierre con Escape y restauracion del foco al disparador.
