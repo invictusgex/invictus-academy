@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const focusCards = [
   {
     title: "Datos, no opiniones",
@@ -54,12 +56,12 @@ export default function Home() {
             Programa
           </a>
         </nav>
-        <a
-          href="#acceso"
+        <Link
+          href="/academy"
           className="shrink-0 rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)]"
         >
           Acceder
-        </a>
+        </Link>
       </header>
 
       <main id="inicio">
@@ -77,12 +79,12 @@ export default function Home() {
               del mercado.
             </p>
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              <a
-                href="#acceso"
+              <Link
+                href="/academy"
                 className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
               >
                 Acceder a la academia
-              </a>
+              </Link>
               <a
                 href="#programa"
                 className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--color-border)] px-6 text-sm font-semibold text-white transition hover:border-[var(--color-blue)] hover:bg-[var(--color-hover-bg)]"

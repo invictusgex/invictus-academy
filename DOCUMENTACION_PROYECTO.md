@@ -63,6 +63,11 @@
 - Se unifico el ancho maximo y la alineacion lateral de header, hero, tarjetas y footer.
 - Se reemplazo el bloque derecho simple por un panel institucional con grafico abstracto hecho solo con HTML y CSS.
 - Se mejoro el comportamiento responsive para escritorio ancho, aproximadamente 1024 px y movil.
+- Se inicio la Fase 3 con la estructura interna inicial de la academia.
+- Se creo la ruta publica temporal /academy mediante App Router.
+- Se separo la base visual de la academia en componentes reutilizables pequenos.
+- Se crearon carpetas preparadas para futuras funciones de autenticacion y progreso, sin implementar esas funciones todavia.
+- No se instalaron dependencias nuevas para la estructura de academia.
 
 ## Comandos ejecutados
 
@@ -202,6 +207,24 @@ npm.cmd run build
 
 Resultado: build de produccion finalizado correctamente despues del refinamiento visual de composicion.
 
+```powershell
+New-Item -ItemType Directory -Force src\components\layout, src\components\ui, src\features\academy, src\features\auth, src\features\progress, src\lib, src\types, src\utils, src\app\academy
+```
+
+Resultado: arquitectura minima de carpetas creada para la Fase 3.
+
+```powershell
+npm.cmd run lint
+```
+
+Resultado: ESLint finalizo correctamente despues de crear la estructura inicial de la academia.
+
+```powershell
+npm.cmd run build
+```
+
+Resultado: build de produccion finalizado correctamente despues de crear la estructura inicial de la academia. La ruta /academy fue generada como contenido estatico.
+
 ## Archivos importantes creados
 
 - package.json
@@ -268,6 +291,52 @@ La base tecnica de Invictus Trading Academy fue inicializada con Next.js en la c
 - Dependencias:
   - No se instalaron dependencias nuevas.
 
+## Fase 3 - Estructura inicial de academia
+
+- Ruta creada:
+  - /academy
+- Carpetas creadas:
+  - src/components/layout
+  - src/components/ui
+  - src/features/academy
+  - src/features/auth
+  - src/features/progress
+  - src/lib
+  - src/types
+  - src/utils
+  - src/app/academy
+- Componentes creados:
+  - AcademySidebar
+  - AcademyHeader
+  - ProgressBar
+  - ModuleCard
+- Archivos creados:
+  - src/app/academy/page.tsx
+  - src/components/layout/academy-sidebar.tsx
+  - src/components/layout/academy-header.tsx
+  - src/components/ui/progress-bar.tsx
+  - src/features/academy/module-card.tsx
+  - src/features/auth/README.md
+  - src/features/progress/README.md
+  - src/lib/academy-content.ts
+  - src/types/academy.ts
+  - src/utils/class-names.ts
+- Archivos modificados:
+  - src/app/page.tsx
+  - DOCUMENTACION_PROYECTO.md
+- Decisiones:
+  - La ruta /academy queda publica temporalmente.
+  - No se implemento autenticacion, login ni proteccion de acceso.
+  - Las carpetas src/features/auth y src/features/progress conservan README de alcance para dejar claro que aun no tienen implementacion funcional.
+  - No se conecto Supabase ni se creo base de datos.
+  - No se crearon rutas de modulos ni lecciones.
+  - Los siete modulos se mantienen como tarjetas provisionales sin nombres especificos.
+  - El progreso general se mantiene en 0 %.
+  - No se instalaron dependencias nuevas.
+- Comportamiento responsive:
+  - En escritorio, la academia usa una barra lateral izquierda y contenido principal a la derecha.
+  - En movil, la navegacion se apila de forma simple y las tarjetas se muestran en una sola columna, sin menu hamburguesa funcional.
+
 ## Historial de cambios
 
 ### 2026-07-18 - Inicializacion tecnica base
@@ -289,3 +358,7 @@ Se reemplazo la pagina generica de Next.js por una portada profesional, sobria y
 ### 2026-07-18 - Refinamiento de composicion de portada
 
 Se ajustaron espaciado, alineacion lateral, equilibrio de columnas y relacion visual entre la seccion principal y las tarjetas. Se incorporo un panel institucional con grafico abstracto construido solo con HTML y CSS, sin dependencias nuevas ni funcionalidad adicional.
+
+### 2026-07-19 - Estructura inicial de academia
+
+Se inicio la Fase 3 creando la arquitectura interna inicial y la ruta publica temporal /academy. Se agrego un dashboard estructural con barra lateral, encabezado superior, tarjeta de bienvenida, progreso general en 0 % y siete tarjetas provisionales de modulos sin nombres especificos. No se agregaron autenticacion, Supabase, base de datos, rutas de modulos, rutas de lecciones ni dependencias nuevas.
