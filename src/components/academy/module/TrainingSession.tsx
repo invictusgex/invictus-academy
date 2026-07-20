@@ -1,24 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
 import { ModuleSessionsList } from "@/components/academy/module/ModuleSessionsList";
 import { SessionCompletionPanel } from "@/components/academy/module/SessionCompletionPanel";
 import { SessionProgress } from "@/components/academy/module/SessionProgress";
+import { useProgressContext } from "@/contexts/ProgressContext";
 import type { Module } from "@/types/academy";
-import { useAcademyProgress } from "@/hooks/use-academy-progress";
 
 type TrainingSessionProps = {
   academyModule: Module;
   isAvailable: boolean;
-  programId: string;
   selectedVideoId?: string;
 };
 
 export function TrainingSession({
   academyModule,
   isAvailable,
-  programId,
   selectedVideoId,
 }: TrainingSessionProps) {
   const videos = academyModule.videos;
@@ -35,19 +34,25 @@ export function TrainingSession({
   const hasAvailableVideo =
     isAvailable && Boolean(selectedVideo?.placeholder.trim());
   const {
-    completedSessionsCount,
+    getModuleSummary,
     getScopedVideoStatus,
-    isCurrentModuleCompleted,
-    markVideoAsCompleted,
-  } = useAcademyProgress({
-    academyModule,
-    programId,
-    selectedVideoId: selectedVideo?.id,
-  });
+    markCompleted,
+    markInProgress,
+  } = useProgressContext();
+  const moduleSummary = getModuleSummary(academyModule);
+  const getCurrentModuleVideoStatus = getScopedVideoStatus(academyModule.id);
   const selectedVideoStatus = selectedVideo
-    ? getScopedVideoStatus(selectedVideo.id)
+    ? getCurrentModuleVideoStatus(selectedVideo.id)
     : "not-started";
   const isSelectedVideoCompleted = selectedVideoStatus === "completed";
+
+  useEffect(() => {
+    if (!selectedVideo || selectedVideoStatus !== "not-started") {
+      return;
+    }
+
+    void markInProgress(academyModule.id, selectedVideo.id);
+  }, [academyModule.id, markInProgress, selectedVideo, selectedVideoStatus]);
 
   return (
     <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
@@ -60,11 +65,11 @@ export function TrainingSession({
       {hasMultipleVideos ? (
         <>
           <SessionProgress
-            completedSessions={completedSessionsCount}
+            completedSessions={moduleSummary.completedSessions}
             totalSessions={videos.length}
           />
           <ModuleSessionsList
-            getVideoStatus={getScopedVideoStatus}
+            getVideoStatus={getCurrentModuleVideoStatus}
             moduleId={academyModule.id}
             selectedVideoId={selectedVideo?.id}
             videos={videos}
@@ -81,7 +86,7 @@ export function TrainingSession({
       {selectedVideo ? (
         <button
           className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-center text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
-          onClick={() => markVideoAsCompleted(selectedVideo.id)}
+          onClick={() => markCompleted(academyModule.id, selectedVideo.id)}
           type="button"
         >
           {isSelectedVideoCompleted
@@ -91,7 +96,7 @@ export function TrainingSession({
       ) : null}
       {isSelectedVideoCompleted ? (
         <SessionCompletionPanel
-          isModuleCompleted={isCurrentModuleCompleted}
+          isModuleCompleted={moduleSummary.isCompleted}
           moduleId={academyModule.id}
           nextVideo={nextVideoNumber ? videos[nextVideoNumber - 1] : undefined}
           nextVideoNumber={nextVideoNumber}

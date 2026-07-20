@@ -82,7 +82,6 @@ export default async function AcademyModulePage({
         <TrainingSession
           academyModule={academyModule}
           isAvailable={academyModule.availability === "available"}
-          programId={course.id}
           selectedVideoId={selectedVideoId}
         />
         <ModuleResources resources={academyModule.resources} />

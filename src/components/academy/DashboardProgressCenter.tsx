@@ -3,8 +3,8 @@
 import Link from "next/link";
 
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { useProgressContext } from "@/contexts/ProgressContext";
 import type { Course } from "@/types/academy";
-import { useAcademyProgress } from "@/hooks/use-academy-progress";
 import { formatModuleProgressStatusLabel } from "@/utils/module-progress";
 
 type DashboardProgressCenterProps = {
@@ -15,21 +15,7 @@ export function DashboardProgressCenter({
   course,
 }: DashboardProgressCenterProps) {
   const { getModuleSummary, nextPendingSession, programSummary } =
-    useAcademyProgress({
-      course,
-      programId: course.id,
-    });
-  const totalSessions = course.modules.reduce(
-    (total, academyModule) => total + academyModule.videos.length,
-    0,
-  );
-  const summary = programSummary ?? {
-    completedSessions: 0,
-    moduleCount: course.modules.length,
-    pendingSessions: totalSessions,
-    percentage: 0,
-    totalSessions,
-  };
+    useProgressContext();
 
   return (
     <div className="mt-6 space-y-6">
@@ -40,35 +26,35 @@ export function DashboardProgressCenter({
               Progreso general
             </p>
             <h2 className="mt-3 text-2xl font-semibold text-white">
-              {summary.percentage} % del programa
+              {programSummary.percentage} % del programa
             </h2>
             <p className="mt-4 text-base leading-7 text-[var(--color-text-secondary)]">
-              {summary.completedSessions} de {summary.totalSessions} sesiones
-              completadas.
+              {programSummary.completedSessions} de{" "}
+              {programSummary.totalSessions} sesiones completadas.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4 lg:min-w-[28rem]">
             <span className="rounded-xl border border-[var(--color-border)] p-3 text-[var(--color-text-secondary)]">
               <strong className="block text-lg text-white">
-                {summary.moduleCount}
+                {programSummary.moduleCount}
               </strong>
               módulos
             </span>
             <span className="rounded-xl border border-[var(--color-border)] p-3 text-[var(--color-text-secondary)]">
               <strong className="block text-lg text-white">
-                {summary.totalSessions}
+                {programSummary.totalSessions}
               </strong>
               sesiones
             </span>
             <span className="rounded-xl border border-[var(--color-border)] p-3 text-[var(--color-text-secondary)]">
               <strong className="block text-lg text-white">
-                {summary.completedSessions}
+                {programSummary.completedSessions}
               </strong>
               completadas
             </span>
             <span className="rounded-xl border border-[var(--color-border)] p-3 text-[var(--color-text-secondary)]">
               <strong className="block text-lg text-white">
-                {summary.pendingSessions}
+                {programSummary.pendingSessions}
               </strong>
               pendientes
             </span>
@@ -77,7 +63,7 @@ export function DashboardProgressCenter({
         <div className="mt-6">
           <ProgressBar
             label="Progreso total del programa"
-            value={summary.percentage}
+            value={programSummary.percentage}
           />
         </div>
       </section>

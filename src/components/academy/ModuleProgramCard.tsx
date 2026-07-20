@@ -4,16 +4,15 @@ import Link from "next/link";
 
 import type { Module } from "@/types/academy";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { useAcademyProgress } from "@/hooks/use-academy-progress";
+import { useProgressContext } from "@/contexts/ProgressContext";
 import { formatModuleProgressStatusLabel } from "@/utils/module-progress";
 
 type ModuleProgramCardProps = {
   module: Module;
-  programId: string;
 };
 
-export function ModuleProgramCard({ module, programId }: ModuleProgramCardProps) {
-  const { getModuleSummary } = useAcademyProgress({ programId });
+export function ModuleProgramCard({ module }: ModuleProgramCardProps) {
+  const { getModuleSummary } = useProgressContext();
   const moduleSummary = getModuleSummary(module);
   const hasMultipleSessions = moduleSummary.totalSessions > 1;
 
