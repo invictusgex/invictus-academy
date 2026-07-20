@@ -88,14 +88,17 @@ Supabase y no esta conectado todavia a hooks, rutas ni pantallas.
 
 ## EnrollmentRepository
 
-`enrollment.repository.ts` define la API conceptual para autorizacion de acceso
-al programa:
+`enrollment.repository.ts` implementa el acceso a datos para autorizacion de
+acceso al programa:
 
-- `hasProgramAccess()`
+- `getEnrollmentForProduct()`
 - `getEnrollments()`
 
-En esta etapa no consulta Supabase ni la tabla `enrollments`. Sus metodos quedan
-definidos como contrato para hooks y services futuros.
+El repository resuelve el producto por `slug`, consulta `enrollments` por
+`profile_id` y `product_id`, y devuelve tipos internos en camelCase. No decide
+por si solo si el acceso esta habilitado: esa regla vive en
+`EnrollmentService`, donde se evaluan `status`, `startsAt`, `expiresAt` y
+`revokedAt`.
 
 ## Authentication, Authorization y Enrollment
 
