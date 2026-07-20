@@ -1,3 +1,5 @@
+import { LogoutButton } from "@/components/auth/LogoutButton";
+
 export function AcademyHeader() {
   return (
     <header className="flex flex-col gap-5 border-b border-[var(--color-border)] px-5 py-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
@@ -10,11 +12,14 @@ export function AcademyHeader() {
         </p>
       </div>
 
-      <div
-        aria-label="Avatar provisional IA"
-        className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-card-bg)] text-sm font-semibold text-[var(--color-cyan)]"
-      >
-        IA
+      <div className="flex items-center gap-3 self-start sm:self-auto">
+        <LogoutButton />
+        <div
+          aria-label="Avatar provisional IA"
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-card-bg)] text-sm font-semibold text-[var(--color-cyan)]"
+        >
+          IA
+        </div>
       </div>
     </header>
   );

@@ -85,3 +85,33 @@ Reglas del patron:
 
 Este repository utiliza solamente `AuthService`. No accede directamente a
 Supabase y no esta conectado todavia a hooks, rutas ni pantallas.
+
+## EnrollmentRepository
+
+`enrollment.repository.ts` define la API conceptual para autorizacion de acceso
+al programa:
+
+- `hasProgramAccess()`
+- `getEnrollments()`
+
+En esta etapa no consulta Supabase ni la tabla `enrollments`. Sus metodos quedan
+definidos como contrato para hooks y services futuros.
+
+## Authentication, Authorization y Enrollment
+
+Authentication confirma la identidad del usuario: quien es.
+
+Authorization decide permisos: que puede ver o hacer.
+
+Enrollment representa la relacion comercial o administrativa que concede acceso
+a un producto o programa.
+
+```text
+Usuario autenticado
+  !=
+Usuario con acceso al programa
+```
+
+Un usuario puede tener sesion valida y aun asi no tener una inscripcion activa.
+El acceso futuro a `Trading Basado en Datos` debe depender de `Enrollment`, no
+solo de `AuthSession`.

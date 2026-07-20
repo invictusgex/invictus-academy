@@ -15,3 +15,7 @@ export interface AuthState {
   session: AuthSession | null;
   isAuthenticated: boolean;
 }
+
+export type AuthStateChangeHandler = (state: AuthState) => void;
+
+export type AuthUnsubscribe = () => void;

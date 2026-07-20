@@ -38,3 +38,24 @@ contaminar componentes.
 Los services son usados por hooks o repositories segun el caso. Pueden coordinar
 varios repositories y usar adaptadores de infraestructura, pero deben mantener
 una interfaz estable para el resto de la aplicacion.
+
+## EnrollmentService
+
+`enrollment.service.ts` prepara la capa de autorizacion para acceso al programa.
+Todavia no consulta la tabla `enrollments` ni protege rutas. Su responsabilidad
+futura sera coordinar la pregunta de acceso con el repository correspondiente.
+
+Conceptos:
+
+- Authentication: valida identidad y sesion.
+- Authorization: valida permisos de acceso.
+- Enrollment: evidencia de que el usuario tiene acceso a un producto.
+
+```text
+Usuario autenticado
+  !=
+Usuario con acceso al programa
+```
+
+Esta separacion evita que una sesion activa abra contenido privado sin una
+inscripcion activa.

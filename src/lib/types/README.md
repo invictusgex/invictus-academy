@@ -37,3 +37,14 @@ repositories, services y adaptadores.
 Los tipos deben ser consumidos por hooks, repositories y services. Los adapters
 pueden traducir desde tipos externos hacia estos contratos internos para evitar
 que Supabase u otros proveedores se filtren a la UI.
+
+## Enrollment
+
+`enrollment.types.ts` define:
+
+- `Enrollment`
+- `EnrollmentStatus`
+- `ProgramAccessInput`
+
+Estos tipos preparan la autorizacion futura sin crear consultas reales ni
+acoplar componentes a Supabase.

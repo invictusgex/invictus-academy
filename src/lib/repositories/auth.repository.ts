@@ -1,6 +1,7 @@
 import {
   getCurrentUser as getCurrentAuthUser,
   getSession as getAuthSession,
+  onAuthStateChange as onAuthServiceStateChange,
   resetPassword as resetAuthPassword,
   signIn as signInWithAuthService,
   signOut as signOutWithAuthService,
@@ -28,4 +29,5 @@ export const AuthRepository = {
   resetPassword(input: ResetPasswordInput) {
     return resetAuthPassword(input);
   },
+  onAuthStateChange: onAuthServiceStateChange,
 };
