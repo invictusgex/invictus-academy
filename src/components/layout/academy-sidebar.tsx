@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 
+import { useAdminContext } from "@/contexts/AdminContext";
 import type { AcademyNavItem } from "@/types/academy";
 import { classNames } from "@/utils/class-names";
 
@@ -8,6 +11,11 @@ type AcademySidebarProps = {
 };
 
 export function AcademySidebar({ navigation }: AcademySidebarProps) {
+  const { isAdmin } = useAdminContext();
+  const visibleNavigation = isAdmin
+    ? [...navigation, { href: "/admin", label: "Administración" }]
+    : navigation;
+
   return (
     <aside className="flex w-full flex-col border-b border-[var(--color-border)] bg-[var(--color-panel-bg)] px-5 py-5 lg:min-h-screen lg:w-72 lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
       <div>
@@ -23,7 +31,7 @@ export function AcademySidebar({ navigation }: AcademySidebarProps) {
         aria-label="Navegación de academia"
         className="mt-6 grid gap-2 sm:grid-cols-4 lg:grid-cols-1"
       >
-        {navigation.map((item) => (
+        {visibleNavigation.map((item) => (
           <Link
             key={item.label}
             href={item.href}

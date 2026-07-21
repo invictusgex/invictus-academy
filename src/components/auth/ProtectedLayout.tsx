@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RequireEnrollment } from "@/components/auth/RequireEnrollment";
 import { getAcademyProgram } from "@/lib/academy";
+import { AdminProvider } from "@/providers/AdminProvider";
 import { ProgressProvider } from "@/providers/ProgressProvider";
 
 export type ProtectedLayoutProps = {
@@ -21,15 +22,17 @@ export function ProtectedLayout({
 }: ProtectedLayoutProps) {
   return (
     <RequireAuth>
-      <RequireEnrollment productSlug={academyProductSlug}>
-        <ProgressProvider
-          course={academyProgram}
-          productSlug={academyProductSlug}
-          programId={academyProgram.id}
-        >
-          {children}
-        </ProgressProvider>
-      </RequireEnrollment>
+      <AdminProvider>
+        <RequireEnrollment productSlug={academyProductSlug}>
+          <ProgressProvider
+            course={academyProgram}
+            productSlug={academyProductSlug}
+            programId={academyProgram.id}
+          >
+            {children}
+          </ProgressProvider>
+        </RequireEnrollment>
+      </AdminProvider>
     </RequireAuth>
   );
 }
