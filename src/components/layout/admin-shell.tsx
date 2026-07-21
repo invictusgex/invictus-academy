@@ -11,6 +11,7 @@ const adminNavigation = [
   { href: "/admin", label: "Resumen", enabled: true },
   { href: "/admin/students", label: "Alumnos", enabled: true },
   { href: "/admin/access", label: "Accesos", enabled: true },
+  { href: "/admin/content", label: "Contenido", enabled: true },
   { href: "/admin/productos", label: "Productos", enabled: false },
 ];
 
