@@ -183,8 +183,113 @@ Reglas:
 - Lectura pública/autenticada: solo contenido `published`.
 - Administradores: lectura de todo el contenido mediante `admin_users`.
 
-No se agregan policies de escritura porque esta fase no incluye pantallas ni
-flujos de edición.
+La lectura inicial no agregaba policies de escritura. La edicion administrativa
+de informacion general de modulos agrega una policy especifica de `UPDATE`
+documentada abajo.
+
+## Escritura Administrativa De Modulos
+
+La fase 5B agrega edición administrativa de informacion general de
+`academy_modules`. No agrega creación, eliminación, duplicación, reordenamiento
+ni edición de videos o recursos.
+
+La escritura queda encapsulada en:
+
+```text
+AdminContentService
+  |
+AdminContentRepository.updateModuleGeneralInfo()
+  |
+Supabase Client
+```
+
+Los componentes y rutas no importan Supabase directamente.
+
+### Campos editables
+
+Solo se permite actualizar:
+
+- `title`
+- `description`
+- `overview`
+- `learning_objectives`
+- `estimated_duration_minutes`
+- `availability`
+- `status`
+
+### Campos protegidos
+
+No se permite editar desde el formulario:
+
+- `id`
+- `product_id`
+- `module_key`
+- `module_order`
+- `created_at`
+- `updated_at`
+- `published_at` directamente
+
+`updated_at` se mantiene mediante trigger. `published_at` se administra desde el
+servicio.
+
+### Validaciones
+
+El formulario y el servicio validan:
+
+- `title` obligatorio, maximo 160 caracteres.
+- `description` opcional, maximo 500 caracteres.
+- `overview` opcional, maximo 2000 caracteres.
+- `learning_objectives` como arreglo de textos no vacios.
+- maximo 20 objetivos.
+- cada objetivo con maximo 180 caracteres.
+- `estimated_duration_minutes` entero no negativo o `null`.
+- `availability` limitado a `available` y `coming-soon`.
+- `status` limitado a `draft`, `published` y `archived`.
+
+El servicio normaliza espacios innecesarios antes de guardar.
+
+### Regla de publicacion
+
+`published_at` no se edita manualmente.
+
+La constraint real de `academy_modules` exige:
+
+```text
+published_at is null or status = 'published'
+```
+
+Por eso la regla efectiva es:
+
+- Si el modulo cambia a `published` y `published_at` esta vacio, se asigna la
+  fecha actual.
+- Si el modulo sigue en `published`, se conserva `published_at`.
+- Si el modulo cambia a `draft` o `archived`, `published_at` se guarda como
+  `null` para respetar la constraint aplicada.
+
+### RLS de UPDATE
+
+La migración `20260721001000_admin_content_module_update_policy.sql` agrega una
+policy de `UPDATE` solo para usuarios autenticados presentes en
+`public.admin_users`.
+
+No agrega `INSERT`.
+No agrega `DELETE`.
+No amplía permisos de alumnos.
+
+### Funciones aun no implementadas
+
+Quedan fuera de esta fase:
+
+- crear modulos;
+- eliminar modulos;
+- archivar mediante accion separada;
+- reordenar modulos;
+- editar videos;
+- editar recursos;
+- subir archivos;
+- duplicar modulos;
+- editor de texto enriquecido;
+- autosave.
 
 ## Compatibilidad Con Progreso
 

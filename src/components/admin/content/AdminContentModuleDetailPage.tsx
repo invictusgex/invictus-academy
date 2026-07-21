@@ -142,6 +142,12 @@ export function AdminContentModuleDetailPage({
           Vista administrativa de lectura para informacion general, videos y
           recursos del modulo.
         </p>
+        <Link
+          className="mt-6 inline-flex min-h-11 items-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+          href={`/admin/content/modules/${academyModule.id}/edit`}
+        >
+          Editar informacion
+        </Link>
       </section>
 
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">

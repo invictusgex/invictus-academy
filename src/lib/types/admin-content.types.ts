@@ -4,6 +4,52 @@ import type {
   ModuleAvailability,
 } from "@/types/academy";
 
+export const adminContentAvailabilityValues = [
+  "available",
+  "coming-soon",
+] as const satisfies readonly ModuleAvailability[];
+
+export const adminContentStatusValues = [
+  "draft",
+  "published",
+  "archived",
+] as const satisfies readonly AcademyContentStatus[];
+
+export type AdminContentEditableModuleData = {
+  availability: ModuleAvailability;
+  description: string;
+  estimatedDurationMinutes: number | null;
+  learningObjectives: string[];
+  overview: string;
+  status: AcademyContentStatus;
+  title: string;
+};
+
+export type AdminContentModuleValidationField =
+  | "availability"
+  | "description"
+  | "estimatedDurationMinutes"
+  | "general"
+  | "learningObjectives"
+  | "overview"
+  | "status"
+  | "title";
+
+export type AdminContentModuleValidationError = {
+  field: AdminContentModuleValidationField;
+  message: string;
+};
+
+export type AdminContentModuleUpdateResult =
+  | {
+      module: AdminContentModule;
+      ok: true;
+    }
+  | {
+      errors: AdminContentModuleValidationError[];
+      ok: false;
+    };
+
 export type AdminContentVideo = {
   durationSeconds: number | null;
   id: string;

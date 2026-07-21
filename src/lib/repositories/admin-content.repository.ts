@@ -5,6 +5,9 @@ import type {
   AcademyModuleVideoRow,
   AcademyResourceRow,
 } from "@/lib/types/academy-content.types";
+import type {
+  AdminContentEditableModuleData,
+} from "@/lib/types/admin-content.types";
 
 const moduleSelect = `
   id,
@@ -57,6 +60,17 @@ const resourceSelect = `
   created_at,
   updated_at
 `;
+
+type AcademyModuleUpdateRow = {
+  availability: AdminContentEditableModuleData["availability"];
+  description: string;
+  estimated_duration_minutes: number | null;
+  learning_objectives: string[];
+  overview: string;
+  published_at: string | null;
+  status: AdminContentEditableModuleData["status"];
+  title: string;
+};
 
 export const AdminContentRepository = {
   async listProgramContent(): Promise<AcademyContentProgramRows> {
@@ -161,5 +175,24 @@ export const AdminContentRepository = {
         (resourcesResult.data as unknown as AcademyResourceRow[] | null) ?? [],
       videos: (videosResult.data as unknown as AcademyModuleVideoRow[] | null) ?? [],
     };
+  },
+
+  async updateModuleGeneralInfo(
+    moduleId: string,
+    input: AcademyModuleUpdateRow,
+  ): Promise<AcademyModuleContentRow> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("academy_modules")
+      .update(input)
+      .eq("id", moduleId)
+      .select(moduleSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as AcademyModuleContentRow;
   },
 };
