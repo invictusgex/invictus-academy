@@ -284,12 +284,132 @@ Quedan fuera de esta fase:
 - eliminar modulos;
 - archivar mediante accion separada;
 - reordenar modulos;
-- editar videos;
 - editar recursos;
 - subir archivos;
 - duplicar modulos;
 - editor de texto enriquecido;
 - autosave.
+
+## Administracion De Videos
+
+La fase 5C agrega gestion administrativa de registros de
+`academy_module_videos`. Los videos pertenecen directamente a un modulo y no son
+unidades de progreso.
+
+Operaciones implementadas:
+
+- crear video;
+- editar video;
+- cambiar posicion;
+- cambiar estado;
+- eliminar video con validaciones;
+- normalizar posiciones despues de crear, mover o eliminar.
+
+No se agrega progreso por video.
+
+### Campos editables de video
+
+Solo se permite actualizar:
+
+- `title`
+- `provider`
+- `provider_video_id`
+- `duration_seconds`
+- `thumbnail_url`
+- `video_order`
+- `status`
+
+No se permite editar desde el formulario:
+
+- `id`
+- `module_id`
+- `video_key`
+- `created_at`
+- `updated_at`
+- `published_at` directamente
+
+### Proveedores
+
+`provider` no tiene constraint cerrada en la tabla. La administracion acepta:
+
+- `youtube`
+- `vimeo`
+- `bunny`
+- `external`
+
+No se almacena codigo embed arbitrario. Para `external`, el identificador debe
+ser una URL `http` o `https`.
+
+### Generacion de `video_key`
+
+El servicio genera `video_key` al crear videos. Usa una version normalizada del
+titulo y controla colisiones dentro del modulo con sufijos numericos.
+
+El administrador no edita `video_key` directamente.
+
+### Orden
+
+`video_order` debe ser entero mayor que cero y es unico por modulo.
+
+El servicio coordina el reordenamiento. Para evitar violar
+`unique (module_id, video_order)`, las posiciones se actualizan en dos fases:
+
+1. posiciones temporales;
+2. posiciones finales consecutivas.
+
+Al crear sin posicion explicita, se usa la siguiente posicion disponible.
+
+### Publicacion de videos
+
+`published_at` no se edita manualmente.
+
+La constraint real de `academy_module_videos` exige:
+
+```text
+published_at is null or status = 'published'
+```
+
+Por eso:
+
+- si el video cambia a `published` y no tiene fecha, se asigna la fecha actual;
+- si sigue `published`, conserva `published_at`;
+- si cambia a `draft` o `archived`, `published_at` se guarda como `null`.
+
+### Eliminacion
+
+La eliminacion solo aplica a `academy_module_videos`.
+
+Reglas:
+
+- no se puede eliminar el unico video de un modulo publicado;
+- si el modulo tiene mas de un video, se permite eliminar;
+- eliminar un video no elimina el modulo;
+- eliminar un video no elimina progreso;
+- despues de eliminar, las posiciones se normalizan para quedar consecutivas.
+
+### RLS de videos
+
+La migracion `20260721002000_admin_content_video_write_policies.sql` agrega:
+
+- `INSERT` solo para usuarios en `public.admin_users`;
+- `UPDATE` solo para usuarios en `public.admin_users`;
+- `DELETE` solo para usuarios en `public.admin_users`.
+
+No amplia permisos de alumnos.
+No modifica policies anteriores.
+
+### Pendiente
+
+Queda fuera:
+
+- progreso por video;
+- reproduccion avanzada;
+- analytics;
+- carga directa de archivos de video;
+- integracion con servicios de streaming;
+- gestion de recursos;
+- drag and drop;
+- duplicar videos.
 
 ## Compatibilidad Con Progreso
 

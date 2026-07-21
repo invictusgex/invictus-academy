@@ -15,6 +15,16 @@ export const adminContentStatusValues = [
   "archived",
 ] as const satisfies readonly AcademyContentStatus[];
 
+export const adminContentVideoProviderValues = [
+  "youtube",
+  "vimeo",
+  "bunny",
+  "external",
+] as const;
+
+export type AdminContentVideoProvider =
+  (typeof adminContentVideoProviderValues)[number];
+
 export type AdminContentEditableModuleData = {
   availability: ModuleAvailability;
   description: string;
@@ -22,6 +32,16 @@ export type AdminContentEditableModuleData = {
   learningObjectives: string[];
   overview: string;
   status: AcademyContentStatus;
+  title: string;
+};
+
+export type AdminContentEditableVideoData = {
+  durationSeconds: number | null;
+  position: number | null;
+  provider: AdminContentVideoProvider;
+  providerVideoId: string;
+  status: AcademyContentStatus;
+  thumbnailUrl: string;
   title: string;
 };
 
@@ -35,8 +55,23 @@ export type AdminContentModuleValidationField =
   | "status"
   | "title";
 
+export type AdminContentVideoValidationField =
+  | "durationSeconds"
+  | "general"
+  | "position"
+  | "provider"
+  | "providerVideoId"
+  | "status"
+  | "thumbnailUrl"
+  | "title";
+
 export type AdminContentModuleValidationError = {
   field: AdminContentModuleValidationField;
+  message: string;
+};
+
+export type AdminContentVideoValidationError = {
+  field: AdminContentVideoValidationField;
   message: string;
 };
 
@@ -48,6 +83,16 @@ export type AdminContentModuleUpdateResult =
   | {
       errors: AdminContentModuleValidationError[];
       ok: false;
+  };
+
+export type AdminContentVideoMutationResult =
+  | {
+      module: AdminContentModule;
+      ok: true;
+    }
+  | {
+      errors: AdminContentVideoValidationError[];
+      ok: false;
     };
 
 export type AdminContentVideo = {
@@ -55,7 +100,7 @@ export type AdminContentVideo = {
   id: string;
   moduleId: string;
   position: number;
-  provider: string | null;
+  provider: AdminContentVideoProvider | null;
   providerVideoId: string | null;
   status: AcademyContentStatus;
   thumbnailUrl: string | null;

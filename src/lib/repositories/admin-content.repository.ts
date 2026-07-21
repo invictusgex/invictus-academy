@@ -7,6 +7,7 @@ import type {
 } from "@/lib/types/academy-content.types";
 import type {
   AdminContentEditableModuleData,
+  AdminContentEditableVideoData,
 } from "@/lib/types/admin-content.types";
 
 const moduleSelect = `
@@ -70,6 +71,34 @@ type AcademyModuleUpdateRow = {
   published_at: string | null;
   status: AdminContentEditableModuleData["status"];
   title: string;
+};
+
+type AcademyModuleVideoCreateRow = {
+  duration_seconds: number | null;
+  module_id: string;
+  provider: AdminContentEditableVideoData["provider"];
+  provider_video_id: string;
+  published_at: string | null;
+  status: AdminContentEditableVideoData["status"];
+  thumbnail_url: string | null;
+  title: string;
+  video_key: string;
+  video_order: number;
+};
+
+type AcademyModuleVideoUpdateRow = {
+  duration_seconds: number | null;
+  provider: AdminContentEditableVideoData["provider"];
+  provider_video_id: string;
+  published_at: string | null;
+  status: AdminContentEditableVideoData["status"];
+  thumbnail_url: string | null;
+  title: string;
+};
+
+type AcademyModuleVideoPositionUpdate = {
+  id: string;
+  videoOrder: number;
 };
 
 export const AdminContentRepository = {
@@ -194,5 +223,102 @@ export const AdminContentRepository = {
     }
 
     return data as unknown as AcademyModuleContentRow;
+  },
+
+  async listModuleVideos(moduleId: string): Promise<AcademyModuleVideoRow[]> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("academy_module_videos")
+      .select(videoSelect)
+      .eq("module_id", moduleId)
+      .order("video_order", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return (data as unknown as AcademyModuleVideoRow[] | null) ?? [];
+  },
+
+  async createVideo(
+    input: AcademyModuleVideoCreateRow,
+  ): Promise<AcademyModuleVideoRow> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("academy_module_videos")
+      .insert(input)
+      .select(videoSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as AcademyModuleVideoRow;
+  },
+
+  async updateVideo(
+    videoId: string,
+    input: AcademyModuleVideoUpdateRow,
+  ): Promise<AcademyModuleVideoRow> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("academy_module_videos")
+      .update(input)
+      .eq("id", videoId)
+      .select(videoSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as AcademyModuleVideoRow;
+  },
+
+  async deleteVideo(videoId: string): Promise<void> {
+    const supabase = getSupabaseClient();
+    const { error } = await supabase
+      .from("academy_module_videos")
+      .delete()
+      .eq("id", videoId);
+
+    if (error) {
+      throw error;
+    }
+  },
+
+  async updateVideoPositions(
+    updates: AcademyModuleVideoPositionUpdate[],
+  ): Promise<void> {
+    if (updates.length === 0) {
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    const tempBase =
+      Math.max(...updates.map((update) => update.videoOrder)) + 1000;
+
+    for (const [index, update] of updates.entries()) {
+      const { error } = await supabase
+        .from("academy_module_videos")
+        .update({ video_order: tempBase + index })
+        .eq("id", update.id);
+
+      if (error) {
+        throw error;
+      }
+    }
+
+    for (const update of updates) {
+      const { error } = await supabase
+        .from("academy_module_videos")
+        .update({ video_order: update.videoOrder })
+        .eq("id", update.id);
+
+      if (error) {
+        throw error;
+      }
+    }
   },
 };

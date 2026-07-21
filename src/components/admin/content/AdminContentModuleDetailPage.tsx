@@ -12,6 +12,8 @@ import {
   formatDurationSeconds,
   formatResourceType,
 } from "@/components/admin/content/admin-content-formatters";
+import { AdminContentVideoDeleteConfirmation } from "@/components/admin/content/AdminContentVideoDeleteConfirmation";
+import { AdminContentVideoOrderControls } from "@/components/admin/content/AdminContentVideoOrderControls";
 import { AdminContentService } from "@/lib/services/admin-content.service";
 import type { AdminContentModule } from "@/lib/types/admin-content.types";
 
@@ -234,12 +236,18 @@ export function AdminContentModuleDetailPage({
       </section>
 
       <section className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
-        <div className="border-b border-[var(--color-border)] p-5">
+        <div className="flex flex-col gap-3 border-b border-[var(--color-border)] p-5 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xl font-semibold text-white">Videos</h2>
+          <Link
+            className="inline-flex min-h-10 items-center justify-center rounded-full bg-[var(--color-cyan)] px-4 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+            href={`/admin/content/modules/${academyModule.id}/videos/new`}
+          >
+            Agregar video
+          </Link>
         </div>
         {academyModule.videos.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[54rem] border-collapse text-left text-sm">
+            <table className="w-full min-w-[74rem] border-collapse text-left text-sm">
               <thead className="bg-[var(--color-card-bg)] text-xs tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
                 <tr>
                   <th className="px-5 py-4 font-semibold">Posicion</th>
@@ -248,10 +256,12 @@ export function AdminContentModuleDetailPage({
                   <th className="px-5 py-4 font-semibold">Duracion</th>
                   <th className="px-5 py-4 font-semibold">Estado</th>
                   <th className="px-5 py-4 font-semibold">Miniatura</th>
+                  <th className="px-5 py-4 font-semibold">Orden</th>
+                  <th className="px-5 py-4 font-semibold">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {academyModule.videos.map((video) => (
+                {academyModule.videos.map((video, index) => (
                   <tr
                     className="border-t border-[var(--color-border)]"
                     key={video.id}
@@ -286,6 +296,31 @@ export function AdminContentModuleDetailPage({
                           Sin miniatura
                         </span>
                       )}
+                    </td>
+                    <td className="px-5 py-4">
+                      <AdminContentVideoOrderControls
+                        disabledDown={index === academyModule.videos.length - 1}
+                        disabledUp={index === 0}
+                        moduleId={academyModule.id}
+                        onUpdated={setAcademyModule}
+                        videoId={video.id}
+                      />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="grid gap-2">
+                        <Link
+                          className="font-semibold text-[var(--color-cyan)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+                          href={`/admin/content/modules/${academyModule.id}/videos/${video.id}/edit`}
+                        >
+                          Editar
+                        </Link>
+                        <AdminContentVideoDeleteConfirmation
+                          moduleId={academyModule.id}
+                          onUpdated={setAcademyModule}
+                          videoId={video.id}
+                          videoTitle={video.title}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}
