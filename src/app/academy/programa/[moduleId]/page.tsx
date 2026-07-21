@@ -44,8 +44,8 @@ export default async function AcademyModulePage({
 }: ModulePageProps) {
   const { moduleId } = await params;
   const resolvedSearchParams = await searchParams;
-  const course = getAcademyProgram();
-  const academyModule = getAcademyModule(moduleId);
+  const course = await getAcademyProgram();
+  const academyModule = await getAcademyModule(moduleId);
 
   if (!academyModule) {
     notFound();

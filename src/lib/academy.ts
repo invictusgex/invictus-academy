@@ -1,10 +1,12 @@
-export {
-  getAcademyModule,
-  getAcademyModules,
-  getAcademyProgram,
-} from "@/content/programs/trading-basado-en-datos";
-
 import type { AcademyNavItem } from "@/types/academy";
+import { AcademyContentService } from "@/lib/services/academy-content.service";
+
+export const getAcademyProgram = AcademyContentService.getProgram;
+export const getAcademyModules = AcademyContentService.getModules;
+export const getAcademyModule = AcademyContentService.getModule;
+export const getAcademyModuleVideos = AcademyContentService.getModuleVideos;
+export const getAcademyModuleResources =
+  AcademyContentService.getModuleResources;
 
 export const academyNavigation: AcademyNavItem[] = [
   { label: "Inicio", href: "/academy" },

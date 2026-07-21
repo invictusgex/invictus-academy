@@ -5,8 +5,8 @@ import { ProgramHeader } from "@/components/academy/ProgramHeader";
 import { ProgramSummary } from "@/components/academy/ProgramSummary";
 import { getAcademyProgram } from "@/lib/academy";
 
-export default function AcademyProgramPage() {
-  const course = getAcademyProgram();
+export default async function AcademyProgramPage() {
+  const course = await getAcademyProgram();
 
   return (
     <AcademyShell>

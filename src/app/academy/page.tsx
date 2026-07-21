@@ -3,8 +3,8 @@ import { DashboardProgressCenter } from "@/components/academy/DashboardProgressC
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { getAcademyProgram } from "@/lib/academy";
 
-export default function AcademyPage() {
-  const course = getAcademyProgram();
+export default async function AcademyPage() {
+  const course = await getAcademyProgram();
 
   return (
     <AcademyShell>

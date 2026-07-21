@@ -4,15 +4,35 @@ export type AcademyNavItem = {
 };
 
 export type ModuleVideo = {
+  description?: string;
+  durationSeconds?: number | null;
   id: string;
-  title: string;
   placeholder: string;
+  provider?: string | null;
+  providerVideoId?: string | null;
+  status?: AcademyContentStatus;
+  thumbnailUrl?: string | null;
+  title: string;
 };
 
 export type ModuleResource = {
+  description?: string;
   id: string;
+  resourceType?: AcademyResourceType;
+  status?: AcademyContentStatus;
+  storagePath?: string | null;
   title: string;
+  url?: string | null;
 };
+
+export type AcademyContentStatus = "draft" | "published" | "archived";
+
+export type AcademyResourceType =
+  | "pdf"
+  | "link"
+  | "template"
+  | "downloadable"
+  | "other";
 
 export type ModuleAvailability = "available" | "coming-soon";
 
@@ -42,13 +62,17 @@ export type AcademyProgressState = {
 };
 
 export type Module = {
+  createdAt?: string;
   id: string;
+  estimatedDurationMinutes?: number | null;
   number: number;
   title: string;
   description: string;
   overview: string;
   learningObjectives: string[];
   availability: ModuleAvailability;
+  status?: AcademyContentStatus;
+  updatedAt?: string;
   videos: ModuleVideo[];
   resources: ModuleResource[];
 };

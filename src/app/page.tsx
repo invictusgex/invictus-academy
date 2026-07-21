@@ -1,8 +1,8 @@
 import { PublicLanding } from "@/components/landing/PublicLanding";
 import { getAcademyProgram } from "@/lib/academy";
 
-export default function Home() {
-  const course = getAcademyProgram();
+export default async function Home() {
+  const course = await getAcademyProgram();
 
   return <PublicLanding course={course} />;
 }
