@@ -284,7 +284,6 @@ Quedan fuera de esta fase:
 - eliminar modulos;
 - archivar mediante accion separada;
 - reordenar modulos;
-- editar recursos;
 - subir archivos;
 - duplicar modulos;
 - editor de texto enriquecido;
@@ -410,6 +409,149 @@ Queda fuera:
 - gestion de recursos;
 - drag and drop;
 - duplicar videos.
+
+## Administracion De Recursos
+
+La fase 5D agrega gestion administrativa de registros de `academy_resources`.
+Cada recurso pertenece directamente a un modulo. No existen carpetas, categorias,
+etiquetas ni permisos individuales.
+
+Operaciones implementadas:
+
+- crear recurso;
+- editar recurso;
+- cambiar posicion;
+- cambiar estado;
+- eliminar recurso;
+- normalizar posiciones despues de crear, mover o eliminar.
+
+La gestion de recursos no modifica `academy_modules`, `academy_module_videos`,
+`module_progress`, enrollments ni autenticacion.
+
+### Campos editables de recurso
+
+Solo se permite actualizar:
+
+- `title`
+- `description`
+- `resource_type`
+- `url`
+- `storage_path`
+- `resource_order`
+- `status`
+
+No se permite editar desde el formulario:
+
+- `id`
+- `module_id`
+- `resource_key`
+- `metadata`
+- `created_at`
+- `updated_at`
+- `published_at` directamente
+
+`metadata` se guarda como objeto JSON vacio en esta version. `updated_at` se
+mantiene mediante trigger. `published_at` se administra desde el servicio.
+
+### Tipos de recurso
+
+`resource_type` esta limitado por la constraint real
+`academy_resources_type_check`:
+
+- `pdf`
+- `link`
+- `template`
+- `downloadable`
+- `other`
+
+No se almacena HTML arbitrario ni se renderiza marcado HTML directo.
+
+### Validaciones de recursos
+
+El formulario y el servicio validan:
+
+- `title` obligatorio, maximo 160 caracteres.
+- `description` opcional, maximo 500 caracteres.
+- `resource_type` limitado a los tipos soportados por la constraint.
+- `resource_order` entero mayor que cero.
+- `status` limitado a `draft`, `published` y `archived`.
+- `url` opcional, pero si existe debe ser `http` o `https`.
+- `storage_path` opcional, maximo 500 caracteres.
+- debe existir al menos `url` o `storage_path`.
+- no se aceptan caracteres de marcado HTML en campos editables.
+
+El servicio normaliza espacios innecesarios antes de guardar.
+
+### Generacion de `resource_key`
+
+El servicio genera `resource_key` al crear recursos. Usa una version normalizada
+del titulo y controla colisiones dentro del modulo con sufijos numericos.
+
+El administrador no edita `resource_key` directamente.
+
+### Orden de recursos
+
+`resource_order` debe ser entero mayor que cero y es unico por modulo.
+
+El servicio coordina el reordenamiento. Para evitar violar
+`unique (module_id, resource_order)`, las posiciones se actualizan en dos fases:
+
+1. posiciones temporales;
+2. posiciones finales consecutivas.
+
+Al crear sin posicion explicita, se usa la siguiente posicion disponible.
+
+### Publicacion de recursos
+
+`published_at` no se edita manualmente.
+
+La constraint real de `academy_resources` exige:
+
+```text
+published_at is null or status = 'published'
+```
+
+Por eso:
+
+- si el recurso cambia a `published` y no tiene fecha, se asigna la fecha actual;
+- si sigue `published`, conserva `published_at`;
+- si cambia a `draft` o `archived`, `published_at` se guarda como `null`.
+
+### Eliminacion de recursos
+
+La eliminacion solo aplica a `academy_resources`.
+
+Reglas:
+
+- eliminar un recurso no elimina el modulo;
+- eliminar un recurso no elimina videos;
+- eliminar un recurso no elimina progreso;
+- despues de eliminar, las posiciones se normalizan para quedar consecutivas.
+
+### RLS de recursos
+
+La migracion `20260721003000_admin_content_resource_write_policies.sql` agrega:
+
+- `INSERT` solo para usuarios en `public.admin_users`;
+- `UPDATE` solo para usuarios en `public.admin_users`;
+- `DELETE` solo para usuarios en `public.admin_users`.
+
+No amplia permisos de alumnos.
+No modifica policies anteriores.
+
+### Pendiente
+
+Queda fuera:
+
+- carpetas;
+- categorias;
+- etiquetas;
+- analytics;
+- comentarios;
+- permisos individuales;
+- carga directa de archivos;
+- drag and drop;
+- duplicar recursos.
 
 ## Compatibilidad Con Progreso
 

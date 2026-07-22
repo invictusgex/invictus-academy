@@ -7,8 +7,10 @@ import type {
 } from "@/lib/types/academy-content.types";
 import type {
   AdminContentEditableModuleData,
+  AdminContentEditableResourceData,
   AdminContentEditableVideoData,
 } from "@/lib/types/admin-content.types";
+import type { AcademyResourceType } from "@/types/academy";
 
 const moduleSelect = `
   id,
@@ -99,6 +101,36 @@ type AcademyModuleVideoUpdateRow = {
 type AcademyModuleVideoPositionUpdate = {
   id: string;
   videoOrder: number;
+};
+
+type AcademyResourceCreateRow = {
+  description: string;
+  metadata: Record<string, never>;
+  module_id: string;
+  published_at: string | null;
+  resource_key: string;
+  resource_order: number;
+  resource_type: AcademyResourceType;
+  status: AdminContentEditableResourceData["status"];
+  storage_path: string | null;
+  title: string;
+  url: string | null;
+};
+
+type AcademyResourceUpdateRow = {
+  description: string;
+  metadata: Record<string, never>;
+  published_at: string | null;
+  resource_type: AcademyResourceType;
+  status: AdminContentEditableResourceData["status"];
+  storage_path: string | null;
+  title: string;
+  url: string | null;
+};
+
+type AcademyResourcePositionUpdate = {
+  id: string;
+  resourceOrder: number;
 };
 
 export const AdminContentRepository = {
@@ -314,6 +346,88 @@ export const AdminContentRepository = {
       const { error } = await supabase
         .from("academy_module_videos")
         .update({ video_order: update.videoOrder })
+        .eq("id", update.id);
+
+      if (error) {
+        throw error;
+      }
+    }
+  },
+
+  async createResource(
+    input: AcademyResourceCreateRow,
+  ): Promise<AcademyResourceRow> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("academy_resources")
+      .insert(input)
+      .select(resourceSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as AcademyResourceRow;
+  },
+
+  async updateResource(
+    resourceId: string,
+    input: AcademyResourceUpdateRow,
+  ): Promise<AcademyResourceRow> {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("academy_resources")
+      .update(input)
+      .eq("id", resourceId)
+      .select(resourceSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as AcademyResourceRow;
+  },
+
+  async deleteResource(resourceId: string): Promise<void> {
+    const supabase = getSupabaseClient();
+    const { error } = await supabase
+      .from("academy_resources")
+      .delete()
+      .eq("id", resourceId);
+
+    if (error) {
+      throw error;
+    }
+  },
+
+  async reorderResources(
+    updates: AcademyResourcePositionUpdate[],
+  ): Promise<void> {
+    if (updates.length === 0) {
+      return;
+    }
+
+    const supabase = getSupabaseClient();
+    const tempBase =
+      Math.max(...updates.map((update) => update.resourceOrder)) + 1000;
+
+    for (const [index, update] of updates.entries()) {
+      const { error } = await supabase
+        .from("academy_resources")
+        .update({ resource_order: tempBase + index })
+        .eq("id", update.id);
+
+      if (error) {
+        throw error;
+      }
+    }
+
+    for (const update of updates) {
+      const { error } = await supabase
+        .from("academy_resources")
+        .update({ resource_order: update.resourceOrder })
         .eq("id", update.id);
 
       if (error) {

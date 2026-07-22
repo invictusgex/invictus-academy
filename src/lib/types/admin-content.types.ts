@@ -25,6 +25,14 @@ export const adminContentVideoProviderValues = [
 export type AdminContentVideoProvider =
   (typeof adminContentVideoProviderValues)[number];
 
+export const adminContentResourceTypeValues = [
+  "pdf",
+  "link",
+  "template",
+  "downloadable",
+  "other",
+] as const satisfies readonly AcademyResourceType[];
+
 export type AdminContentEditableModuleData = {
   availability: ModuleAvailability;
   description: string;
@@ -43,6 +51,16 @@ export type AdminContentEditableVideoData = {
   status: AcademyContentStatus;
   thumbnailUrl: string;
   title: string;
+};
+
+export type AdminContentEditableResourceData = {
+  description: string;
+  position: number | null;
+  resourceType: AcademyResourceType;
+  status: AcademyContentStatus;
+  storagePath: string;
+  title: string;
+  url: string;
 };
 
 export type AdminContentModuleValidationField =
@@ -65,6 +83,16 @@ export type AdminContentVideoValidationField =
   | "thumbnailUrl"
   | "title";
 
+export type AdminContentResourceValidationField =
+  | "description"
+  | "general"
+  | "position"
+  | "resourceType"
+  | "status"
+  | "storagePath"
+  | "title"
+  | "url";
+
 export type AdminContentModuleValidationError = {
   field: AdminContentModuleValidationField;
   message: string;
@@ -72,6 +100,11 @@ export type AdminContentModuleValidationError = {
 
 export type AdminContentVideoValidationError = {
   field: AdminContentVideoValidationField;
+  message: string;
+};
+
+export type AdminContentResourceValidationError = {
+  field: AdminContentResourceValidationField;
   message: string;
 };
 
@@ -95,6 +128,16 @@ export type AdminContentVideoMutationResult =
       ok: false;
     };
 
+export type AdminContentResourceMutationResult =
+  | {
+      module: AdminContentModule;
+      ok: true;
+    }
+  | {
+      errors: AdminContentResourceValidationError[];
+      ok: false;
+    };
+
 export type AdminContentVideo = {
   durationSeconds: number | null;
   id: string;
@@ -114,6 +157,7 @@ export type AdminContentResource = {
   position: number;
   resourceType: AcademyResourceType;
   status: AcademyContentStatus;
+  storagePath: string | null;
   title: string;
   url: string | null;
 };

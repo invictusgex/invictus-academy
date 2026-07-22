@@ -12,6 +12,8 @@ import {
   formatDurationSeconds,
   formatResourceType,
 } from "@/components/admin/content/admin-content-formatters";
+import { AdminContentResourceDeleteConfirmation } from "@/components/admin/content/AdminContentResourceDeleteConfirmation";
+import { AdminContentResourceOrderControls } from "@/components/admin/content/AdminContentResourceOrderControls";
 import { AdminContentVideoDeleteConfirmation } from "@/components/admin/content/AdminContentVideoDeleteConfirmation";
 import { AdminContentVideoOrderControls } from "@/components/admin/content/AdminContentVideoOrderControls";
 import { AdminContentService } from "@/lib/services/admin-content.service";
@@ -335,12 +337,18 @@ export function AdminContentModuleDetailPage({
       </section>
 
       <section className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
-        <div className="border-b border-[var(--color-border)] p-5">
+        <div className="flex flex-col gap-3 border-b border-[var(--color-border)] p-5 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xl font-semibold text-white">Recursos</h2>
+          <Link
+            className="inline-flex min-h-10 items-center justify-center rounded-full bg-[var(--color-cyan)] px-4 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+            href={`/admin/content/modules/${academyModule.id}/resources/new`}
+          >
+            Agregar recurso
+          </Link>
         </div>
         {academyModule.resources.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[54rem] border-collapse text-left text-sm">
+            <table className="w-full min-w-[76rem] border-collapse text-left text-sm">
               <thead className="bg-[var(--color-card-bg)] text-xs tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
                 <tr>
                   <th className="px-5 py-4 font-semibold">Posicion</th>
@@ -349,10 +357,12 @@ export function AdminContentModuleDetailPage({
                   <th className="px-5 py-4 font-semibold">Descripcion</th>
                   <th className="px-5 py-4 font-semibold">Estado</th>
                   <th className="px-5 py-4 font-semibold">Enlace</th>
+                  <th className="px-5 py-4 font-semibold">Orden</th>
+                  <th className="px-5 py-4 font-semibold">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {academyModule.resources.map((resource) => (
+                {academyModule.resources.map((resource, index) => (
                   <tr
                     className="border-t border-[var(--color-border)]"
                     key={resource.id}
@@ -387,6 +397,33 @@ export function AdminContentModuleDetailPage({
                           Sin enlace
                         </span>
                       )}
+                    </td>
+                    <td className="px-5 py-4">
+                      <AdminContentResourceOrderControls
+                        disabledDown={
+                          index === academyModule.resources.length - 1
+                        }
+                        disabledUp={index === 0}
+                        moduleId={academyModule.id}
+                        onUpdated={setAcademyModule}
+                        resourceId={resource.id}
+                      />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="grid gap-2">
+                        <Link
+                          className="font-semibold text-[var(--color-cyan)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+                          href={`/admin/content/modules/${academyModule.id}/resources/${resource.id}/edit`}
+                        >
+                          Editar
+                        </Link>
+                        <AdminContentResourceDeleteConfirmation
+                          moduleId={academyModule.id}
+                          onUpdated={setAcademyModule}
+                          resourceId={resource.id}
+                          resourceTitle={resource.title}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}

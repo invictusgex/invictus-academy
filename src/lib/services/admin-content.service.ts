@@ -8,9 +8,12 @@ import type {
 import type {
   AdminContentModule,
   AdminContentEditableModuleData,
+  AdminContentEditableResourceData,
   AdminContentEditableVideoData,
   AdminContentProgram,
   AdminContentResource,
+  AdminContentResourceMutationResult,
+  AdminContentResourceValidationError,
   AdminContentSummary,
   AdminContentModuleUpdateResult,
   AdminContentModuleValidationError,
@@ -21,6 +24,7 @@ import type {
 } from "@/lib/types/admin-content.types";
 import {
   adminContentAvailabilityValues,
+  adminContentResourceTypeValues,
   adminContentStatusValues,
   adminContentVideoProviderValues,
 } from "@/lib/types/admin-content.types";
@@ -33,6 +37,10 @@ const maxObjectiveCount = 20;
 const videoTitleMaxLength = 160;
 const videoProviderIdMaxLength = 300;
 const videoThumbnailUrlMaxLength = 500;
+const resourceTitleMaxLength = 160;
+const resourceDescriptionMaxLength = 500;
+const resourceUrlMaxLength = 500;
+const resourceStoragePathMaxLength = 500;
 
 function getLearningObjectives(value: unknown) {
   if (!Array.isArray(value)) {
@@ -64,6 +72,7 @@ function mapResource(row: AcademyResourceRow): AdminContentResource {
     position: row.resource_order,
     resourceType: row.resource_type,
     status: row.status,
+    storagePath: row.storage_path,
     title: row.title,
     url: row.url,
   };
@@ -177,6 +186,12 @@ function isValidVideoProvider(
   );
 }
 
+function isValidResourceType(
+  value: AdminContentEditableResourceData["resourceType"],
+) {
+  return adminContentResourceTypeValues.includes(value);
+}
+
 function isValidUrl(value: string) {
   try {
     const url = new URL(value);
@@ -185,6 +200,10 @@ function isValidUrl(value: string) {
   } catch {
     return false;
   }
+}
+
+function hasUnsafeMarkupCharacters(value: string) {
+  return /[<>]/.test(value);
 }
 
 export function validateAdminContentModuleInput(
@@ -316,6 +335,26 @@ function getNextVideoPublishedAt({
   return currentPublishedAt ?? new Date().toISOString();
 }
 
+function getNextResourcePublishedAt({
+  currentPublishedAt,
+  currentStatus,
+  nextStatus,
+}: {
+  currentPublishedAt: string | null;
+  currentStatus: AdminContentEditableResourceData["status"];
+  nextStatus: AdminContentEditableResourceData["status"];
+}) {
+  if (nextStatus !== "published") {
+    return null;
+  }
+
+  if (currentStatus === "published" && currentPublishedAt) {
+    return currentPublishedAt;
+  }
+
+  return currentPublishedAt ?? new Date().toISOString();
+}
+
 function validateAdminContentVideoInput(
   input: AdminContentEditableVideoData,
   options: { requirePosition: boolean },
@@ -431,6 +470,123 @@ function validateAdminContentVideoInput(
   };
 }
 
+function validateAdminContentResourceInput(
+  input: AdminContentEditableResourceData,
+  options: { requirePosition: boolean },
+) {
+  const errors: AdminContentResourceValidationError[] = [];
+  const normalized: AdminContentEditableResourceData = {
+    description: normalizeLongText(input.description),
+    position: input.position,
+    resourceType: input.resourceType,
+    status: input.status,
+    storagePath: normalizeText(input.storagePath),
+    title: normalizeText(input.title),
+    url: normalizeText(input.url),
+  };
+
+  if (!normalized.title) {
+    errors.push({
+      field: "title",
+      message: "El titulo es obligatorio.",
+    });
+  } else if (normalized.title.length > resourceTitleMaxLength) {
+    errors.push({
+      field: "title",
+      message: `El titulo no puede superar ${resourceTitleMaxLength} caracteres.`,
+    });
+  } else if (hasUnsafeMarkupCharacters(normalized.title)) {
+    errors.push({
+      field: "title",
+      message: "El titulo contiene caracteres no permitidos.",
+    });
+  }
+
+  if (normalized.description.length > resourceDescriptionMaxLength) {
+    errors.push({
+      field: "description",
+      message: `La descripcion no puede superar ${resourceDescriptionMaxLength} caracteres.`,
+    });
+  } else if (hasUnsafeMarkupCharacters(normalized.description)) {
+    errors.push({
+      field: "description",
+      message: "La descripcion contiene caracteres no permitidos.",
+    });
+  }
+
+  if (!isValidResourceType(normalized.resourceType)) {
+    errors.push({
+      field: "resourceType",
+      message: "El tipo de recurso seleccionado no es valido.",
+    });
+  }
+
+  if (options.requirePosition && normalized.position === null) {
+    errors.push({
+      field: "position",
+      message: "La posicion es obligatoria.",
+    });
+  }
+
+  if (
+    normalized.position !== null &&
+    (!Number.isInteger(normalized.position) || normalized.position <= 0)
+  ) {
+    errors.push({
+      field: "position",
+      message: "La posicion debe ser un entero mayor que cero.",
+    });
+  }
+
+  if (!isValidStatus(normalized.status)) {
+    errors.push({
+      field: "status",
+      message: "El estado seleccionado no es valido.",
+    });
+  }
+
+  if (normalized.url.length > resourceUrlMaxLength) {
+    errors.push({
+      field: "url",
+      message: `La URL no puede superar ${resourceUrlMaxLength} caracteres.`,
+    });
+  } else if (normalized.url.length > 0 && !isValidUrl(normalized.url)) {
+    errors.push({
+      field: "url",
+      message: "La URL debe ser http o https valida.",
+    });
+  } else if (hasUnsafeMarkupCharacters(normalized.url)) {
+    errors.push({
+      field: "url",
+      message: "La URL contiene caracteres no permitidos.",
+    });
+  }
+
+  if (normalized.storagePath.length > resourceStoragePathMaxLength) {
+    errors.push({
+      field: "storagePath",
+      message: `La ruta de archivo no puede superar ${resourceStoragePathMaxLength} caracteres.`,
+    });
+  } else if (hasUnsafeMarkupCharacters(normalized.storagePath)) {
+    errors.push({
+      field: "storagePath",
+      message: "La ruta de archivo contiene caracteres no permitidos.",
+    });
+  }
+
+  if (!normalized.url && !normalized.storagePath) {
+    errors.push({
+      field: "general",
+      message: "Registra una URL o una ruta de archivo para el recurso.",
+    });
+  }
+
+  return {
+    errors,
+    normalized,
+  };
+}
+
 function createVideoKeyBase(title: string) {
   const normalized = title
     .normalize("NFD")
@@ -445,6 +601,37 @@ function createVideoKeyBase(title: string) {
 
 function createUniqueVideoKey(title: string, existingKeys: string[]) {
   const baseKey = createVideoKeyBase(title);
+  const existing = new Set(existingKeys);
+
+  if (!existing.has(baseKey)) {
+    return baseKey;
+  }
+
+  for (let index = 2; index < 1000; index += 1) {
+    const candidate = `${baseKey}-${index}`;
+
+    if (!existing.has(candidate)) {
+      return candidate;
+    }
+  }
+
+  return `${baseKey}-${Date.now()}`;
+}
+
+function createResourceKeyBase(title: string) {
+  const normalized = title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+
+  return normalized || "resource";
+}
+
+function createUniqueResourceKey(title: string, existingKeys: string[]) {
+  const baseKey = createResourceKeyBase(title);
   const existing = new Set(existingKeys);
 
   if (!existing.has(baseKey)) {
@@ -499,10 +686,42 @@ function reorderVideoRows<T extends { id: string; video_order: number }>({
   return sortedRows;
 }
 
+function reorderResourceRows<T extends { id: string; resource_order: number }>({
+  rows,
+  targetId,
+  targetPosition,
+}: {
+  rows: T[];
+  targetId: string;
+  targetPosition: number;
+}) {
+  const sortedRows = [...rows].sort((first, second) =>
+    first.resource_order - second.resource_order
+  );
+  const targetIndex = sortedRows.findIndex((row) => row.id === targetId);
+
+  if (targetIndex < 0) {
+    return sortedRows;
+  }
+
+  const [targetRow] = sortedRows.splice(targetIndex, 1);
+  const nextIndex = clampPosition(targetPosition, sortedRows.length + 1) - 1;
+  sortedRows.splice(nextIndex, 0, targetRow);
+
+  return sortedRows;
+}
+
 function toPositionUpdates(rows: Array<{ id: string }>) {
   return rows.map((row, index) => ({
     id: row.id,
     videoOrder: index + 1,
+  }));
+}
+
+function toResourcePositionUpdates(rows: Array<{ id: string }>) {
+  return rows.map((row, index) => ({
+    id: row.id,
+    resourceOrder: index + 1,
   }));
 }
 
@@ -877,6 +1096,297 @@ export const AdminContentService = {
           {
             field: "general",
             message: "No fue posible eliminar el video.",
+          },
+        ],
+        ok: false,
+      };
+    }
+  },
+
+  async createResource(
+    moduleId: string,
+    input: AdminContentEditableResourceData,
+  ): Promise<AdminContentResourceMutationResult> {
+    const validation = validateAdminContentResourceInput(input, {
+      requirePosition: false,
+    });
+
+    if (validation.errors.length > 0) {
+      return {
+        errors: validation.errors,
+        ok: false,
+      };
+    }
+
+    try {
+      const currentModule = await AdminContentRepository.getModuleContent(moduleId);
+      const currentModuleRow = currentModule.modules[0];
+
+      if (!currentModuleRow) {
+        return {
+          errors: [
+            {
+              field: "general",
+              message: "No fue posible encontrar el modulo solicitado.",
+            },
+          ],
+          ok: false,
+        };
+      }
+
+      const currentResources = currentModule.resources;
+      const nextPosition =
+        validation.normalized.position ??
+        getNextPosition(
+          currentResources.map((resource) => resource.resource_order),
+        );
+      const temporaryPosition = getNextPosition(
+        currentResources.map((resource) => resource.resource_order),
+      ) + 1000;
+      const createdResource = await AdminContentRepository.createResource({
+        description: validation.normalized.description,
+        metadata: {},
+        module_id: moduleId,
+        published_at: getNextResourcePublishedAt({
+          currentPublishedAt: null,
+          currentStatus: "draft",
+          nextStatus: validation.normalized.status,
+        }),
+        resource_key: createUniqueResourceKey(
+          validation.normalized.title,
+          currentResources.map((resource) => resource.resource_key),
+        ),
+        resource_order: temporaryPosition,
+        resource_type: validation.normalized.resourceType,
+        status: validation.normalized.status,
+        storage_path: validation.normalized.storagePath || null,
+        title: validation.normalized.title,
+        url: validation.normalized.url || null,
+      });
+      const reorderedResources = reorderResourceRows({
+        rows: [...currentResources, createdResource],
+        targetId: createdResource.id,
+        targetPosition: nextPosition,
+      });
+
+      await AdminContentRepository.reorderResources(
+        toResourcePositionUpdates(reorderedResources),
+      );
+
+      const refreshedModule =
+        await AdminContentRepository.getModuleContent(moduleId);
+
+      return {
+        module: mapProgram(refreshedModule).modules[0],
+        ok: true,
+      };
+    } catch {
+      return {
+        errors: [
+          {
+            field: "general",
+            message: "No fue posible guardar el recurso.",
+          },
+        ],
+        ok: false,
+      };
+    }
+  },
+
+  async updateResource(
+    moduleId: string,
+    resourceId: string,
+    input: AdminContentEditableResourceData,
+  ): Promise<AdminContentResourceMutationResult> {
+    const validation = validateAdminContentResourceInput(input, {
+      requirePosition: true,
+    });
+
+    if (validation.errors.length > 0) {
+      return {
+        errors: validation.errors,
+        ok: false,
+      };
+    }
+
+    try {
+      const currentModule = await AdminContentRepository.getModuleContent(moduleId);
+      const currentResource = currentModule.resources.find(
+        (resource) => resource.id === resourceId,
+      );
+
+      if (!currentModule.modules[0] || !currentResource) {
+        return {
+          errors: [
+            {
+              field: "general",
+              message: "No fue posible encontrar el recurso solicitado.",
+            },
+          ],
+          ok: false,
+        };
+      }
+
+      const updatedResource = await AdminContentRepository.updateResource(
+        resourceId,
+        {
+          description: validation.normalized.description,
+          metadata: {},
+          published_at: getNextResourcePublishedAt({
+            currentPublishedAt: currentResource.published_at,
+            currentStatus: currentResource.status,
+            nextStatus: validation.normalized.status,
+          }),
+          resource_type: validation.normalized.resourceType,
+          status: validation.normalized.status,
+          storage_path: validation.normalized.storagePath || null,
+          title: validation.normalized.title,
+          url: validation.normalized.url || null,
+        },
+      );
+      const resourcesWithUpdate = currentModule.resources.map((resource) =>
+        resource.id === resourceId ? updatedResource : resource
+      );
+      const reorderedResources = reorderResourceRows({
+        rows: resourcesWithUpdate,
+        targetId: resourceId,
+        targetPosition:
+          validation.normalized.position ?? currentResource.resource_order,
+      });
+
+      await AdminContentRepository.reorderResources(
+        toResourcePositionUpdates(reorderedResources),
+      );
+
+      const refreshedModule =
+        await AdminContentRepository.getModuleContent(moduleId);
+
+      return {
+        module: mapProgram(refreshedModule).modules[0],
+        ok: true,
+      };
+    } catch {
+      return {
+        errors: [
+          {
+            field: "general",
+            message: "No fue posible guardar el recurso.",
+          },
+        ],
+        ok: false,
+      };
+    }
+  },
+
+  async moveResource(
+    moduleId: string,
+    resourceId: string,
+    direction: -1 | 1,
+  ): Promise<AdminContentResourceMutationResult> {
+    try {
+      const currentModule = await AdminContentRepository.getModuleContent(moduleId);
+      const sortedResources = [...currentModule.resources].sort(
+        (first, second) => first.resource_order - second.resource_order,
+      );
+      const currentIndex = sortedResources.findIndex(
+        (resource) => resource.id === resourceId,
+      );
+      const nextIndex = currentIndex + direction;
+
+      if (
+        !currentModule.modules[0] ||
+        currentIndex < 0 ||
+        nextIndex < 0 ||
+        nextIndex >= sortedResources.length
+      ) {
+        return {
+          errors: [
+            {
+              field: "general",
+              message: "No fue posible cambiar la posicion del recurso.",
+            },
+          ],
+          ok: false,
+        };
+      }
+
+      const nextResources = [...sortedResources];
+      const currentResource = nextResources[currentIndex];
+      nextResources[currentIndex] = nextResources[nextIndex];
+      nextResources[nextIndex] = currentResource;
+
+      await AdminContentRepository.reorderResources(
+        toResourcePositionUpdates(nextResources),
+      );
+
+      const refreshedModule =
+        await AdminContentRepository.getModuleContent(moduleId);
+
+      return {
+        module: mapProgram(refreshedModule).modules[0],
+        ok: true,
+      };
+    } catch {
+      return {
+        errors: [
+          {
+            field: "general",
+            message: "No fue posible cambiar la posicion del recurso.",
+          },
+        ],
+        ok: false,
+      };
+    }
+  },
+
+  async deleteResource(
+    moduleId: string,
+    resourceId: string,
+  ): Promise<AdminContentResourceMutationResult> {
+    try {
+      const currentModule = await AdminContentRepository.getModuleContent(moduleId);
+      const currentResource = currentModule.resources.find(
+        (resource) => resource.id === resourceId,
+      );
+
+      if (!currentModule.modules[0] || !currentResource) {
+        return {
+          errors: [
+            {
+              field: "general",
+              message: "No fue posible encontrar el recurso solicitado.",
+            },
+          ],
+          ok: false,
+        };
+      }
+
+      await AdminContentRepository.deleteResource(resourceId);
+      const remainingResources = currentModule.resources.filter(
+        (resource) => resource.id !== resourceId,
+      );
+
+      await AdminContentRepository.reorderResources(
+        toResourcePositionUpdates(
+          remainingResources.sort(
+            (first, second) => first.resource_order - second.resource_order,
+          ),
+        ),
+      );
+
+      const refreshedModule =
+        await AdminContentRepository.getModuleContent(moduleId);
+
+      return {
+        module: mapProgram(refreshedModule).modules[0],
+        ok: true,
+      };
+    } catch {
+      return {
+        errors: [
+          {
+            field: "general",
+            message: "No fue posible eliminar el recurso.",
           },
         ],
         ok: false,
