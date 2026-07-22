@@ -1,4 +1,5 @@
 import { ScenarioLibraryRepository } from "@/lib/repositories/scenario-library.repository";
+import { StorageService } from "@/lib/services/storage.service";
 import type {
   AdminScenario,
   AdminScenarioDeleteResult,
@@ -302,8 +303,26 @@ function validateAdminScenarioInput(input: AdminScenarioEditableData) {
     });
   }
 
+  if (normalized.thumbnailUrl.length > urlMaxLength) {
+    errors.push({
+      field: "thumbnailUrl",
+      message: `La URL no puede superar ${urlMaxLength} caracteres.`,
+    });
+  } else if (
+    normalized.thumbnailUrl &&
+    !isSafeHttpUrl(normalized.thumbnailUrl) &&
+    !StorageService.validatePathForAssetKind(
+      normalized.thumbnailUrl,
+      "scenario_thumbnail",
+    )
+  ) {
+    errors.push({
+      field: "thumbnailUrl",
+      message: "La miniatura debe ser una URL http/https o una ruta interna valida.",
+    });
+  }
+
   for (const [field, value] of [
-    ["thumbnailUrl", normalized.thumbnailUrl],
     ["videoUrl", normalized.videoUrl],
     ["documentUrl", normalized.documentUrl],
   ] as const) {
@@ -510,8 +529,20 @@ function buildLabels(row: ScenarioLibraryRow): ScenarioLabelSet {
   };
 }
 
-function mapPublishedScenario(row: ScenarioLibraryRow): PublishedScenario {
+async function resolveScenarioThumbnailUrl(value: string | null) {
+  const resolved = await StorageService.resolveAssetUrl({
+    allowedKinds: ["scenario_thumbnail"],
+    value,
+  });
+
+  return resolved?.url ?? null;
+}
+
+async function mapPublishedScenario(
+  row: ScenarioLibraryRow,
+): Promise<PublishedScenario> {
   const videoUrl = isSafeHttpUrl(row.video_url) ? row.video_url : null;
+  const thumbnailUrl = await resolveScenarioThumbnailUrl(row.thumbnail_url);
 
   return {
     description: row.description,
@@ -525,7 +556,7 @@ function mapPublishedScenario(row: ScenarioLibraryRow): PublishedScenario {
     scenarioKey: row.scenario_key,
     scenarioType: row.scenario_type,
     summary: row.summary,
-    thumbnailUrl: isSafeHttpUrl(row.thumbnail_url) ? row.thumbnail_url : null,
+    thumbnailUrl,
     title: row.title,
     videoEmbedUrl: buildVideoEmbedUrl(row),
     videoProvider: normalizeVideoProvider(row.video_provider),
@@ -533,12 +564,13 @@ function mapPublishedScenario(row: ScenarioLibraryRow): PublishedScenario {
   };
 }
 
-function mapAdminScenario(row: ScenarioLibraryRow): AdminScenario {
+async function mapAdminScenario(row: ScenarioLibraryRow): Promise<AdminScenario> {
   return {
-    ...mapPublishedScenario(row),
+    ...(await mapPublishedScenario(row)),
     createdAt: row.created_at,
     metadata: row.metadata,
     status: normalizeStatus(row.status),
+    thumbnailStorageValue: row.thumbnail_url ?? "",
     updatedAt: row.updated_at,
     videoId: row.video_id,
   };
@@ -555,7 +587,7 @@ export const ScenarioLibraryService = {
 
       return {
         ok: true,
-        scenarios: rows.map(mapPublishedScenario),
+        scenarios: await Promise.all(rows.map(mapPublishedScenario)),
       };
     } catch {
       return {
@@ -575,7 +607,7 @@ export const ScenarioLibraryService = {
 
       return {
         ok: true,
-        scenario: row ? mapPublishedScenario(row) : null,
+        scenario: row ? await mapPublishedScenario(row) : null,
       };
     } catch {
       return {
@@ -598,7 +630,7 @@ export const ScenarioLibraryService = {
 
       return {
         ok: true,
-        scenarios: rows.map(mapAdminScenario),
+        scenarios: await Promise.all(rows.map(mapAdminScenario)),
         summary,
       };
     } catch {
@@ -619,7 +651,7 @@ export const ScenarioLibraryService = {
 
       return {
         ok: true,
-        scenario: row ? mapAdminScenario(row) : null,
+        scenario: row ? await mapAdminScenario(row) : null,
       };
     } catch {
       return {
@@ -657,7 +689,7 @@ export const ScenarioLibraryService = {
 
       return {
         ok: true,
-        scenario: mapAdminScenario(createdRow),
+        scenario: await mapAdminScenario(createdRow),
       };
     } catch {
       return {
@@ -712,7 +744,7 @@ export const ScenarioLibraryService = {
 
       return {
         ok: true,
-        scenario: mapAdminScenario(updatedRow),
+        scenario: await mapAdminScenario(updatedRow),
       };
     } catch {
       return {
@@ -767,7 +799,7 @@ export const ScenarioLibraryService = {
 
       return {
         ok: true,
-        scenario: mapAdminScenario(updatedRow),
+        scenario: await mapAdminScenario(updatedRow),
       };
     } catch {
       return {

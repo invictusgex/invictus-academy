@@ -82,3 +82,14 @@ export type StorageMutationResult =
       message: string;
       ok: false;
     };
+
+export type StorageResolvedAsset =
+  | {
+      source: "external";
+      url: string;
+    }
+  | {
+      path: string;
+      source: "internal";
+      url: string;
+    };

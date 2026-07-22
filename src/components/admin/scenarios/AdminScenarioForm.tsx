@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { AdminScenarioSaveStatus } from "@/components/admin/scenarios/AdminScenarioSaveStatus";
 import { AdminScenarioValidationErrors } from "@/components/admin/scenarios/AdminScenarioValidationErrors";
+import { AdminImageUploadField } from "@/components/admin/storage/AdminImageUploadField";
 import { ScenarioLibraryService } from "@/lib/services/scenario-library.service";
 import type {
   AdminScenario,
@@ -36,7 +37,7 @@ function createInitialFormData(
     scenarioType: scenario?.scenarioType ?? "market_analysis",
     status: scenario?.status ?? "draft",
     summary: scenario?.summary ?? "",
-    thumbnailUrl: scenario?.thumbnailUrl ?? "",
+    thumbnailUrl: scenario?.thumbnailStorageValue ?? "",
     title: scenario?.title ?? "",
     videoId: scenario?.videoId ?? "",
     videoProvider: scenario?.videoProvider ?? "",
@@ -51,13 +52,14 @@ export function AdminScenarioForm({ mode, scenario }: AdminScenarioFormProps) {
     createInitialFormData(scenario),
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [saveStatus, setSaveStatus] =
     useState<"error" | "idle" | "saved" | "saving">("idle");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (isSaving) {
+    if (isSaving || isUploadingThumbnail) {
       return;
     }
 
@@ -259,23 +261,21 @@ export function AdminScenarioForm({ mode, scenario }: AdminScenarioFormProps) {
           </label>
         </div>
 
-        <label className="grid gap-2 text-sm font-medium text-white">
-          Miniatura
-          <input
-            className="min-h-11 rounded-lg border border-[var(--color-border)] bg-[var(--color-card-bg)] px-3 text-sm text-white outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-cyan)]"
-            disabled={isSaving}
-            maxLength={500}
-            onChange={(event) =>
-              setFormData((current) => ({
-                ...current,
-                thumbnailUrl: event.target.value,
-              }))
-            }
-            type="url"
-            value={formData.thumbnailUrl}
-          />
-          <AdminScenarioValidationErrors errors={errors} field="thumbnailUrl" />
-        </label>
+        <AdminImageUploadField
+          disabled={isSaving}
+          helpText="JPG, PNG o WebP. La ruta privada se guardara al guardar el escenario."
+          kind="scenario_thumbnail"
+          label="Miniatura"
+          onChange={(thumbnailUrl) =>
+            setFormData((current) => ({
+              ...current,
+              thumbnailUrl,
+            }))
+          }
+          onUploadStateChange={setIsUploadingThumbnail}
+          value={formData.thumbnailUrl}
+        />
+        <AdminScenarioValidationErrors errors={errors} field="thumbnailUrl" />
 
         <div className="grid gap-5 lg:grid-cols-3">
           <label className="grid gap-2 text-sm font-medium text-white">
@@ -367,10 +367,14 @@ export function AdminScenarioForm({ mode, scenario }: AdminScenarioFormProps) {
         </Link>
         <button
           className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={isSaving}
+          disabled={isSaving || isUploadingThumbnail}
           type="submit"
         >
-          {isSaving ? "Guardando..." : "Guardar"}
+          {isSaving
+            ? "Guardando..."
+            : isUploadingThumbnail
+              ? "Subiendo..."
+              : "Guardar"}
         </button>
       </div>
     </form>

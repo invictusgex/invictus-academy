@@ -6,6 +6,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { AdminContentSaveStatus } from "@/components/admin/content/AdminContentSaveStatus";
 import { AdminContentValidationErrors } from "@/components/admin/content/AdminContentValidationErrors";
 import { LearningObjectivesEditor } from "@/components/admin/content/LearningObjectivesEditor";
+import { AdminImageUploadField } from "@/components/admin/storage/AdminImageUploadField";
 import {
   AdminContentService,
   validateAdminContentModuleInput,
@@ -35,6 +36,7 @@ function createInitialFormData(
     learningObjectives: academyModule.learningObjectives,
     overview: academyModule.overview,
     status: academyModule.status,
+    thumbnailUrl: academyModule.thumbnailUrl ?? "",
     title: academyModule.title,
   };
 }
@@ -48,6 +50,7 @@ export function AdminContentModuleGeneralInfoForm({
   const [saveStatus, setSaveStatus] =
     useState<"idle" | "saving" | "saved" | "error">("idle");
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const durationValue = useMemo(
     () =>
       formData.estimatedDurationMinutes === null
@@ -59,7 +62,7 @@ export function AdminContentModuleGeneralInfoForm({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (isSaving) {
+    if (isSaving || isUploadingThumbnail) {
       return;
     }
 
@@ -259,6 +262,22 @@ export function AdminContentModuleGeneralInfoForm({
             <AdminContentValidationErrors errors={errors} field="status" />
           </label>
         </div>
+
+        <AdminImageUploadField
+          disabled={isSaving}
+          helpText="JPG, PNG o WebP. La ruta interna se guardara al guardar el formulario."
+          kind="module_thumbnail"
+          label="Miniatura del modulo"
+          onChange={(thumbnailUrl) =>
+            setFormData((current) => ({
+              ...current,
+              thumbnailUrl,
+            }))
+          }
+          onUploadStateChange={setIsUploadingThumbnail}
+          value={formData.thumbnailUrl}
+        />
+        <AdminContentValidationErrors errors={errors} field="thumbnailUrl" />
       </div>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -270,10 +289,14 @@ export function AdminContentModuleGeneralInfoForm({
         </Link>
         <button
           className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={isSaving}
+          disabled={isSaving || isUploadingThumbnail}
           type="submit"
         >
-          {isSaving ? "Guardando..." : "Guardar cambios"}
+          {isSaving
+            ? "Guardando..."
+            : isUploadingThumbnail
+              ? "Subiendo..."
+              : "Guardar cambios"}
         </button>
       </div>
     </form>

@@ -40,6 +40,7 @@ export type AdminContentEditableModuleData = {
   learningObjectives: string[];
   overview: string;
   status: AcademyContentStatus;
+  thumbnailUrl: string;
   title: string;
 };
 
@@ -71,6 +72,7 @@ export type AdminContentModuleValidationField =
   | "learningObjectives"
   | "overview"
   | "status"
+  | "thumbnailUrl"
   | "title";
 
 export type AdminContentVideoValidationField =
@@ -174,6 +176,7 @@ export type AdminContentModule = {
   resourceCount: number;
   resources: AdminContentResource[];
   status: AcademyContentStatus;
+  thumbnailUrl: string | null;
   title: string;
   videoCount: number;
   videos: AdminContentVideo[];

@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 
 import { AdminContentSaveStatus } from "@/components/admin/content/AdminContentSaveStatus";
 import { AdminContentResourceValidationErrors } from "@/components/admin/content/AdminContentResourceValidationErrors";
+import { AdminDocumentUploadField } from "@/components/admin/storage/AdminDocumentUploadField";
 import { AdminContentService } from "@/lib/services/admin-content.service";
+import type { AcademyAssetKind } from "@/lib/types/storage.types";
 import type {
   AdminContentEditableResourceData,
   AdminContentModule,
@@ -55,6 +57,7 @@ export function AdminContentResourceForm({
     createInitialFormData({ mode, module, resource }),
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [saveStatus, setSaveStatus] =
     useState<"idle" | "saving" | "saved" | "error">("idle");
   const positionValue = useMemo(
@@ -62,11 +65,18 @@ export function AdminContentResourceForm({
     [formData.position],
   );
   const detailHref = `/admin/content/modules/${module.id}`;
+  const allowedResourceKinds = useMemo<AcademyAssetKind[]>(
+    () =>
+      formData.resourceType === "pdf"
+        ? ["resource_pdf"]
+        : ["resource_pdf", "resource_doc", "resource_image"],
+    [formData.resourceType],
+  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (isSaving) {
+    if (isSaving || isUploadingFile) {
       return;
     }
 
@@ -246,26 +256,24 @@ export function AdminContentResourceForm({
           <AdminContentResourceValidationErrors errors={errors} field="url" />
         </label>
 
-        <label className="grid gap-2 text-sm font-medium text-white">
-          Ruta de archivo
-          <input
-            className="min-h-11 rounded-lg border border-[var(--color-border)] bg-[var(--color-card-bg)] px-3 text-sm text-white outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-cyan)]"
-            disabled={isSaving}
-            maxLength={500}
-            onChange={(event) =>
-              setFormData((current) => ({
-                ...current,
-                storagePath: event.target.value,
-              }))
-            }
-            type="text"
-            value={formData.storagePath}
-          />
-          <AdminContentResourceValidationErrors
-            errors={errors}
-            field="storagePath"
-          />
-        </label>
+        <AdminDocumentUploadField
+          allowedKinds={allowedResourceKinds}
+          disabled={isSaving}
+          helpText="PDF, DOC, DOCX o imagen. Se guardara solo la ruta interna del archivo."
+          label="Archivo del recurso"
+          onChange={(storagePath) =>
+            setFormData((current) => ({
+              ...current,
+              storagePath,
+            }))
+          }
+          onUploadStateChange={setIsUploadingFile}
+          value={formData.storagePath}
+        />
+        <AdminContentResourceValidationErrors
+          errors={errors}
+          field="storagePath"
+        />
       </div>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -277,10 +285,10 @@ export function AdminContentResourceForm({
         </Link>
         <button
           className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={isSaving}
+          disabled={isSaving || isUploadingFile}
           type="submit"
         >
-          {isSaving ? "Guardando..." : "Guardar"}
+          {isSaving ? "Guardando..." : isUploadingFile ? "Subiendo..." : "Guardar"}
         </button>
       </div>
     </form>

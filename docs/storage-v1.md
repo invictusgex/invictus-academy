@@ -1,7 +1,7 @@
 # Storage v1
 
-Esta fase prepara la infraestructura de Supabase Storage para assets de
-Invictus Trading Academy. No implementa subida desde formularios ni cambia UI.
+Esta documentacion cubre la infraestructura de Supabase Storage y la primera
+integracion administrativa de subida de archivos en Invictus Trading Academy.
 
 ## Bucket
 
@@ -80,14 +80,49 @@ Responsabilidades:
 - validar extension;
 - validar tipo MIME;
 - validar tamano maximo;
+- validar que una ruta interna corresponda al tipo de asset esperado;
+- resolver rutas internas privadas a URLs firmadas bajo demanda;
 - convertir errores tecnicos en respuestas controladas;
 - delegar operaciones reales al repository.
 - generar URLs firmadas temporales cuando se necesite acceder a un archivo
   privado.
 
-## Flujo Previsto Para Upload
+## Integracion Administrativa
 
-1. Un formulario futuro recibe un archivo.
+La Fase 6C.2 conecta Storage con formularios administrativos existentes sin
+crear nuevas tablas ni columnas:
+
+- miniaturas de modulos: `academy_modules.thumbnail_url`;
+- miniaturas de escenarios: `market_scenarios.thumbnail_url`;
+- archivos de recursos: `academy_resources.storage_path`.
+
+Los formularios guardan rutas internas, no objetos `File`, URLs firmadas ni
+URLs publicas.
+
+Componentes reutilizables creados:
+
+- `AdminFileUploadField`
+- `AdminImageUploadField`
+- `AdminDocumentUploadField`
+- `AdminFilePreview`
+- `AdminUploadStatus`
+- `AdminRemoveSelectedFileButton`
+
+Estados contemplados:
+
+- sin archivo;
+- archivo local seleccionado;
+- validando;
+- subiendo;
+- subida exitosa;
+- error de validacion;
+- error de subida;
+- archivo existente;
+- seleccion cancelada.
+
+## Flujo De Upload
+
+1. Un formulario administrativo recibe un archivo.
 2. La UI llama a `StorageService.uploadFile`.
 3. El service valida tipo, extension y tamano.
 4. El service genera un nombre definitivo, sin usar el nombre original como
@@ -100,8 +135,8 @@ resources/pdf/{uuid}.pdf
 ```
 
 6. El repository ejecuta la llamada a Supabase Storage.
-7. El formulario futuro guarda la ruta interna resultante en la tabla
-   correspondiente.
+7. El formulario guarda la ruta interna resultante en la tabla correspondiente
+   cuando el administrador guarda el registro.
 
 La base de datos debe guardar rutas internas, por ejemplo:
 
@@ -110,6 +145,12 @@ scenarios/thumbnails/{uuid}.jpg
 ```
 
 No debe guardar URLs firmadas. Las URLs firmadas se generan bajo demanda.
+
+Si una subida funciona pero el guardado de la entidad falla, el archivo puede
+quedar huerfano temporalmente en el bucket. La eliminacion automatica y segura
+de esos objetos queda pendiente para Fase 6C.3. En esta fase, "Quitar
+seleccion" solo revierte el estado visual del formulario y no elimina objetos
+existentes del bucket.
 
 ## URLs Firmadas
 
@@ -135,7 +176,12 @@ temporal y no debe persistirse en base de datos.
 - La escritura depende de `public.admin_users`.
 - No existe acceso publico.
 - No se guarda HTML ni codigo embed.
-- No se implementa Storage en formularios durante esta fase.
+- Los componentes administrativos usan `StorageService`; no importan
+  Supabase, `StorageRepository` ni `supabase.storage`.
+- La aplicacion persiste rutas internas y genera URLs firmadas solo al mostrar
+  archivos privados.
+- Las URLs externas heredadas se muestran directamente y no se migran
+  automaticamente.
 
 ## Limites Iniciales
 

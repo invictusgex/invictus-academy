@@ -5,6 +5,7 @@ import type {
   CreateStoragePathInput,
   StorageFileBody,
   StorageMutationResult,
+  StorageResolvedAsset,
   StorageSignedUrlResult,
   StorageValidationResult,
   StorageValidationRule,
@@ -75,12 +76,32 @@ function getExtension(filename: string) {
 }
 
 function isAllowedPath(path: string) {
-  return academyAssetPathPrefixValues.some((prefix) =>
-    path.startsWith(`${prefix}/`),
-  );
+  return StorageService.isInternalStoragePath(path);
+}
+
+function isSafeHttpUrl(value: string) {
+  try {
+    const url = new URL(value);
+
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 export const StorageService = {
+  getValidationRule(kind: AcademyAssetKind) {
+    return validationRules[kind];
+  },
+
+  formatFileSize(sizeBytes: number) {
+    if (sizeBytes >= 1024 * 1024) {
+      return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    return `${Math.max(1, Math.round(sizeBytes / 1024))} KB`;
+  },
+
   sanitizeFilename(filename: string) {
     return filename
       .normalize("NFD")
@@ -105,6 +126,57 @@ export const StorageService = {
     );
 
     return `${prefix}/${filename}`;
+  },
+
+  determineAssetKindFromFile(file: StorageFileBody, filename: string) {
+    const extension = getExtension(filename);
+    const mimeType = file.type;
+
+    if (mimeType === "application/pdf" || extension === "pdf") {
+      return "resource_pdf" as const;
+    }
+
+    if (mimeType.startsWith("image/")) {
+      return "resource_image" as const;
+    }
+
+    if (["doc", "docx"].includes(extension)) {
+      return "resource_doc" as const;
+    }
+
+    return null;
+  },
+
+  isExternalAssetUrl(value: string) {
+    return isSafeHttpUrl(value);
+  },
+
+  isInternalStoragePath(path: string) {
+    if (
+      !path ||
+      path.startsWith("/") ||
+      path.includes("\\") ||
+      path.includes("..") ||
+      path.includes("//") ||
+      isSafeHttpUrl(path)
+    ) {
+      return false;
+    }
+
+    return academyAssetPathPrefixValues.some((prefix) =>
+      path.startsWith(`${prefix}/`),
+    );
+  },
+
+  validatePathForAssetKind(path: string, kind: AcademyAssetKind) {
+    return (
+      StorageService.isInternalStoragePath(path) &&
+      path.startsWith(`${pathPrefixByKind[kind]}/`)
+    );
+  },
+
+  validatePathForAssetKinds(path: string, kinds: AcademyAssetKind[]) {
+    return kinds.some((kind) => StorageService.validatePathForAssetKind(path, kind));
   },
 
   validateFile({
@@ -256,5 +328,40 @@ export const StorageService = {
       expiresInSeconds,
       path,
     });
+  },
+
+  async resolveAssetUrl({
+    allowedKinds,
+    value,
+  }: {
+    allowedKinds: AcademyAssetKind[];
+    value: string | null;
+  }): Promise<StorageResolvedAsset | null> {
+    if (!value) {
+      return null;
+    }
+
+    if (StorageService.isExternalAssetUrl(value)) {
+      return {
+        source: "external",
+        url: value,
+      };
+    }
+
+    if (!StorageService.validatePathForAssetKinds(value, allowedKinds)) {
+      return null;
+    }
+
+    const signedUrl = await StorageService.createSignedUrl(value);
+
+    if (!signedUrl) {
+      return null;
+    }
+
+    return {
+      path: signedUrl.path,
+      source: "internal",
+      url: signedUrl.signedUrl,
+    };
   },
 };

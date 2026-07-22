@@ -1,4 +1,5 @@
 import { AdminContentRepository } from "@/lib/repositories/admin-content.repository";
+import { StorageService } from "@/lib/services/storage.service";
 import type {
   AcademyContentProgramRows,
   AcademyModuleContentRow,
@@ -34,6 +35,7 @@ const descriptionMaxLength = 500;
 const overviewMaxLength = 2000;
 const objectiveMaxLength = 180;
 const maxObjectiveCount = 20;
+const moduleThumbnailUrlMaxLength = 500;
 const videoTitleMaxLength = 160;
 const videoProviderIdMaxLength = 300;
 const videoThumbnailUrlMaxLength = 500;
@@ -106,6 +108,7 @@ function mapModule({
     resourceCount: moduleResources.length,
     resources: moduleResources,
     status: moduleRow.status,
+    thumbnailUrl: moduleRow.thumbnail_url,
     title: moduleRow.title,
     videoCount: moduleVideos.length,
     videos: moduleVideos,
@@ -206,6 +209,14 @@ function hasUnsafeMarkupCharacters(value: string) {
   return /[<>]/.test(value);
 }
 
+function getAllowedResourceStorageKinds(
+  resourceType: AdminContentEditableResourceData["resourceType"],
+) {
+  return resourceType === "pdf"
+    ? (["resource_pdf"] as const)
+    : (["resource_pdf", "resource_doc", "resource_image"] as const);
+}
+
 export function validateAdminContentModuleInput(
   input: AdminContentEditableModuleData,
 ) {
@@ -217,6 +228,7 @@ export function validateAdminContentModuleInput(
     learningObjectives: normalizeObjectives(input.learningObjectives),
     overview: normalizeLongText(input.overview),
     status: input.status,
+    thumbnailUrl: normalizeText(input.thumbnailUrl),
     title: normalizeText(input.title),
   };
 
@@ -268,6 +280,25 @@ export function validateAdminContentModuleInput(
     errors.push({
       field: "status",
       message: "El estado seleccionado no es valido.",
+    });
+  }
+
+  if (normalized.thumbnailUrl.length > moduleThumbnailUrlMaxLength) {
+    errors.push({
+      field: "thumbnailUrl",
+      message: `La miniatura no puede superar ${moduleThumbnailUrlMaxLength} caracteres.`,
+    });
+  } else if (
+    normalized.thumbnailUrl &&
+    !StorageService.isExternalAssetUrl(normalized.thumbnailUrl) &&
+    !StorageService.validatePathForAssetKind(
+      normalized.thumbnailUrl,
+      "module_thumbnail",
+    )
+  ) {
+    errors.push({
+      field: "thumbnailUrl",
+      message: "La miniatura debe ser una URL heredada o una ruta interna valida.",
     });
   }
 
@@ -572,6 +603,17 @@ function validateAdminContentResourceInput(
       field: "storagePath",
       message: "La ruta de archivo contiene caracteres no permitidos.",
     });
+  } else if (
+    normalized.storagePath &&
+    !StorageService.validatePathForAssetKinds(
+      normalized.storagePath,
+      [...getAllowedResourceStorageKinds(normalized.resourceType)],
+    )
+  ) {
+    errors.push({
+      field: "storagePath",
+      message: "La ruta de archivo no corresponde a un recurso permitido.",
+    });
   }
 
   if (!normalized.url && !normalized.storagePath) {
@@ -782,6 +824,7 @@ export const AdminContentService = {
             nextStatus: validation.normalized.status,
           }),
           status: validation.normalized.status,
+          thumbnail_url: validation.normalized.thumbnailUrl || null,
           title: validation.normalized.title,
         });
 

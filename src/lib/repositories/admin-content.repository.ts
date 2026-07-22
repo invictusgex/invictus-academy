@@ -22,6 +22,7 @@ const moduleSelect = `
   overview,
   learning_objectives,
   estimated_duration_minutes,
+  thumbnail_url,
   availability,
   status,
   published_at,
@@ -72,6 +73,7 @@ type AcademyModuleUpdateRow = {
   overview: string;
   published_at: string | null;
   status: AdminContentEditableModuleData["status"];
+  thumbnail_url: string | null;
   title: string;
 };
 

@@ -109,6 +109,7 @@ export type AdminScenario = PublishedScenario & {
   createdAt: string;
   metadata: Record<string, unknown>;
   status: ScenarioStatus;
+  thumbnailStorageValue: string;
   updatedAt: string;
   videoId: string | null;
 };
