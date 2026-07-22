@@ -120,7 +120,16 @@ Policies de lectura:
   `trading-basado-en-datos` pueden leer escenarios `published`.
 
 No existe policy publica para `anon`.
-No existen policies de `INSERT`, `UPDATE` ni `DELETE` en esta fase.
+
+La fase 6B agrega la migracion
+`20260721005000_admin_scenario_write_policies.sql` con policies de escritura
+solo para usuarios en `public.admin_users`:
+
+- `INSERT`
+- `UPDATE`
+- `DELETE`
+
+No amplia permisos de alumnos.
 
 ## Repository
 
@@ -137,8 +146,13 @@ Operaciones:
 - `getAdminScenarios`
 - `getAdminScenarioById`
 - `getAdminScenarioSummary`
+- `scenarioKeyExists`
+- `createScenario`
+- `updateScenario`
+- `updateScenarioStatus`
+- `deleteScenario`
 
-Toda consulta a Supabase vive en el repository.
+Toda consulta y escritura a Supabase vive en el repository.
 
 ## Service
 
@@ -155,6 +169,11 @@ Responsabilidades:
 - ocultar datos no necesarios al alumno;
 - generar etiquetas en espanol;
 - construir URLs seguras de video para proveedores soportados;
+- validar entradas administrativas;
+- generar `scenario_key`;
+- aplicar reglas de publicacion;
+- validar cambios de estado;
+- validar eliminacion;
 - convertir errores tecnicos en resultados controlados.
 
 Orden por defecto para alumnos:
@@ -185,6 +204,8 @@ Administracion:
 
 - `/admin/scenarios`
 - `/admin/scenarios/[scenarioId]`
+- `/admin/scenarios/new`
+- `/admin/scenarios/[scenarioId]/edit`
 
 Estas rutas quedan dentro de:
 
@@ -222,14 +243,101 @@ Los alumnos ven:
 
 No ven metadata interna ni estados no publicados.
 
+## Gestion Administrativa
+
+La fase 6B permite:
+
+- crear escenarios;
+- editar escenarios;
+- publicar escenarios;
+- volver escenarios publicados a borrador;
+- archivar escenarios;
+- eliminar escenarios solo si estan en `draft` o `archived`.
+
+No se permite eliminar escenarios `published`.
+
+## Campos Editables
+
+El formulario administrativo permite editar:
+
+- `title`
+- `summary`
+- `description`
+- `scenario_type`
+- `market`
+- `instrument`
+- `event_date`
+- `thumbnail_url`
+- `video_provider`
+- `video_id`
+- `video_url`
+- `document_url`
+- `status`
+
+`metadata` se conserva como `{}` porque aun no hay campos funcionales definidos
+y no se acepta JSON arbitrario desde la UI.
+
+Campos protegidos:
+
+- `id`
+- `scenario_key`
+- `published_at`
+- `created_at`
+- `updated_at`
+
+## Generacion De `scenario_key`
+
+`scenario_key` se genera al crear el escenario:
+
+- basado inicialmente en `title`;
+- minusculas;
+- sin acentos;
+- solo letras, numeros y guiones;
+- sin guiones duplicados;
+- sin guiones al inicio o final;
+- con control de colisiones mediante sufijos numericos.
+
+No se regenera al editar el titulo.
+
+## Publicacion
+
+`published_at` no se edita manualmente.
+
+Reglas:
+
+- al pasar a `published` sin fecha previa, se asigna la fecha actual;
+- si continua `published`, conserva `published_at`;
+- al pasar a `draft` o `archived`, se guarda `published_at = null`.
+
+## Validaciones
+
+Limites elegidos:
+
+- `title`: obligatorio, maximo 160 caracteres.
+- `summary`: obligatorio, maximo 300 caracteres.
+- `description`: opcional, maximo 5000 caracteres.
+- `instrument`: maximo 32 caracteres, normalizado a mayusculas.
+- URLs: maximo 500 caracteres, solo `http` o `https`.
+- `video_id`: maximo 300 caracteres.
+
+Tambien se validan:
+
+- `scenario_type` segun constraint real;
+- `market` segun constraint real;
+- `status` segun constraint real;
+- `event_date` con formato valido;
+- coherencia entre `video_provider`, `video_id` y `video_url`;
+- ausencia de marcado HTML arbitrario.
+
+## Storage
+
+Supabase Storage no esta implementado en esta fase. Miniaturas, documentos y
+videos se registran mediante URLs.
+
 ## Funciones No Implementadas
 
 Quedan fuera de esta fase:
 
-- crear escenarios;
-- editar escenarios;
-- eliminar escenarios;
-- publicar o archivar desde UI;
 - categorias;
 - etiquetas;
 - comentarios;
@@ -239,3 +347,4 @@ Quedan fuera de esta fase:
 - progreso por escenario;
 - feed infinito;
 - carga directa de archivos.
+- duplicacion de escenarios.

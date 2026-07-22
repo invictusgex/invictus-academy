@@ -3,8 +3,11 @@ import {
   isSupabaseConfigured,
 } from "@/lib/database/client";
 import type {
+  AdminScenarioEditableData,
   NormalizedScenarioLibraryFilters,
+  ScenarioStatus,
   ScenarioLibraryRow,
+  ScenarioVideoProvider,
 } from "@/lib/types/scenario-library.types";
 
 const scenarioSelect = `
@@ -34,6 +37,32 @@ const emptySummary = {
   drafts: 0,
   published: 0,
   total: 0,
+};
+
+type ScenarioCreateRow = {
+  description: string;
+  document_url: string | null;
+  event_date: string | null;
+  instrument: string;
+  market: AdminScenarioEditableData["market"];
+  metadata: Record<string, never>;
+  published_at: string | null;
+  scenario_key: string;
+  scenario_type: AdminScenarioEditableData["scenarioType"];
+  status: AdminScenarioEditableData["status"];
+  summary: string;
+  thumbnail_url: string | null;
+  title: string;
+  video_id: string | null;
+  video_provider: ScenarioVideoProvider | null;
+  video_url: string | null;
+};
+
+type ScenarioUpdateRow = Omit<ScenarioCreateRow, "scenario_key">;
+
+type ScenarioStatusUpdateRow = {
+  published_at: string | null;
+  status: ScenarioStatus;
 };
 
 function ensureSupabaseConfigured() {
@@ -195,5 +224,95 @@ export const ScenarioLibraryRepository = {
 
       return { ...summary, drafts: summary.drafts + 1, total: summary.total + 1 };
     }, emptySummary);
+  },
+
+  async scenarioKeyExists(scenarioKey: string): Promise<boolean> {
+    ensureSupabaseConfigured();
+
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("market_scenarios")
+      .select("id")
+      .eq("scenario_key", scenarioKey)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return Boolean(data);
+  },
+
+  async createScenario(input: ScenarioCreateRow): Promise<ScenarioLibraryRow> {
+    ensureSupabaseConfigured();
+
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("market_scenarios")
+      .insert(input)
+      .select(scenarioSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as ScenarioLibraryRow;
+  },
+
+  async updateScenario(
+    scenarioId: string,
+    input: ScenarioUpdateRow,
+  ): Promise<ScenarioLibraryRow> {
+    ensureSupabaseConfigured();
+
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("market_scenarios")
+      .update(input)
+      .eq("id", scenarioId)
+      .select(scenarioSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as ScenarioLibraryRow;
+  },
+
+  async updateScenarioStatus(
+    scenarioId: string,
+    input: ScenarioStatusUpdateRow,
+  ): Promise<ScenarioLibraryRow> {
+    ensureSupabaseConfigured();
+
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("market_scenarios")
+      .update(input)
+      .eq("id", scenarioId)
+      .select(scenarioSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as ScenarioLibraryRow;
+  },
+
+  async deleteScenario(scenarioId: string): Promise<void> {
+    ensureSupabaseConfigured();
+
+    const supabase = getSupabaseClient();
+    const { error } = await supabase
+      .from("market_scenarios")
+      .delete()
+      .eq("id", scenarioId);
+
+    if (error) {
+      throw error;
+    }
   },
 };

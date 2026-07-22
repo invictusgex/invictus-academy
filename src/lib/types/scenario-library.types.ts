@@ -120,6 +120,67 @@ export type AdminScenarioSummary = {
   total: number;
 };
 
+export type AdminScenarioEditableData = {
+  description: string;
+  documentUrl: string;
+  eventDate: string;
+  instrument: string;
+  market: ScenarioMarket;
+  scenarioType: ScenarioType;
+  status: ScenarioStatus;
+  summary: string;
+  thumbnailUrl: string;
+  title: string;
+  videoId: string;
+  videoProvider: ScenarioVideoProvider | "";
+  videoUrl: string;
+};
+
+export type AdminScenarioValidationField =
+  | "description"
+  | "documentUrl"
+  | "eventDate"
+  | "general"
+  | "instrument"
+  | "market"
+  | "scenarioType"
+  | "status"
+  | "summary"
+  | "thumbnailUrl"
+  | "title"
+  | "videoId"
+  | "videoProvider"
+  | "videoUrl";
+
+export type AdminScenarioValidationError = {
+  field: AdminScenarioValidationField;
+  message: string;
+};
+
+export type AdminScenarioMutationResult =
+  | {
+      ok: true;
+      scenario: AdminScenario;
+    }
+  | {
+      errors: AdminScenarioValidationError[];
+      ok: false;
+    };
+
+export type AdminScenarioDeleteResult =
+  | {
+      ok: true;
+    }
+  | {
+      errors: AdminScenarioValidationError[];
+      ok: false;
+    };
+
+export type AdminScenarioStatusAction =
+  | "archive"
+  | "publish"
+  | "return_to_draft";
+
 export type PublishedScenarioListResult =
   | {
       ok: true;

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { AdminScenarioDeleteConfirmation } from "@/components/admin/scenarios/AdminScenarioDeleteConfirmation";
+import { AdminScenarioStatusActions } from "@/components/admin/scenarios/AdminScenarioStatusActions";
 import { ScenarioMedia } from "@/components/scenarios/ScenarioMedia";
 import { ScenarioLibraryService } from "@/lib/services/scenario-library.service";
 import type { AdminScenario } from "@/lib/types/scenario-library.types";
@@ -118,22 +120,37 @@ export function AdminScenarioDetailPage({
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <Link
-          className="text-sm font-semibold text-[var(--color-cyan)] transition hover:text-white"
-          href="/admin/scenarios"
-        >
-          Volver a escenarios
-        </Link>
-        <p className="mt-6 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          {scenario.labels.status}
-        </p>
-        <h1 className="mt-3 break-words text-3xl font-semibold text-white">
-          {scenario.title}
-        </h1>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          {scenario.summary || "Sin resumen disponible."}
-        </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <Link
+              className="text-sm font-semibold text-[var(--color-cyan)] transition hover:text-white"
+              href="/admin/scenarios"
+            >
+              Volver a escenarios
+            </Link>
+            <p className="mt-6 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+              {scenario.labels.status}
+            </p>
+            <h1 className="mt-3 break-words text-3xl font-semibold text-white">
+              {scenario.title}
+            </h1>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
+              {scenario.summary || "Sin resumen disponible."}
+            </p>
+          </div>
+          <Link
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
+            href={`/admin/scenarios/${scenario.id}/edit`}
+          >
+            Editar
+          </Link>
+        </div>
       </section>
+
+      <AdminScenarioStatusActions
+        onUpdated={setScenario}
+        scenario={scenario}
+      />
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <DetailItem label="ID" value={scenario.id} />
@@ -154,6 +171,18 @@ export function AdminScenarioDetailPage({
           value={scenario.labels.videoProvider ?? "Sin video"}
         />
         <DetailItem label="Video ID" value={scenario.videoId ?? "Sin video ID"} />
+        <DetailItem
+          label="Video URL"
+          value={scenario.videoUrl ?? "Sin URL de video"}
+        />
+        <DetailItem
+          label="Miniatura"
+          value={scenario.thumbnailUrl ?? "Sin miniatura"}
+        />
+        <DetailItem
+          label="Documento"
+          value={scenario.documentUrl ?? "Sin documento"}
+        />
       </section>
 
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
@@ -163,6 +192,13 @@ export function AdminScenarioDetailPage({
         </p>
       </section>
 
+      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
+        <h2 className="text-xl font-semibold text-white">Metadata</h2>
+        <pre className="mt-4 overflow-x-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm text-[var(--color-text-secondary)]">
+          {JSON.stringify(scenario.metadata, null, 2)}
+        </pre>
+      </section>
+
       <ScenarioMedia
         documentUrl={scenario.documentUrl}
         thumbnailUrl={scenario.thumbnailUrl}
@@ -170,6 +206,13 @@ export function AdminScenarioDetailPage({
         videoEmbedUrl={scenario.videoEmbedUrl}
         videoUrl={scenario.videoUrl}
       />
+
+      <section className="rounded-2xl border border-red-200/40 bg-[var(--color-panel-bg)] p-5">
+        <h2 className="text-lg font-semibold text-white">Eliminacion</h2>
+        <div className="mt-4">
+          <AdminScenarioDeleteConfirmation scenario={scenario} />
+        </div>
+      </section>
     </div>
   );
 }

@@ -94,16 +94,26 @@ export function AdminScenariosPage() {
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Biblioteca de Escenarios
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold text-white">
-          Escenarios de mercado
-        </h1>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Lectura administrativa de analisis y ejemplos operativos publicados o
-          preparados para alumnos.
-        </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+              Biblioteca de Escenarios
+            </p>
+            <h1 className="mt-3 text-3xl font-semibold text-white">
+              Escenarios de mercado
+            </h1>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
+              Gestion administrativa de analisis y ejemplos operativos
+              publicados o preparados para alumnos.
+            </p>
+          </div>
+          <Link
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
+            href="/admin/scenarios/new"
+          >
+            Nuevo escenario
+          </Link>
+        </div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
