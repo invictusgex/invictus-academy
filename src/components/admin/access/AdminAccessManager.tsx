@@ -2,6 +2,9 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
+import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
+import { AdminStatusMessage } from "@/components/admin/ui/AdminStatusMessage";
+import { formatEnrollmentStatus } from "@/components/admin/ui/admin-formatters";
 import { AdminEnrollmentsService } from "@/lib/services/admin-enrollments.service";
 import { AdminStudentsService } from "@/lib/services/admin-students.service";
 import type {
@@ -320,14 +323,14 @@ export function AdminAccessManager({
         </div>
 
         {error ? (
-          <p className="mt-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm text-[var(--color-text-secondary)]">
-            {error}
-          </p>
+          <div className="mt-5">
+            <AdminStatusMessage tone="error">{error}</AdminStatusMessage>
+          </div>
         ) : null}
         {success ? (
-          <p className="mt-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm font-medium text-[var(--color-cyan)]">
-            {success}
-          </p>
+          <div className="mt-5">
+            <AdminStatusMessage tone="success">{success}</AdminStatusMessage>
+          </div>
         ) : null}
 
         {selectedStudentId ? (
@@ -355,9 +358,9 @@ export function AdminAccessManager({
                       </h3>
                       <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
                         Estado:{" "}
-                        <span className="font-semibold text-[var(--color-cyan)]">
-                          {enrollment?.status ?? "Sin enrollment"}
-                        </span>
+                        <AdminStatusBadge>
+                          {formatEnrollmentStatus(enrollment?.status)}
+                        </AdminStatusBadge>
                       </p>
                       <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
                         Inscripción: {formatDate(enrollment?.createdAt ?? null)}
@@ -417,7 +420,7 @@ export function AdminAccessManager({
                               Cambiar vencimiento
                             </button>
                             <button
-                              className="min-h-10 rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] disabled:cursor-not-allowed disabled:opacity-50"
+                              className="min-h-10 rounded-full border border-red-200/40 px-4 text-sm font-semibold text-red-100 transition hover:border-red-200 disabled:cursor-not-allowed disabled:opacity-50"
                               disabled={isMutating}
                               onClick={() => setPendingRevokeId(enrollment.id)}
                               type="button"

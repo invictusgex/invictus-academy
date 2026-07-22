@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { AdminScenarioDeleteConfirmation } from "@/components/admin/scenarios/AdminScenarioDeleteConfirmation";
 import { AdminScenarioStatusActions } from "@/components/admin/scenarios/AdminScenarioStatusActions";
+import { AdminDangerZone } from "@/components/admin/ui/AdminDangerZone";
 import { ScenarioMedia } from "@/components/scenarios/ScenarioMedia";
 import { ScenarioLibraryService } from "@/lib/services/scenario-library.service";
 import type { AdminScenario } from "@/lib/types/scenario-library.types";
@@ -207,12 +208,9 @@ export function AdminScenarioDetailPage({
         videoUrl={scenario.videoUrl}
       />
 
-      <section className="rounded-2xl border border-red-200/40 bg-[var(--color-panel-bg)] p-5">
-        <h2 className="text-lg font-semibold text-white">Eliminacion</h2>
-        <div className="mt-4">
-          <AdminScenarioDeleteConfirmation scenario={scenario} />
-        </div>
-      </section>
+      <AdminDangerZone description="Las acciones de esta seccion pueden retirar o eliminar contenido administrativo.">
+        <AdminScenarioDeleteConfirmation scenario={scenario} />
+      </AdminDangerZone>
     </div>
   );
 }

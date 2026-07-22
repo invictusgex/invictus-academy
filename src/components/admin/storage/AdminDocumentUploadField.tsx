@@ -23,12 +23,18 @@ export function AdminDocumentUploadField({
   onUploadStateChange,
   value,
 }: AdminDocumentUploadFieldProps) {
+  const maxSize = Math.max(
+    ...allowedKinds.map(
+      (kind) => StorageService.getValidationRule(kind).maxSizeBytes,
+    ),
+  );
+
   return (
     <AdminFileUploadField
       accept=".pdf,.doc,.docx,image/jpeg,image/png,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       allowedKinds={allowedKinds}
       disabled={disabled}
-      helpText={helpText}
+      helpText={`${helpText} Tamano maximo: ${StorageService.formatFileSize(maxSize)}.`}
       label={label}
       mode="document"
       onChange={onChange}

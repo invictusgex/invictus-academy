@@ -5,6 +5,10 @@ import { FormEvent, useMemo, useState } from "react";
 
 import { AdminContentSaveStatus } from "@/components/admin/content/AdminContentSaveStatus";
 import { AdminContentValidationErrors } from "@/components/admin/content/AdminContentValidationErrors";
+import {
+  formatAvailability,
+  formatContentStatus,
+} from "@/components/admin/content/admin-content-formatters";
 import { LearningObjectivesEditor } from "@/components/admin/content/LearningObjectivesEditor";
 import { AdminImageUploadField } from "@/components/admin/storage/AdminImageUploadField";
 import {
@@ -232,7 +236,7 @@ export function AdminContentModuleGeneralInfoForm({
             >
               {adminContentAvailabilityValues.map((availability) => (
                 <option key={availability} value={availability}>
-                  {availability}
+                  {formatAvailability(availability)}
                 </option>
               ))}
             </select>
@@ -255,7 +259,7 @@ export function AdminContentModuleGeneralInfoForm({
             >
               {adminContentStatusValues.map((status) => (
                 <option key={status} value={status}>
-                  {status}
+                  {formatContentStatus(status)}
                 </option>
               ))}
             </select>

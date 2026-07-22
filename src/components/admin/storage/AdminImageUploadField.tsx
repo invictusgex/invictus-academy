@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 
 import { AdminFileUploadField } from "@/components/admin/storage/AdminFileUploadField";
+import { StorageService } from "@/lib/services/storage.service";
 import type { AcademyAssetKind } from "@/lib/types/storage.types";
 
 type AdminImageUploadFieldProps = {
@@ -25,13 +26,16 @@ export function AdminImageUploadField({
   value,
 }: AdminImageUploadFieldProps) {
   const allowedKinds = useMemo(() => [kind], [kind]);
+  const maxSize = StorageService.formatFileSize(
+    StorageService.getValidationRule(kind).maxSizeBytes,
+  );
 
   return (
     <AdminFileUploadField
       accept="image/jpeg,image/png,image/webp"
       allowedKinds={allowedKinds}
       disabled={disabled}
-      helpText={helpText}
+      helpText={`${helpText} Tamano maximo: ${maxSize}.`}
       label={label}
       mode="image"
       onChange={onChange}

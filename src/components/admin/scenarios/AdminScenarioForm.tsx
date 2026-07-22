@@ -12,6 +12,10 @@ import type {
   AdminScenario,
   AdminScenarioEditableData,
   AdminScenarioValidationError,
+  ScenarioMarket,
+  ScenarioStatus,
+  ScenarioType,
+  ScenarioVideoProvider,
 } from "@/lib/types/scenario-library.types";
 import {
   scenarioMarketValues,
@@ -19,6 +23,39 @@ import {
   scenarioTypeValues,
   scenarioVideoProviderValues,
 } from "@/lib/types/scenario-library.types";
+
+const scenarioTypeLabels: Record<ScenarioType, string> = {
+  execution_example: "Ejemplo de ejecucion",
+  gamma_structure: "Estructura de gamma",
+  heatmap: "Heatmap",
+  macro_event: "Evento macro",
+  market_analysis: "Analisis de mercado",
+  order_flow: "Order flow",
+  other: "Otro",
+  trade_review: "Revision de trade",
+  volume_profile: "Perfil de volumen",
+};
+
+const scenarioMarketLabels: Record<ScenarioMarket, string> = {
+  equities: "Acciones",
+  futures: "Futuros",
+  macro: "Macro",
+  options: "Opciones",
+  other: "Otro",
+};
+
+const scenarioStatusLabels: Record<ScenarioStatus, string> = {
+  archived: "Archivado",
+  draft: "Borrador",
+  published: "Publicado",
+};
+
+const scenarioVideoProviderLabels: Record<ScenarioVideoProvider, string> = {
+  bunny: "Bunny",
+  external: "Externo",
+  vimeo: "Vimeo",
+  youtube: "YouTube",
+};
 
 type AdminScenarioFormProps = {
   mode: "create" | "edit";
@@ -171,7 +208,7 @@ export function AdminScenarioForm({ mode, scenario }: AdminScenarioFormProps) {
             >
               {scenarioTypeValues.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {scenarioTypeLabels[value]}
                 </option>
               ))}
             </select>
@@ -193,7 +230,7 @@ export function AdminScenarioForm({ mode, scenario }: AdminScenarioFormProps) {
             >
               {scenarioMarketValues.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {scenarioMarketLabels[value]}
                 </option>
               ))}
             </select>
@@ -215,7 +252,7 @@ export function AdminScenarioForm({ mode, scenario }: AdminScenarioFormProps) {
             >
               {scenarioStatusValues.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {scenarioStatusLabels[value]}
                 </option>
               ))}
             </select>
@@ -295,7 +332,7 @@ export function AdminScenarioForm({ mode, scenario }: AdminScenarioFormProps) {
               <option value="">Sin video</option>
               {scenarioVideoProviderValues.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {scenarioVideoProviderLabels[value]}
                 </option>
               ))}
             </select>

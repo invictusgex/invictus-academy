@@ -4,6 +4,10 @@ import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import {
+  formatContentStatus,
+  formatResourceType,
+} from "@/components/admin/content/admin-content-formatters";
 import { AdminContentSaveStatus } from "@/components/admin/content/AdminContentSaveStatus";
 import { AdminContentResourceValidationErrors } from "@/components/admin/content/AdminContentResourceValidationErrors";
 import { AdminDocumentUploadField } from "@/components/admin/storage/AdminDocumentUploadField";
@@ -180,7 +184,7 @@ export function AdminContentResourceForm({
             >
               {adminContentResourceTypeValues.map((resourceType) => (
                 <option key={resourceType} value={resourceType}>
-                  {resourceType}
+                  {formatResourceType(resourceType)}
                 </option>
               ))}
             </select>
@@ -230,7 +234,7 @@ export function AdminContentResourceForm({
             >
               {adminContentStatusValues.map((status) => (
                 <option key={status} value={status}>
-                  {status}
+                  {formatContentStatus(status)}
                 </option>
               ))}
             </select>

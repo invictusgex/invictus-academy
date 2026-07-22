@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { AdminEmptyState } from "@/components/admin/ui/AdminEmptyState";
+import { AdminLoadingSkeleton } from "@/components/admin/ui/AdminLoadingSkeleton";
+import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
+import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
+import { AdminStatusMessage } from "@/components/admin/ui/AdminStatusMessage";
+import { formatAdminDate } from "@/components/admin/ui/admin-formatters";
 import { ScenarioLibraryService } from "@/lib/services/scenario-library.service";
 import type {
   AdminScenario,
@@ -20,18 +26,6 @@ const emptySummary: AdminScenarioSummary = {
   published: 0,
   total: 0,
 };
-
-function formatDate(value: string | null) {
-  if (!value) {
-    return "Sin fecha";
-  }
-
-  return new Intl.DateTimeFormat("es", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value.includes("T") ? value : `${value}T00:00:00`));
-}
 
 function SummaryCard({ label, value }: SummaryItem) {
   return (
@@ -93,28 +87,21 @@ export function AdminScenariosPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-              Biblioteca de Escenarios
-            </p>
-            <h1 className="mt-3 text-3xl font-semibold text-white">
-              Escenarios de mercado
-            </h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-              Gestion administrativa de analisis y ejemplos operativos
-              publicados o preparados para alumnos.
-            </p>
-          </div>
+      <AdminPageHeader
+        actions={
           <Link
             className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
             href="/admin/scenarios/new"
           >
             Nuevo escenario
           </Link>
-        </div>
-      </section>
+        }
+        eyebrow="Biblioteca de Escenarios"
+        title="Escenarios de mercado"
+      >
+        Gestion administrativa de analisis y ejemplos operativos publicados o
+        preparados para alumnos.
+      </AdminPageHeader>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {summaryItems.map((item) => (
@@ -131,10 +118,14 @@ export function AdminScenariosPage() {
         </div>
 
         {error ? (
-          <div className="p-5 text-sm text-red-200">{error}</div>
+          <div className="p-5">
+            <AdminStatusMessage tone="error">{error}</AdminStatusMessage>
+          </div>
         ) : null}
 
-        {!error ? (
+        {loading ? <AdminLoadingSkeleton rows={5} /> : null}
+
+        {!error && !loading ? (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[72rem] border-collapse text-left text-sm">
               <thead className="bg-[var(--color-card-bg)] text-xs tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
@@ -167,14 +158,14 @@ export function AdminScenariosPage() {
                     <td className="px-5 py-4 text-[var(--color-text-secondary)]">
                       {scenario.instrument || "Sin instrumento"}
                     </td>
-                    <td className="px-5 py-4 text-[var(--color-cyan)]">
-                      {scenario.labels.status}
+                    <td className="px-5 py-4">
+                      <AdminStatusBadge>{scenario.labels.status}</AdminStatusBadge>
                     </td>
                     <td className="px-5 py-4 text-[var(--color-text-secondary)]">
-                      {formatDate(scenario.eventDate)}
+                      {formatAdminDate(scenario.eventDate)}
                     </td>
                     <td className="px-5 py-4 text-[var(--color-text-secondary)]">
-                      {formatDate(scenario.updatedAt)}
+                      {formatAdminDate(scenario.updatedAt)}
                     </td>
                     <td className="px-5 py-4">
                       <Link
@@ -186,13 +177,15 @@ export function AdminScenariosPage() {
                     </td>
                   </tr>
                 ))}
-                {!loading && scenarios.length === 0 ? (
+                {scenarios.length === 0 ? (
                   <tr>
-                    <td
-                      className="px-5 py-8 text-center text-[var(--color-text-secondary)]"
-                      colSpan={8}
-                    >
-                      No hay escenarios registrados.
+                    <td className="px-5 py-8" colSpan={8}>
+                      <AdminEmptyState
+                        actionHref="/admin/scenarios/new"
+                        actionLabel="Nuevo escenario"
+                        description="Crea el primer escenario para comenzar a construir la biblioteca operativa."
+                        title="No hay escenarios todavia"
+                      />
                     </td>
                   </tr>
                 ) : null}

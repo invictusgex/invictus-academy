@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { formatContentStatus } from "@/components/admin/content/admin-content-formatters";
 import { AdminContentSaveStatus } from "@/components/admin/content/AdminContentSaveStatus";
 import { AdminContentVideoValidationErrors } from "@/components/admin/content/AdminContentVideoValidationErrors";
 import { AdminContentService } from "@/lib/services/admin-content.service";
@@ -259,7 +260,7 @@ export function AdminContentVideoForm({
             >
               {adminContentStatusValues.map((status) => (
                 <option key={status} value={status}>
-                  {status}
+                  {formatContentStatus(status)}
                 </option>
               ))}
             </select>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { StorageService } from "@/lib/services/storage.service";
@@ -54,10 +55,13 @@ export function AdminFilePreview({
 
   if (mode === "image") {
     return (
-      <img
+      <Image
         alt={alt}
         className="h-40 w-full max-w-sm rounded-lg border border-[var(--color-border)] object-cover"
+        height={160}
         src={resolvedUrl}
+        unoptimized
+        width={384}
       />
     );
   }

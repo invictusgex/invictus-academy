@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
+import { AdminEmptyState } from "@/components/admin/ui/AdminEmptyState";
+import { AdminLoadingSkeleton } from "@/components/admin/ui/AdminLoadingSkeleton";
+import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
+import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
+import { AdminStatusMessage } from "@/components/admin/ui/AdminStatusMessage";
+import { formatAdminDate } from "@/components/admin/ui/admin-formatters";
 import { AdminStudentsService } from "@/lib/services/admin-students.service";
 import type {
   AdminStudent,
@@ -11,18 +17,6 @@ import type {
 } from "@/lib/types/admin-students.types";
 
 const pageSize = 10;
-
-function formatDate(value: string | null) {
-  if (!value) {
-    return "Sin registro";
-  }
-
-  return new Intl.DateTimeFormat("es", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
 
 function getDisplayName(student: AdminStudent) {
   return student.fullName?.trim() || "Alumno sin nombre";
@@ -117,18 +111,10 @@ export function AdminStudentsPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Alumnos
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold text-white">
-          Listado de alumnos
-        </h1>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Consulta administrativa de alumnos inscritos, cursos y progreso
-          academico registrado.
-        </p>
-      </section>
+      <AdminPageHeader eyebrow="Alumnos" title="Listado de alumnos">
+        Consulta administrativa de alumnos inscritos, cursos y progreso
+        academico registrado.
+      </AdminPageHeader>
 
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
         <form
@@ -179,12 +165,16 @@ export function AdminStudentsPage() {
         </div>
 
         {error ? (
-          <div className="p-5 text-sm text-[var(--color-text-secondary)]">
-            No fue posible cargar el listado administrativo.
+          <div className="p-5">
+            <AdminStatusMessage tone="error">
+              No fue posible cargar el listado administrativo.
+            </AdminStatusMessage>
           </div>
         ) : null}
 
-        {!error ? (
+        {loading ? <AdminLoadingSkeleton rows={5} /> : null}
+
+        {!error && !loading ? (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
               <thead className="bg-[var(--color-card-bg)] text-xs tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
@@ -220,7 +210,7 @@ export function AdminStudentsPage() {
                         {student.email ?? "No disponible"}
                       </td>
                       <td className="px-5 py-4 text-[var(--color-text-secondary)]">
-                        {formatDate(student.lastEnrollmentAt)}
+                        {formatAdminDate(student.lastEnrollmentAt)}
                       </td>
                       <td className="px-5 py-4 text-[var(--color-text-secondary)]">
                         {getCourseSummary(student)}
@@ -228,19 +218,19 @@ export function AdminStudentsPage() {
                       <td className="px-5 py-4 text-white">
                         {progress.percentage} %
                       </td>
-                      <td className="px-5 py-4 text-[var(--color-cyan)]">
-                        {progress.status}
+                      <td className="px-5 py-4">
+                        <AdminStatusBadge>{progress.status}</AdminStatusBadge>
                       </td>
                     </tr>
                   );
                 })}
-                {!loading && students.length === 0 ? (
+                {students.length === 0 ? (
                   <tr>
-                    <td
-                      className="px-5 py-8 text-center text-[var(--color-text-secondary)]"
-                      colSpan={6}
-                    >
-                      No hay alumnos para mostrar.
+                    <td className="px-5 py-8" colSpan={6}>
+                      <AdminEmptyState
+                        description="Ajusta la busqueda o espera a que existan alumnos registrados con actividad administrativa."
+                        title="No hay alumnos para mostrar"
+                      />
                     </td>
                   </tr>
                 ) : null}

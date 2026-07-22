@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { AdminEmptyState } from "@/components/admin/ui/AdminEmptyState";
+import { AdminLoadingSkeleton } from "@/components/admin/ui/AdminLoadingSkeleton";
+import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
+import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
+import { AdminStatusMessage } from "@/components/admin/ui/AdminStatusMessage";
 import {
   formatAvailability,
   formatContentStatus,
@@ -81,18 +86,10 @@ export function AdminContentPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Contenido
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold text-white">
-          Contenido academico
-        </h1>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Vista administrativa de modulos, videos y recursos existentes en el
-          CMS academico.
-        </p>
-      </section>
+      <AdminPageHeader eyebrow="Contenido" title="Contenido academico">
+        Vista administrativa de modulos, videos y recursos existentes en el CMS
+        academico.
+      </AdminPageHeader>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         {summaryItems.map((item) => (
@@ -109,12 +106,16 @@ export function AdminContentPage() {
         </div>
 
         {error ? (
-          <div className="p-5 text-sm text-[var(--color-text-secondary)]">
-            No fue posible cargar el contenido administrativo.
+          <div className="p-5">
+            <AdminStatusMessage tone="error">
+              No fue posible cargar el contenido administrativo.
+            </AdminStatusMessage>
           </div>
         ) : null}
 
-        {!error ? (
+        {loading ? <AdminLoadingSkeleton rows={6} /> : null}
+
+        {!error && !loading ? (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[62rem] border-collapse text-left text-sm">
               <thead className="bg-[var(--color-card-bg)] text-xs tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
@@ -141,8 +142,10 @@ export function AdminContentPage() {
                     <td className="px-5 py-4 font-medium text-white">
                       {academyModule.title}
                     </td>
-                    <td className="px-5 py-4 text-[var(--color-cyan)]">
-                      {formatContentStatus(academyModule.status)}
+                    <td className="px-5 py-4">
+                      <AdminStatusBadge>
+                        {formatContentStatus(academyModule.status)}
+                      </AdminStatusBadge>
                     </td>
                     <td className="px-5 py-4 text-[var(--color-text-secondary)]">
                       {formatDurationMinutes(
@@ -168,13 +171,13 @@ export function AdminContentPage() {
                     </td>
                   </tr>
                 ))}
-                {!loading && modules.length === 0 ? (
+                {modules.length === 0 ? (
                   <tr>
-                    <td
-                      className="px-5 py-8 text-center text-[var(--color-text-secondary)]"
-                      colSpan={8}
-                    >
-                      No hay modulos para mostrar.
+                    <td className="px-5 py-8" colSpan={8}>
+                      <AdminEmptyState
+                        description="Cuando exista contenido academico sincronizado, los modulos apareceran aqui para su gestion."
+                        title="No hay modulos para mostrar"
+                      />
                     </td>
                   </tr>
                 ) : null}
