@@ -11,6 +11,7 @@ export const getAcademyModuleResources =
 export const academyNavigation: AcademyNavItem[] = [
   { label: "Inicio", href: "/academy" },
   { label: "Mi programa", href: "/academy/programa" },
+  { label: "Biblioteca de Escenarios", href: "/academy/escenarios" },
   { label: "Progreso", href: "/academy" },
   { label: "Configuración", href: "/academy" },
 ];
