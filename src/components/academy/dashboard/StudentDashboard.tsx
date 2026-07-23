@@ -11,10 +11,13 @@ import { StudentProgressSummary } from "@/components/academy/dashboard/StudentPr
 import { StudentScenarioCard } from "@/components/academy/dashboard/StudentScenarioCard";
 import {
   getAccessibleModules,
+  getCurrentModuleSummary,
   getProgressPercentage,
   getProgramStatusLabel,
   getStudentGreeting,
   getStudentNameFromEmail,
+  toStudentModuleStatus,
+  type StudentModuleSummary,
 } from "@/components/academy/dashboard/student-dashboard-utils";
 import { useModuleThumbnailUrls } from "@/components/academy/dashboard/useModuleThumbnailUrls";
 import { useRecentPublishedScenarios } from "@/components/academy/dashboard/useRecentPublishedScenarios";
@@ -29,18 +32,10 @@ import {
 } from "@/components/student";
 import { useProgressContext } from "@/contexts/ProgressContext";
 import { useAuth } from "@/hooks/useAuth";
-import type { ModuleProgressStatus as PersistedModuleProgressStatus } from "@/lib/types/progress.types";
-import type { Course, Module } from "@/types/academy";
+import type { Course } from "@/types/academy";
 import {
   formatModuleProgressStatusLabel,
-  type ModuleProgressStatus,
 } from "@/utils/module-progress";
-
-type ModuleDashboardSummary = {
-  academyModule: Module;
-  status: ModuleProgressStatus;
-  statusLabel: string;
-};
 
 type StudentDashboardProps = {
   course: Course;
@@ -51,7 +46,7 @@ function getHeroCta({
   completedModules,
   totalModules,
 }: {
-  continueModule: ModuleDashboardSummary | null;
+  continueModule: StudentModuleSummary | null;
   completedModules: number;
   totalModules: number;
 }) {
@@ -86,8 +81,8 @@ function getVisibleModules({
   continueModule,
   modules,
 }: {
-  continueModule: ModuleDashboardSummary | null;
-  modules: ModuleDashboardSummary[];
+  continueModule: StudentModuleSummary | null;
+  modules: StudentModuleSummary[];
 }) {
   if (!continueModule) {
     return modules.slice(0, 4);
@@ -102,20 +97,6 @@ function getVisibleModules({
   );
 
   return modules.slice(startIndex, startIndex + 4);
-}
-
-function toDashboardModuleStatus(
-  status: PersistedModuleProgressStatus,
-): ModuleProgressStatus {
-  if (status === "completed") {
-    return "completed";
-  }
-
-  if (status === "in_progress") {
-    return "in-progress";
-  }
-
-  return "not-started";
 }
 
 export function StudentDashboard({ course }: StudentDashboardProps) {
@@ -143,10 +124,10 @@ export function StudentDashboard({ course }: StudentDashboardProps) {
     () => getAccessibleModules(course.modules),
     [course.modules],
   );
-  const moduleSummaries = useMemo<ModuleDashboardSummary[]>(
+  const moduleSummaries = useMemo<StudentModuleSummary[]>(
     () =>
       accessibleModules.map((academyModule) => {
-        const status = toDashboardModuleStatus(
+        const status = toStudentModuleStatus(
           getPersistedModuleStatus(academyModule.id),
         );
 
@@ -169,14 +150,7 @@ export function StudentDashboard({ course }: StudentDashboardProps) {
     totalModules,
   });
   const continueModule = useMemo(
-    () =>
-      moduleSummaries.find(
-        (moduleSummary) => moduleSummary.status === "in-progress",
-      ) ??
-      moduleSummaries.find(
-        (moduleSummary) => moduleSummary.status !== "completed",
-      ) ??
-      null,
+    () => getCurrentModuleSummary(moduleSummaries),
     [moduleSummaries],
   );
   const visibleModules = useMemo(

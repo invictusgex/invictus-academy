@@ -1,5 +1,14 @@
 import type { Module } from "@/types/academy";
+import type {
+  ModuleProgressStatus as PersistedModuleProgressStatus,
+} from "@/lib/types/progress.types";
 import type { ModuleProgressStatus } from "@/utils/module-progress";
+
+export type StudentModuleSummary = {
+  academyModule: Module;
+  status: ModuleProgressStatus;
+  statusLabel: string;
+};
 
 export function getAccessibleModules(modules: Module[]) {
   return modules
@@ -14,6 +23,32 @@ export function getAccessibleModules(modules: Module[]) {
         firstModule.number - secondModule.number ||
         firstModule.id.localeCompare(secondModule.id),
     );
+}
+
+export function getCurrentModuleSummary(moduleSummaries: StudentModuleSummary[]) {
+  return (
+    moduleSummaries.find(
+      (moduleSummary) => moduleSummary.status === "in-progress",
+    ) ??
+    moduleSummaries.find(
+      (moduleSummary) => moduleSummary.status !== "completed",
+    ) ??
+    null
+  );
+}
+
+export function toStudentModuleStatus(
+  status: PersistedModuleProgressStatus,
+): ModuleProgressStatus {
+  if (status === "completed") {
+    return "completed";
+  }
+
+  if (status === "in_progress") {
+    return "in-progress";
+  }
+
+  return "not-started";
 }
 
 export function getStudentNameFromEmail(email: string | null | undefined) {
