@@ -1,49 +1,17 @@
 import { notFound } from "next/navigation";
 
-import { LearningObjectives } from "@/components/academy/module/LearningObjectives";
-import { ModuleBreadcrumb } from "@/components/academy/module/ModuleBreadcrumb";
-import { ModuleHeader } from "@/components/academy/module/ModuleHeader";
-import { ModuleNavigation } from "@/components/academy/module/ModuleNavigation";
-import { ModulePurpose } from "@/components/academy/module/ModulePurpose";
-import { ModuleResources } from "@/components/academy/module/ModuleResources";
-import { TrainingSession } from "@/components/academy/module/TrainingSession";
+import { StudentModuleDetailPage } from "@/components/academy/module/StudentModuleDetailPage";
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { getAcademyModule, getAcademyProgram } from "@/lib/academy";
-import type { ModuleVideo } from "@/types/academy";
 
 type ModulePageProps = {
   params: Promise<{
     moduleId: string;
   }>;
-  searchParams?: Promise<{
-    video?: string | string[];
-  }>;
 };
 
-function normalizePurposeText(value: string) {
-  return value.trim().replace(/\s+/g, " ").toLocaleLowerCase("es");
-}
-
-function getSelectedVideoId(
-  videos: ModuleVideo[],
-  videoParam?: string | string[],
-) {
-  const rawVideoParam = Array.isArray(videoParam) ? videoParam[0] : videoParam;
-  const videoNumber = Number.parseInt(rawVideoParam ?? "1", 10);
-  const selectedIndex =
-    Number.isInteger(videoNumber) && videoNumber >= 1 && videoNumber <= videos.length
-      ? videoNumber - 1
-      : 0;
-
-  return videos[selectedIndex]?.id;
-}
-
-export default async function AcademyModulePage({
-  params,
-  searchParams,
-}: ModulePageProps) {
+export default async function AcademyModulePage({ params }: ModulePageProps) {
   const { moduleId } = await params;
-  const resolvedSearchParams = await searchParams;
   const course = await getAcademyProgram();
   const academyModule = await getAcademyModule(moduleId);
 
@@ -51,45 +19,9 @@ export default async function AcademyModulePage({
     notFound();
   }
 
-  const previousModule = course.modules[academyModule.number - 2];
-  const nextModule = course.modules[academyModule.number];
-  const moduleOverview = academyModule.overview.trim();
-  const moduleDescription = academyModule.description.trim();
-  const normalizedOverview = normalizePurposeText(moduleOverview);
-  const normalizedDescription = normalizePurposeText(moduleDescription);
-  const purpose =
-    moduleOverview && normalizedOverview !== normalizedDescription
-      ? moduleOverview
-      : "";
-  const selectedVideoId = getSelectedVideoId(
-    academyModule.videos,
-    resolvedSearchParams?.video,
-  );
-
   return (
     <AcademyShell>
-      <div className="space-y-6">
-        <ModuleBreadcrumb moduleNumber={academyModule.number} />
-        <ModuleHeader
-          number={academyModule.number}
-          title={academyModule.title}
-          description={academyModule.description}
-          availability={academyModule.availability}
-          competenciesCount={academyModule.learningObjectives.length}
-        />
-        <ModulePurpose purpose={purpose} />
-        <LearningObjectives objectives={academyModule.learningObjectives} />
-        <TrainingSession
-          academyModule={academyModule}
-          isAvailable={academyModule.availability === "available"}
-          selectedVideoId={selectedVideoId}
-        />
-        <ModuleResources resources={academyModule.resources} />
-        <ModuleNavigation
-          previousModule={previousModule}
-          nextModule={nextModule}
-        />
-      </div>
+      <StudentModuleDetailPage academyModule={academyModule} course={course} />
     </AcademyShell>
   );
 }
