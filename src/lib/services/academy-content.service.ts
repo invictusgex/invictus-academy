@@ -66,6 +66,7 @@ function mapModule({
       .filter((resource) => resource.module_id === moduleRow.id)
       .map(mapResource),
     status: moduleRow.status,
+    thumbnailUrl: moduleRow.thumbnail_url,
     title: moduleRow.title,
     updatedAt: moduleRow.updated_at,
     videos: videos

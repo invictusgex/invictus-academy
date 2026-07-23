@@ -59,6 +59,21 @@ export type ScenarioLibraryRow = {
   video_url: string | null;
 };
 
+export type RecentPublishedScenarioRow = Pick<
+  ScenarioLibraryRow,
+  | "event_date"
+  | "id"
+  | "instrument"
+  | "market"
+  | "published_at"
+  | "scenario_key"
+  | "scenario_type"
+  | "status"
+  | "summary"
+  | "thumbnail_url"
+  | "title"
+>;
+
 export type ScenarioLibraryFilters = {
   dateFrom?: string;
   dateTo?: string;

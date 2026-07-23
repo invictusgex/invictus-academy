@@ -22,6 +22,7 @@ import {
   moduleProgressToAcademyProgressCache,
   syncModuleProgress,
 } from "@/lib/services/progress.service";
+import type { ModuleProgress } from "@/lib/types/progress.types";
 import type {
   AcademyProgressState,
   Course,
@@ -52,12 +53,16 @@ export function ProgressProvider({
   const [progress, setProgress] = useState<AcademyProgressState>(() =>
     createEmptyAcademyProgress(),
   );
+  const [syncedModuleProgress, setSyncedModuleProgress] = useState<
+    Record<string, ModuleProgress>
+  >({});
   const syncRequestRef = useRef(0);
 
   const syncFromProgress = useCallback(
     async (localProgress: AcademyProgressState) => {
       if (!user) {
         setProgress(localProgress);
+        setSyncedModuleProgress({});
         return;
       }
 
@@ -78,6 +83,14 @@ export function ProgressProvider({
       });
 
       if (syncRequestRef.current === syncRequestId) {
+        setSyncedModuleProgress(
+          Object.fromEntries(
+            result.synced.map((moduleProgress) => [
+              moduleProgress.moduleKey,
+              moduleProgress,
+            ]),
+          ),
+        );
         writeAcademyProgressSnapshot(mergedProgress);
         setProgress(mergedProgress);
       }
@@ -93,6 +106,7 @@ export function ProgressProvider({
     try {
       await syncFromProgress(localProgress);
     } catch {
+      setSyncedModuleProgress({});
       setProgress(localProgress);
     } finally {
       setLoading(false);
@@ -157,6 +171,11 @@ export function ProgressProvider({
       getModuleProgressSummary(academyModule, getVideoStatus),
     [getVideoStatus],
   );
+  const getPersistedModuleStatus = useCallback(
+    (moduleKey: string) =>
+      syncedModuleProgress[moduleKey]?.status ?? "not_started",
+    [syncedModuleProgress],
+  );
 
   const programSummary = useMemo(
     () => getProgramProgressSummary(course, getVideoStatus),
@@ -170,6 +189,7 @@ export function ProgressProvider({
   const value = useMemo(
     () => ({
       getModuleSummary,
+      getPersistedModuleStatus,
       getScopedVideoStatus,
       getVideoStatus,
       loading,
@@ -184,6 +204,7 @@ export function ProgressProvider({
     }),
     [
       getModuleSummary,
+      getPersistedModuleStatus,
       getScopedVideoStatus,
       getVideoStatus,
       loading,

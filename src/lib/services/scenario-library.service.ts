@@ -13,6 +13,7 @@ import type {
   PublishedScenario,
   PublishedScenarioDetailResult,
   PublishedScenarioListResult,
+  RecentPublishedScenarioRow,
   ScenarioLabelSet,
   ScenarioLibraryFilters,
   ScenarioLibraryRow,
@@ -516,8 +517,15 @@ function buildVideoEmbedUrl(row: ScenarioLibraryRow) {
   return null;
 }
 
-function buildLabels(row: ScenarioLibraryRow): ScenarioLabelSet {
-  const videoProvider = normalizeVideoProvider(row.video_provider);
+type ScenarioLabelSource = Pick<
+  ScenarioLibraryRow,
+  "market" | "scenario_type" | "status"
+> & {
+  video_provider?: ScenarioVideoProvider | null;
+};
+
+function buildLabels(row: ScenarioLabelSource): ScenarioLabelSet {
+  const videoProvider = normalizeVideoProvider(row.video_provider ?? null);
 
   return {
     market: scenarioMarketLabels[row.market],
@@ -564,6 +572,31 @@ async function mapPublishedScenario(
   };
 }
 
+async function mapRecentPublishedScenario(
+  row: RecentPublishedScenarioRow,
+): Promise<PublishedScenario> {
+  const thumbnailUrl = await resolveScenarioThumbnailUrl(row.thumbnail_url);
+
+  return {
+    description: "",
+    documentUrl: null,
+    eventDate: row.event_date,
+    id: row.id,
+    instrument: row.instrument,
+    labels: buildLabels(row),
+    market: row.market,
+    publishedAt: row.published_at,
+    scenarioKey: row.scenario_key,
+    scenarioType: row.scenario_type,
+    summary: row.summary,
+    thumbnailUrl,
+    title: row.title,
+    videoEmbedUrl: null,
+    videoProvider: null,
+    videoUrl: null,
+  };
+}
+
 async function mapAdminScenario(row: ScenarioLibraryRow): Promise<AdminScenario> {
   return {
     ...(await mapPublishedScenario(row)),
@@ -592,6 +625,27 @@ export const ScenarioLibraryService = {
     } catch {
       return {
         message: "No fue posible cargar la biblioteca de escenarios.",
+        ok: false,
+        scenarios: [],
+      };
+    }
+  },
+
+  async getRecentPublishedScenarios(
+    limit = 3,
+  ): Promise<PublishedScenarioListResult> {
+    try {
+      const rows = await ScenarioLibraryRepository.getRecentPublishedScenarios(
+        Math.max(0, Math.min(limit, 3)),
+      );
+
+      return {
+        ok: true,
+        scenarios: await Promise.all(rows.map(mapRecentPublishedScenario)),
+      };
+    } catch {
+      return {
+        message: "No fue posible cargar los escenarios recientes.",
         ok: false,
         scenarios: [],
       };

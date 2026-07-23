@@ -26,6 +26,7 @@ const moduleSelect = `
   overview,
   learning_objectives,
   estimated_duration_minutes,
+  thumbnail_url,
   availability,
   status,
   published_at,

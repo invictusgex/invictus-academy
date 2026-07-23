@@ -72,6 +72,7 @@ export type Module = {
   learningObjectives: string[];
   availability: ModuleAvailability;
   status?: AcademyContentStatus;
+  thumbnailUrl?: string | null;
   updatedAt?: string;
   videos: ModuleVideo[];
   resources: ModuleResource[];

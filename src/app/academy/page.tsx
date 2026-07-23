@@ -1,5 +1,4 @@
-import { DashboardHero } from "@/components/academy/DashboardHero";
-import { DashboardProgressCenter } from "@/components/academy/DashboardProgressCenter";
+import { StudentDashboard } from "@/components/academy/dashboard/StudentDashboard";
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { getAcademyProgram } from "@/lib/academy";
 
@@ -8,8 +7,7 @@ export default async function AcademyPage() {
 
   return (
     <AcademyShell>
-      <DashboardHero userName="Ariel" />
-      <DashboardProgressCenter course={course} />
+      <StudentDashboard course={course} />
     </AcademyShell>
   );
 }

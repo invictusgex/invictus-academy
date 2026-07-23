@@ -5,6 +5,7 @@ import {
 import type {
   AdminScenarioEditableData,
   NormalizedScenarioLibraryFilters,
+  RecentPublishedScenarioRow,
   ScenarioStatus,
   ScenarioLibraryRow,
   ScenarioVideoProvider,
@@ -30,6 +31,20 @@ const scenarioSelect = `
   published_at,
   created_at,
   updated_at
+`;
+
+const recentPublishedScenarioSelect = `
+  id,
+  scenario_key,
+  title,
+  summary,
+  scenario_type,
+  market,
+  instrument,
+  event_date,
+  thumbnail_url,
+  status,
+  published_at
 `;
 
 const emptySummary = {
@@ -136,6 +151,27 @@ export const ScenarioLibraryRepository = {
     }
 
     return (data as unknown as ScenarioLibraryRow[] | null) ?? [];
+  },
+
+  async getRecentPublishedScenarios(
+    limit: number,
+  ): Promise<RecentPublishedScenarioRow[]> {
+    ensureSupabaseConfigured();
+
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("market_scenarios")
+      .select(recentPublishedScenarioSelect)
+      .eq("status", "published")
+      .order("event_date", { ascending: false, nullsFirst: false })
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .limit(limit);
+
+    if (error) {
+      throw error;
+    }
+
+    return (data as unknown as RecentPublishedScenarioRow[] | null) ?? [];
   },
 
   async getPublishedScenarioByIdOrKey(

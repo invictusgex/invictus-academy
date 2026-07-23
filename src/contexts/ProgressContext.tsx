@@ -8,6 +8,9 @@ import type {
   VideoProgressStatus,
 } from "@/types/academy";
 import type {
+  ModuleProgressStatus as PersistedModuleProgressStatus,
+} from "@/lib/types/progress.types";
+import type {
   getModuleProgressSummary,
   getProgramProgressSummary,
   NextPendingSession,
@@ -17,7 +20,10 @@ export type ProgressContextValue = {
   getModuleSummary: (
     academyModule: Module,
   ) => ReturnType<typeof getModuleProgressSummary>;
-  getScopedVideoStatus: (moduleId: string) => (videoId: string) => VideoProgressStatus;
+  getPersistedModuleStatus: (moduleKey: string) => PersistedModuleProgressStatus;
+  getScopedVideoStatus: (
+    moduleId: string,
+  ) => (videoId: string) => VideoProgressStatus;
   getVideoStatus: (moduleId: string, videoId: string) => VideoProgressStatus;
   loading: boolean;
   markCompleted: (moduleId: string, videoId: string) => Promise<void>;
