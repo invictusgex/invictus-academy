@@ -127,6 +127,29 @@ Se cubren:
 - Las imagenes informativas tienen `alt`; los fallbacks no dependen solo del
   color.
 
+## Refinamiento Visual Fase 7.2
+
+La jerarquia visual final queda:
+
+1. Hero de bienvenida.
+2. Continuar formacion.
+3. Resumen del programa.
+4. Programa.
+5. Escenarios recientes.
+6. Accesos rapidos.
+
+El refinamiento mantiene el fondo oscuro institucional y el acento cyan sin
+agregar datos, rutas, metricas ni nuevas consultas. El hero suma decoracion CSS
+abstracta de estructura/flujo, la tarjeta de continuar recibe mayor peso visual,
+las tarjetas compactas estabilizan miniaturas y alturas, y los CTAs tienen
+microinteracciones sutiles con soporte `motion-reduce`.
+
+En responsive, los CTAs pasan a ancho completo en mobile, las miniaturas usan
+proporcion estable `16/10` y los grids conservan stack vertical antes de pasar a
+2, 3 o 4 columnas. Los fallbacks de miniaturas son internos por CSS y no cargan
+imagenes remotas. La accesibilidad conserva un unico `h1`, headings por seccion,
+foco visible y barra de progreso con ARIA.
+
 ## Limites
 
 No se implementa:

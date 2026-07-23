@@ -45,7 +45,7 @@ contexto, luego estado, despues tareas disponibles.
 ## Espaciado
 
 - Separacion entre bloques principales: `space-y-6`.
-- Secciones: `p-6 sm:p-8`.
+- Secciones: `p-5 sm:p-7 lg:p-8`.
 - Cards: `p-5 sm:p-6`.
 - Grids: `gap-4`.
 
@@ -63,6 +63,18 @@ contexto, luego estado, despues tareas disponibles.
 - Skeletons declaran `role="status"` y texto `sr-only`.
 - Badges no deben ser la unica forma de comunicar informacion critica.
 - Contraste se apoya en los tokens oscuros existentes del proyecto.
+
+## Refinamiento Visual Fase 7.2
+
+- `StudentCard` incorpora transicion sutil de borde y elevacion moderada cuando
+  `elevated` esta activo.
+- `StudentSection` alinea mejor acciones secundarias y permite CTA full-width en
+  mobile.
+- `StudentActionCard` mantiene altura consistente y empuja el CTA al final.
+- `StudentEmptyState` usa un separador discreto y CTA responsive para integrarse
+  con el dashboard.
+- Las microinteracciones son ligeras, no continuas y respetan
+  `motion-reduce`.
 
 ## Tokens Reutilizados
 

@@ -22,8 +22,8 @@ export function StudentActionCard({
   title,
 }: StudentActionCardProps) {
   return (
-    <StudentCard elevated>
-      <div className="flex flex-col gap-4">
+    <StudentCard className="h-full" elevated>
+      <div className="flex h-full flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             {eyebrow ? (
@@ -41,7 +41,7 @@ export function StudentActionCard({
           </p>
         ) : null}
         <Link
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-fit"
+          className="mt-auto inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
           href={ctaHref}
         >
           {ctaLabel}

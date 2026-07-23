@@ -23,11 +23,18 @@ export function StudentWelcomeHero({
   name,
 }: StudentWelcomeHeroProps) {
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)] sm:p-8 lg:p-10">
-      <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-center">
+    <section className="relative overflow-hidden rounded-2xl border border-cyan-200/20 bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 shadow-[0_18px_54px_rgba(0,0,0,0.2)] sm:p-8 lg:p-10">
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 opacity-60 lg:block">
+        <div className="absolute right-10 top-8 h-44 w-44 rounded-full border border-cyan-200/10" />
+        <div className="absolute right-20 top-20 h-28 w-64 rounded-full border border-cyan-200/10" />
+        <div className="absolute right-8 top-1/2 h-px w-72 bg-cyan-200/20" />
+        <div className="absolute right-20 top-[58%] h-px w-52 bg-cyan-200/15" />
+        <div className="absolute right-36 top-[42%] h-20 w-px bg-cyan-200/15" />
+      </div>
+      <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-center">
         <div className="min-w-0">
           {badge ? <StudentStatusBadge tone="info">{badge}</StudentStatusBadge> : null}
-          <h1 className="mt-5 text-3xl font-semibold text-white sm:text-4xl lg:text-5xl">
+          <h1 className="mt-5 max-w-4xl text-balance text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
             {greeting}
             {name ? (
               <>
@@ -41,7 +48,7 @@ export function StudentWelcomeHero({
           </p>
           {ctaHref && ctaLabel ? (
             <Link
-              className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
+              className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               href={ctaHref}
             >
               {ctaLabel}

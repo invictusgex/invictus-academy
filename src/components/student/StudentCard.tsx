@@ -16,8 +16,8 @@ export function StudentCard({
   return (
     <article
       className={classNames(
-        "rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5 sm:p-6",
-        elevated && "shadow-[0_20px_70px_rgba(0,0,0,0.22)]",
+        "rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5 transition-colors duration-200 hover:border-cyan-200/35 sm:p-6 motion-reduce:transition-none",
+        elevated && "shadow-[0_18px_46px_rgba(0,0,0,0.18)]",
         className,
       )}
     >

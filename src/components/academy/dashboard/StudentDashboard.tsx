@@ -236,40 +236,6 @@ export function StudentDashboard({ course }: StudentDashboardProps) {
       />
 
       <StudentSection
-        description="Una vista breve de tu avance actual dentro del programa."
-        title="Resumen del programa"
-      >
-        {progressLoading ? (
-          <StudentLoadingSkeleton columns={3} rows={3} />
-        ) : (
-          <div className="space-y-4">
-            <StudentProgressSummary
-              completedModules={completedModules}
-              percentage={progressPercentage}
-              statusLabel={programStatusLabel}
-              totalModules={totalModules}
-            />
-            <StudentContentGrid columns={3}>
-              <StudentStatCard
-                caption={`${totalModules} modulos disponibles`}
-                label="Modulos completados"
-                value={`${completedModules}/${totalModules}`}
-              />
-              {!scenarioError ? (
-                <StudentStatCard
-                  caption="Escenarios publicados visibles para tu cuenta"
-                  label="Escenarios recientes"
-                  value={
-                    scenariosLoading ? "..." : String(recentScenarios.length)
-                  }
-                />
-              ) : null}
-            </StudentContentGrid>
-          </div>
-        )}
-      </StudentSection>
-
-      <StudentSection
         description="Retoma el modulo que corresponde segun tu progreso actual."
         title="Continuar formacion"
       >
@@ -303,9 +269,43 @@ export function StudentDashboard({ course }: StudentDashboardProps) {
       </StudentSection>
 
       <StudentSection
+        description="Una lectura clara de tu posicion actual dentro del programa."
+        title="Resumen del programa"
+      >
+        {progressLoading ? (
+          <StudentLoadingSkeleton columns={3} rows={3} />
+        ) : (
+          <div className="space-y-4">
+            <StudentProgressSummary
+              completedModules={completedModules}
+              percentage={progressPercentage}
+              statusLabel={programStatusLabel}
+              totalModules={totalModules}
+            />
+            <StudentContentGrid columns={3}>
+              <StudentStatCard
+                caption={`${totalModules} modulos disponibles`}
+                label="Modulos completados"
+                value={`${completedModules}/${totalModules}`}
+              />
+              {!scenarioError ? (
+                <StudentStatCard
+                  caption="Escenarios publicados visibles para tu cuenta"
+                  label="Escenarios recientes"
+                  value={
+                    scenariosLoading ? "..." : String(recentScenarios.length)
+                  }
+                />
+              ) : null}
+            </StudentContentGrid>
+          </div>
+        )}
+      </StudentSection>
+
+      <StudentSection
         actions={
           <Link
-            className="inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+            className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto motion-reduce:transition-none motion-reduce:hover:translate-y-0"
             href="/academy/programa"
           >
             Ver programa completo
@@ -338,7 +338,7 @@ export function StudentDashboard({ course }: StudentDashboardProps) {
       <StudentSection
         actions={
           <Link
-            className="inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+            className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto motion-reduce:transition-none motion-reduce:hover:translate-y-0"
             href="/academy/escenarios"
           >
             Ver Biblioteca de Escenarios

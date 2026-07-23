@@ -22,26 +22,30 @@ type StudentScenarioCardProps = {
 
 export function StudentScenarioCard({ scenario }: StudentScenarioCardProps) {
   return (
-    <StudentCard>
-      {scenario.thumbnailUrl ? (
-        <Image
-          alt={`Captura de ${scenario.title}`}
-          className="h-36 w-full rounded-xl border border-[var(--color-border)] object-cover"
-          height={220}
-          src={scenario.thumbnailUrl}
-          unoptimized
-          width={360}
-        />
-      ) : (
-        <div className="flex h-36 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] text-sm text-[var(--color-text-muted)]">
-          Sin captura
-        </div>
-      )}
+    <StudentCard className="flex h-full flex-col">
+      <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
+        {scenario.thumbnailUrl ? (
+          <Image
+            alt={`Captura de ${scenario.title}`}
+            className="aspect-[16/10] w-full object-cover"
+            height={220}
+            src={scenario.thumbnailUrl}
+            unoptimized
+            width={360}
+          />
+        ) : (
+          <div className="flex aspect-[16/10] items-center justify-center bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] text-sm text-[var(--color-text-muted)]">
+            <span className="rounded-full border border-[var(--color-border)] px-3 py-1">
+              Sin captura
+            </span>
+          </div>
+        )}
+      </div>
       <div className="mt-5 flex flex-wrap gap-2">
         <StudentStatusBadge tone="info">{scenario.labels.scenarioType}</StudentStatusBadge>
         <StudentStatusBadge>{scenario.labels.market}</StudentStatusBadge>
       </div>
-      <h3 className="mt-4 line-clamp-2 text-lg font-semibold text-white">
+      <h3 className="mt-4 line-clamp-2 min-h-14 text-lg font-semibold leading-7 text-white">
         {scenario.title}
       </h3>
       <p className="mt-2 text-sm text-[var(--color-text-muted)]">
@@ -52,7 +56,7 @@ export function StudentScenarioCard({ scenario }: StudentScenarioCardProps) {
         {scenario.summary || "Sin resumen disponible."}
       </p>
       <Link
-        className="mt-5 inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+        className="mt-auto inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         href={`/academy/escenarios/${scenario.scenarioKey}`}
       >
         Ver escenario
