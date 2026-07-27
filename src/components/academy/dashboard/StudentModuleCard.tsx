@@ -62,6 +62,7 @@ export function StudentModuleCard({
         {academyModule.overview || academyModule.description}
       </p>
       <Link
+        aria-label={`Ver módulo ${academyModule.number}: ${academyModule.title}`}
         className="mt-auto inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         href={`/academy/programa/${academyModule.id}`}
       >

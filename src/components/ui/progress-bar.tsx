@@ -14,6 +14,7 @@ export function ProgressBar({ value, label }: ProgressBarProps) {
       </div>
       <div
         aria-label={`${label}: ${value} %`}
+        aria-valuetext={`${value} % - ${label}`}
         className="h-3 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-page-bg)]"
         role="progressbar"
         aria-valuenow={value}

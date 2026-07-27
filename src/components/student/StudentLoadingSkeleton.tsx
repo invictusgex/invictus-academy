@@ -17,11 +17,14 @@ export function StudentLoadingSkeleton({
         columns === 3 && "md:grid-cols-2 xl:grid-cols-3",
         columns === 4 && "sm:grid-cols-2 xl:grid-cols-4",
       )}
+      aria-busy="true"
+      aria-live="polite"
       role="status"
     >
       <span className="sr-only">Cargando contenido del alumno</span>
       {Array.from({ length: rows }).map((_, index) => (
         <div
+          aria-hidden="true"
           className="min-h-36 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)]"
           key={index}
         />

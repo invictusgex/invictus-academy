@@ -82,6 +82,7 @@ export function AcademySupport() {
           id={SUPPORT_PANEL_ID}
           ref={panelRef}
           role="dialog"
+          aria-modal="true"
           aria-labelledby={SUPPORT_TITLE_ID}
           onKeyDown={handlePanelKeyDown}
           className="fixed right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-40 w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 shadow-2xl shadow-black/40 transition sm:right-6 sm:bottom-24"
@@ -125,12 +126,12 @@ export function AcademySupport() {
       <button
         ref={triggerRef}
         type="button"
-        aria-label="Contactar con soporte"
+        aria-label={isOpen ? "Cerrar soporte" : "Contactar con soporte"}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         aria-controls={SUPPORT_PANEL_ID}
         onClick={() => setIsOpen((currentState) => !currentState)}
-        className="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--color-cyan-line)] bg-[var(--color-card-bg)] px-4 text-sm font-semibold text-white shadow-xl shadow-black/30 transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:right-6 sm:bottom-6"
+        className="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--color-cyan-line)] bg-[var(--color-card-bg)] px-4 text-sm font-semibold text-white shadow-xl shadow-black/30 transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:right-6 sm:bottom-6 motion-reduce:transition-none"
       >
         <svg
           aria-hidden="true"

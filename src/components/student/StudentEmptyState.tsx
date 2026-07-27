@@ -16,7 +16,7 @@ export function StudentEmptyState({
 }: StudentEmptyStateProps) {
   return (
     <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 text-center sm:p-8">
-      <div className="mx-auto mb-4 h-px w-20 bg-cyan-200/25" />
+      <div aria-hidden="true" className="mx-auto mb-4 h-px w-20 bg-cyan-200/25" />
       <h3 className="text-xl font-semibold text-white">{title}</h3>
       {children ? (
         <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[var(--color-text-secondary)]">
