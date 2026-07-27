@@ -2,25 +2,10 @@
 
 import { createContext, useContext } from "react";
 
-import type {
-  AcademyProgressState,
-  Module,
-  VideoProgressStatus,
-} from "@/types/academy";
-import type {
-  ModuleProgressStatus as PersistedModuleProgressStatus,
-} from "@/lib/types/progress.types";
-import type {
-  getModuleProgressSummary,
-  getProgramProgressSummary,
-  NextPendingSession,
-} from "@/utils/module-progress";
+import type { VideoProgressStatus } from "@/types/academy";
+import type { ProgramProgress } from "@/utils/module-progress";
 
 export type ProgressContextValue = {
-  getModuleSummary: (
-    academyModule: Module,
-  ) => ReturnType<typeof getModuleProgressSummary>;
-  getPersistedModuleStatus: (moduleKey: string) => PersistedModuleProgressStatus;
   getScopedVideoStatus: (
     moduleId: string,
   ) => (videoId: string) => VideoProgressStatus;
@@ -28,9 +13,7 @@ export type ProgressContextValue = {
   loading: boolean;
   markCompleted: (moduleId: string, videoId: string) => Promise<void>;
   markInProgress: (moduleId: string, videoId: string) => Promise<void>;
-  nextPendingSession: NextPendingSession | undefined;
-  progress: AcademyProgressState;
-  programSummary: ReturnType<typeof getProgramProgressSummary>;
+  progress: ProgramProgress;
   refresh: () => Promise<void>;
 };
 

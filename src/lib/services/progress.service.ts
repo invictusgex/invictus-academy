@@ -108,7 +108,7 @@ function getProgressUpdatedAt(moduleProgress: ModuleProgress) {
   );
 }
 
-function getCompletedSessionCountFromPercent(
+function getCompletedVideoCountFromPercent(
   academyModule: Module,
   progressPercent: number,
 ) {
@@ -304,7 +304,7 @@ export function moduleProgressToAcademyProgressCache({
       continue;
     }
 
-    const completedSessionCount = getCompletedSessionCountFromPercent(
+    const completedVideoCount = getCompletedVideoCountFromPercent(
       academyModule,
       moduleRecord.progressPercent,
     );
@@ -319,10 +319,10 @@ export function moduleProgressToAcademyProgressCache({
       );
       let nextStatus: VideoProgressStatus = "not-started";
 
-      if (index < completedSessionCount) {
+      if (index < completedVideoCount) {
         nextStatus = "completed";
       } else if (
-        index === completedSessionCount &&
+        index === completedVideoCount &&
         moduleRecord.status === "in_progress"
       ) {
         nextStatus = "in-progress";

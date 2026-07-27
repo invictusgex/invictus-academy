@@ -3,14 +3,6 @@
 import Link from "next/link";
 import { useMemo } from "react";
 
-import {
-  getAccessibleModules,
-  getCurrentModuleSummary,
-  getProgressPercentage,
-  getProgramStatusLabel,
-  toStudentModuleStatus,
-  type StudentModuleSummary,
-} from "@/components/academy/dashboard/student-dashboard-utils";
 import { useModuleThumbnailUrls } from "@/components/academy/dashboard/useModuleThumbnailUrls";
 import { CurrentProgramModuleCard } from "@/components/academy/program/CurrentProgramModuleCard";
 import { StudentProgramModuleCard } from "@/components/academy/program/StudentProgramModuleCard";
@@ -22,14 +14,9 @@ import {
   StudentLoadingSkeleton,
 } from "@/components/student";
 import { useProgressContext } from "@/contexts/ProgressContext";
-import type { Course } from "@/types/academy";
-import { formatModuleProgressStatusLabel } from "@/utils/module-progress";
+import type { ProgramModuleProgress } from "@/utils/module-progress";
 
-type StudentProgramPageProps = {
-  course: Course;
-};
-
-function getModuleCtaLabel(status: StudentModuleSummary["status"]) {
+function getModuleCtaLabel(status: ProgramModuleProgress["status"]) {
   if (status === "completed") {
     return "Revisar modulo";
   }
@@ -41,70 +28,35 @@ function getModuleCtaLabel(status: StudentModuleSummary["status"]) {
   return "Comenzar modulo";
 }
 
-export function StudentProgramPage({ course }: StudentProgramPageProps) {
-  const {
-    getPersistedModuleStatus,
-    loading: progressLoading,
-  } = useProgressContext();
-  const accessibleModules = useMemo(
-    () => getAccessibleModules(course.modules),
-    [course.modules],
-  );
-  const moduleSummaries = useMemo<StudentModuleSummary[]>(
-    () =>
-      accessibleModules.map((academyModule) => {
-        const status = toStudentModuleStatus(
-          getPersistedModuleStatus(academyModule.id),
-        );
-
-        return {
-          academyModule,
-          status,
-          statusLabel: formatModuleProgressStatusLabel(status),
-        };
-      }),
-    [accessibleModules, getPersistedModuleStatus],
-  );
-  const currentModule = useMemo(
-    () => getCurrentModuleSummary(moduleSummaries),
-    [moduleSummaries],
-  );
+export function StudentProgramPage() {
+  const { loading: progressLoading, progress } = useProgressContext();
   const moduleThumbnailInputs = useMemo(
     () =>
-      moduleSummaries
+      progress.modules
         .map((moduleSummary) => ({
           id: moduleSummary.academyModule.id,
           thumbnailUrl: moduleSummary.academyModule.thumbnailUrl ?? null,
         }))
         .filter(({ thumbnailUrl }) => thumbnailUrl),
-    [moduleSummaries],
+    [progress.modules],
   );
   const moduleThumbnailUrls = useModuleThumbnailUrls(moduleThumbnailInputs);
   const displayModuleSummaries = useMemo(
     () =>
-      moduleSummaries.map((moduleSummary) => ({
+      progress.modules.map((moduleSummary) => ({
         ...moduleSummary,
         academyModule: {
           ...moduleSummary.academyModule,
           thumbnailUrl: moduleThumbnailUrls[moduleSummary.academyModule.id] ?? null,
         },
       })),
-    [moduleSummaries, moduleThumbnailUrls],
+    [progress.modules, moduleThumbnailUrls],
   );
   const displayCurrentModule =
     displayModuleSummaries.find(
       (moduleSummary) =>
-        moduleSummary.academyModule.id === currentModule?.academyModule.id,
+        moduleSummary.academyModule.id === progress.currentModule?.academyModule.id,
     ) ?? null;
-  const completedModules = moduleSummaries.filter(
-    (moduleSummary) => moduleSummary.status === "completed",
-  ).length;
-  const totalModules = moduleSummaries.length;
-  const progressPercentage = getProgressPercentage(completedModules, totalModules);
-  const programStatusLabel = getProgramStatusLabel({
-    completedModules,
-    totalModules,
-  });
 
   return (
     <div className="space-y-6">
@@ -128,17 +80,17 @@ export function StudentProgramPage({ course }: StudentProgramPageProps) {
         <StudentSection title="Resumen del progreso">
           <StudentLoadingSkeleton columns={3} rows={3} />
         </StudentSection>
-      ) : totalModules > 0 ? (
+      ) : progress.totalModules > 0 ? (
         <>
           <StudentSection
             description="Tu avance se calcula por modulo completado, no por videos ni recursos."
             title="Resumen del progreso"
           >
             <StudentProgramOverview
-              completedModules={completedModules}
-              percentage={progressPercentage}
-              statusLabel={programStatusLabel}
-              totalModules={totalModules}
+              completedModules={progress.completedModules}
+              percentage={progress.percentage}
+              statusLabel={progress.statusLabel}
+              totalModules={progress.totalModules}
             />
           </StudentSection>
 

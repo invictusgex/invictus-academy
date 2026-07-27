@@ -1,13 +1,10 @@
 import { StudentProgramPage } from "@/components/academy/program/StudentProgramPage";
 import { AcademyShell } from "@/components/layout/academy-shell";
-import { getAcademyProgram } from "@/lib/academy";
 
-export default async function AcademyProgramPage() {
-  const course = await getAcademyProgram();
-
+export default function AcademyProgramPage() {
   return (
     <AcademyShell>
-      <StudentProgramPage course={course} />
+      <StudentProgramPage />
     </AcademyShell>
   );
 }

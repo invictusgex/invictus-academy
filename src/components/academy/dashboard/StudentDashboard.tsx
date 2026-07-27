@@ -10,14 +10,8 @@ import { StudentModuleCard } from "@/components/academy/dashboard/StudentModuleC
 import { StudentProgressSummary } from "@/components/academy/dashboard/StudentProgressSummary";
 import { StudentScenarioCard } from "@/components/academy/dashboard/StudentScenarioCard";
 import {
-  getAccessibleModules,
-  getCurrentModuleSummary,
-  getProgressPercentage,
-  getProgramStatusLabel,
   getStudentGreeting,
   getStudentNameFromEmail,
-  toStudentModuleStatus,
-  type StudentModuleSummary,
 } from "@/components/academy/dashboard/student-dashboard-utils";
 import { useModuleThumbnailUrls } from "@/components/academy/dashboard/useModuleThumbnailUrls";
 import { useRecentPublishedScenarios } from "@/components/academy/dashboard/useRecentPublishedScenarios";
@@ -32,25 +26,16 @@ import {
 } from "@/components/student";
 import { useProgressContext } from "@/contexts/ProgressContext";
 import { useAuth } from "@/hooks/useAuth";
-import type { Course } from "@/types/academy";
-import {
-  formatModuleProgressStatusLabel,
-} from "@/utils/module-progress";
-
-type StudentDashboardProps = {
-  course: Course;
-};
+import type { ProgramModuleProgress } from "@/utils/module-progress";
 
 function getHeroCta({
   continueModule,
-  completedModules,
-  totalModules,
+  programStatus,
 }: {
-  continueModule: StudentModuleSummary | null;
-  completedModules: number;
-  totalModules: number;
+  continueModule: ProgramModuleProgress | null;
+  programStatus: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 }) {
-  if (totalModules > 0 && completedModules >= totalModules) {
+  if (programStatus === "COMPLETED") {
     return {
       href: "/academy/programa",
       label: "Revisar programa",
@@ -81,8 +66,8 @@ function getVisibleModules({
   continueModule,
   modules,
 }: {
-  continueModule: StudentModuleSummary | null;
-  modules: StudentModuleSummary[];
+  continueModule: ProgramModuleProgress | null;
+  modules: ProgramModuleProgress[];
 }) {
   if (!continueModule) {
     return modules.slice(0, 4);
@@ -99,11 +84,11 @@ function getVisibleModules({
   return modules.slice(startIndex, startIndex + 4);
 }
 
-export function StudentDashboard({ course }: StudentDashboardProps) {
+export function StudentDashboard() {
   const { user } = useAuth();
   const {
-    getPersistedModuleStatus,
     loading: progressLoading,
+    progress,
   } = useProgressContext();
   const [greeting, setGreeting] = useState("Bienvenido");
   const {
@@ -120,46 +105,16 @@ export function StudentDashboard({ course }: StudentDashboardProps) {
     return () => window.clearTimeout(timeoutId);
   }, []);
 
-  const accessibleModules = useMemo(
-    () => getAccessibleModules(course.modules),
-    [course.modules],
-  );
-  const moduleSummaries = useMemo<StudentModuleSummary[]>(
-    () =>
-      accessibleModules.map((academyModule) => {
-        const status = toStudentModuleStatus(
-          getPersistedModuleStatus(academyModule.id),
-        );
-
-        return {
-          academyModule,
-          status,
-          statusLabel: formatModuleProgressStatusLabel(status),
-        };
-      }),
-    [accessibleModules, getPersistedModuleStatus],
-  );
-
-  const completedModules = moduleSummaries.filter(
-    (moduleSummary) => moduleSummary.status === "completed",
-  ).length;
-  const totalModules = moduleSummaries.length;
-  const progressPercentage = getProgressPercentage(completedModules, totalModules);
-  const programStatusLabel = getProgramStatusLabel({
-    completedModules,
-    totalModules,
-  });
-  const continueModule = useMemo(
-    () => getCurrentModuleSummary(moduleSummaries),
-    [moduleSummaries],
-  );
+  const completedModules = progress.completedModules;
+  const totalModules = progress.totalModules;
+  const continueModule = progress.currentModule;
   const visibleModules = useMemo(
     () =>
       getVisibleModules({
         continueModule,
-        modules: moduleSummaries,
+        modules: progress.modules,
       }),
-    [continueModule, moduleSummaries],
+    [continueModule, progress.modules],
   );
   const visibleModuleThumbnailInputs = useMemo(
     () =>
@@ -192,16 +147,15 @@ export function StudentDashboard({ course }: StudentDashboardProps) {
         moduleSummary.academyModule.id === continueModule?.academyModule.id,
     ) ?? null;
   const heroCta = getHeroCta({
-    completedModules,
     continueModule,
-    totalModules,
+    programStatus: progress.status,
   });
   const studentName = getStudentNameFromEmail(user?.email);
 
   return (
     <div className="space-y-6">
       <StudentWelcomeHero
-        badge={programStatusLabel}
+        badge={progress.statusLabel}
         ctaHref={heroCta.href}
         ctaLabel={heroCta.label}
         description="La disciplina construye consistencia. La consistencia construye resultados."
@@ -252,8 +206,8 @@ export function StudentDashboard({ course }: StudentDashboardProps) {
           <div className="space-y-4">
             <StudentProgressSummary
               completedModules={completedModules}
-              percentage={progressPercentage}
-              statusLabel={programStatusLabel}
+              percentage={progress.percentage}
+              statusLabel={progress.statusLabel}
               totalModules={totalModules}
             />
             <StudentContentGrid columns={3}>

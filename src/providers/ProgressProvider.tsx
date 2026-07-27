@@ -22,18 +22,12 @@ import {
   moduleProgressToAcademyProgressCache,
   syncModuleProgress,
 } from "@/lib/services/progress.service";
-import type { ModuleProgress } from "@/lib/types/progress.types";
 import type {
   AcademyProgressState,
   Course,
-  Module,
   VideoProgressStatus,
 } from "@/types/academy";
-import {
-  getModuleProgressSummary,
-  getNextPendingSession,
-  getProgramProgressSummary,
-} from "@/utils/module-progress";
+import { getProgramProgress } from "@/utils/module-progress";
 
 type ProgressProviderProps = {
   children: ReactNode;
@@ -50,19 +44,15 @@ export function ProgressProvider({
 }: ProgressProviderProps) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState<AcademyProgressState>(() =>
+  const [storedProgress, setStoredProgress] = useState<AcademyProgressState>(() =>
     createEmptyAcademyProgress(),
   );
-  const [syncedModuleProgress, setSyncedModuleProgress] = useState<
-    Record<string, ModuleProgress>
-  >({});
   const syncRequestRef = useRef(0);
 
   const syncFromProgress = useCallback(
     async (localProgress: AcademyProgressState) => {
       if (!user) {
-        setProgress(localProgress);
-        setSyncedModuleProgress({});
+        setStoredProgress(localProgress);
         return;
       }
 
@@ -83,16 +73,8 @@ export function ProgressProvider({
       });
 
       if (syncRequestRef.current === syncRequestId) {
-        setSyncedModuleProgress(
-          Object.fromEntries(
-            result.synced.map((moduleProgress) => [
-              moduleProgress.moduleKey,
-              moduleProgress,
-            ]),
-          ),
-        );
         writeAcademyProgressSnapshot(mergedProgress);
-        setProgress(mergedProgress);
+        setStoredProgress(mergedProgress);
       }
     },
     [course, productSlug, programId, user],
@@ -106,8 +88,7 @@ export function ProgressProvider({
     try {
       await syncFromProgress(localProgress);
     } catch {
-      setSyncedModuleProgress({});
-      setProgress(localProgress);
+      setStoredProgress(localProgress);
     } finally {
       setLoading(false);
     }
@@ -143,12 +124,12 @@ export function ProgressProvider({
       }
 
       writeAcademyProgressSnapshot(nextProgress);
-      setProgress(nextProgress);
+      setStoredProgress(nextProgress);
 
       try {
         await syncFromProgress(nextProgress);
       } catch {
-        setProgress(readAcademyProgressSnapshot());
+        setStoredProgress(readAcademyProgressSnapshot());
       }
     },
     [programId, syncFromProgress],
@@ -156,8 +137,8 @@ export function ProgressProvider({
 
   const getVideoStatus = useCallback(
     (moduleId: string, videoId: string) =>
-      getAcademyProgressVideoStatus(progress, programId, moduleId, videoId),
-    [programId, progress],
+      getAcademyProgressVideoStatus(storedProgress, programId, moduleId, videoId),
+    [programId, storedProgress],
   );
 
   const getScopedVideoStatus = useCallback(
@@ -166,30 +147,13 @@ export function ProgressProvider({
     [getVideoStatus],
   );
 
-  const getModuleSummary = useCallback(
-    (academyModule: Module) =>
-      getModuleProgressSummary(academyModule, getVideoStatus),
-    [getVideoStatus],
-  );
-  const getPersistedModuleStatus = useCallback(
-    (moduleKey: string) =>
-      syncedModuleProgress[moduleKey]?.status ?? "not_started",
-    [syncedModuleProgress],
-  );
-
-  const programSummary = useMemo(
-    () => getProgramProgressSummary(course, getVideoStatus),
-    [course, getVideoStatus],
-  );
-  const nextPendingSession = useMemo(
-    () => getNextPendingSession(course, getVideoStatus),
+  const progress = useMemo(
+    () => getProgramProgress(course, getVideoStatus),
     [course, getVideoStatus],
   );
 
   const value = useMemo(
     () => ({
-      getModuleSummary,
-      getPersistedModuleStatus,
       getScopedVideoStatus,
       getVideoStatus,
       loading,
@@ -197,20 +161,14 @@ export function ProgressProvider({
         updateVideoStatus(moduleId, videoId, "completed"),
       markInProgress: (moduleId: string, videoId: string) =>
         updateVideoStatus(moduleId, videoId, "in-progress"),
-      nextPendingSession,
       progress,
-      programSummary,
       refresh,
     }),
     [
-      getModuleSummary,
-      getPersistedModuleStatus,
       getScopedVideoStatus,
       getVideoStatus,
       loading,
-      nextPendingSession,
       progress,
-      programSummary,
       refresh,
       updateVideoStatus,
     ],
