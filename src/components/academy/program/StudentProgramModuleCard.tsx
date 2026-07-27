@@ -43,7 +43,7 @@ export function StudentProgramModuleCard({
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
-            Modulo {academyModule.number}
+            Módulo {academyModule.number}
           </p>
           <StudentStatusBadge tone={getModuleStatusTone(status)}>
             {statusLabel}

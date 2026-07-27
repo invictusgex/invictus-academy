@@ -24,7 +24,7 @@ export function StudentProgressSummary({
             {percentage} %
           </p>
           <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-            {completedModules} de {totalModules} modulos completados.
+            {completedModules} de {totalModules} módulos completados.
           </p>
         </div>
         <p className="w-fit rounded-full border border-cyan-200/30 bg-cyan-200/[0.04] px-3 py-1 text-sm font-semibold text-[var(--color-cyan)]">

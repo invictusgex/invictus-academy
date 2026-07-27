@@ -19,11 +19,11 @@ export default function AcademyProgramLoading() {
         <StudentLoadingSkeleton columns={3} rows={3} />
       </StudentSection>
 
-      <StudentSection title="Modulo actual">
+      <StudentSection title="Módulo actual">
         <StudentLoadingSkeleton columns={2} rows={1} />
       </StudentSection>
 
-      <StudentSection title="Listado completo de modulos">
+      <StudentSection title="Módulos del programa">
         <StudentLoadingSkeleton columns={2} rows={4} />
       </StudentSection>
     </div>

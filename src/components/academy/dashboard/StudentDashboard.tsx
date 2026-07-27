@@ -52,7 +52,7 @@ function getHeroCta({
 
     return {
       href: `/academy/programa/${continueModule.academyModule.id}`,
-      label: "Continuar formacion",
+      label: "Continuar formación",
     };
   }
 
@@ -164,8 +164,8 @@ export function StudentDashboard() {
       />
 
       <StudentSection
-        description="Retoma el modulo que corresponde segun tu progreso actual."
-        title="Continuar formacion"
+        description="Retoma el módulo que corresponde según tu progreso actual."
+        title="Continuar formación"
       >
         {progressLoading ? (
           <StudentLoadingSkeleton columns={2} rows={1} />
@@ -174,8 +174,8 @@ export function StudentDashboard() {
             academyModule={displayContinueModule.academyModule}
             ctaLabel={
               displayContinueModule.status === "not-started"
-                ? "Comenzar modulo"
-                : "Continuar modulo"
+                ? "Comenzar módulo"
+                : "Continuar módulo"
             }
             status={displayContinueModule.status}
             statusLabel={displayContinueModule.statusLabel}
@@ -186,18 +186,18 @@ export function StudentDashboard() {
             actionLabel="Revisar programa"
             title="Programa completado"
           >
-            Completaste los modulos disponibles. Puedes volver al programa para
+            Completaste los módulos disponibles. Puedes volver al programa para
             repasar tu proceso cuando lo necesites.
           </StudentEmptyState>
         ) : (
-          <StudentEmptyState title="Tu formacion aun no tiene modulos disponibles">
-            Los modulos publicados apareceran aqui cuando esten listos.
+          <StudentEmptyState title="Tu formación aún no tiene módulos disponibles">
+            Los módulos publicados aparecerán aquí cuando estén listos.
           </StudentEmptyState>
         )}
       </StudentSection>
 
       <StudentSection
-        description="Una lectura clara de tu posicion actual dentro del programa."
+        description="Una lectura clara de tu posición actual dentro del programa."
         title="Resumen del programa"
       >
         {progressLoading ? (
@@ -212,8 +212,8 @@ export function StudentDashboard() {
             />
             <StudentContentGrid columns={3}>
               <StudentStatCard
-                caption={`${totalModules} modulos disponibles`}
-                label="Modulos completados"
+                caption={`${totalModules} módulos disponibles`}
+                label="Módulos completados"
                 value={`${completedModules}/${totalModules}`}
               />
               {!scenarioError ? (
@@ -239,7 +239,7 @@ export function StudentDashboard() {
             Ver programa completo
           </Link>
         }
-        description="Vista compacta de los modulos disponibles en orden academico."
+        description="Vista compacta de los módulos disponibles en orden académico."
         title="Programa"
       >
         {progressLoading ? (
@@ -256,8 +256,8 @@ export function StudentDashboard() {
             ))}
           </StudentContentGrid>
         ) : (
-          <StudentEmptyState title="No hay modulos disponibles">
-            Tu formacion esta lista para comenzar cuando existan modulos
+          <StudentEmptyState title="No hay módulos disponibles">
+            Tu formación está lista para comenzar cuando existan módulos
             publicados para tu acceso.
           </StudentEmptyState>
         )}
@@ -272,7 +272,7 @@ export function StudentDashboard() {
             Ver Biblioteca de Escenarios
           </Link>
         }
-        description="Casos publicados para estudiar contexto, estructura y ejecucion."
+        description="Casos publicados para estudiar contexto, estructura y ejecución."
         title="Escenarios recientes"
       >
         {scenariosLoading ? (
@@ -280,7 +280,7 @@ export function StudentDashboard() {
         ) : scenarioError ? (
           <StudentEmptyState title="No se pudieron cargar los escenarios">
             El resto del dashboard sigue disponible. Intenta volver a la
-            biblioteca mas tarde.
+            biblioteca más tarde.
           </StudentEmptyState>
         ) : recentScenarios.length > 0 ? (
           <StudentContentGrid columns={3}>
@@ -289,16 +289,16 @@ export function StudentDashboard() {
             ))}
           </StudentContentGrid>
         ) : (
-          <StudentEmptyState title="Todavia no hay escenarios publicados">
-            Los nuevos casos de estudio apareceran aqui cuando esten
+          <StudentEmptyState title="Todavía no hay escenarios publicados">
+            Los nuevos casos de estudio aparecerán aquí cuando estén
             disponibles.
           </StudentEmptyState>
         )}
       </StudentSection>
 
       <StudentSection
-        description="Accesos directos a las areas activas del espacio privado."
-        title="Accesos rapidos"
+        description="Accesos directos a las áreas activas del espacio privado."
+        title="Accesos rápidos"
       >
         <StudentContentGrid columns={2}>
           <StudentActionCard
@@ -307,7 +307,7 @@ export function StudentDashboard() {
             ctaLabel="Ir al programa"
             title="Mi programa"
           >
-            Revisa modulos, objetivos y recursos del programa principal.
+            Revisa módulos, objetivos y recursos del programa principal.
           </StudentActionCard>
           <StudentActionCard
             badge="Escenarios"

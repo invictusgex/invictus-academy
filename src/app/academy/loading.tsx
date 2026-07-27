@@ -13,7 +13,7 @@ export default function AcademyLoading() {
         <div className="mt-8 h-12 w-full rounded-full bg-[var(--color-card-bg)] sm:w-56" />
       </section>
 
-      <StudentSection title="Continuar formacion">
+      <StudentSection title="Continuar formación">
         <StudentLoadingSkeleton columns={2} rows={1} />
       </StudentSection>
 

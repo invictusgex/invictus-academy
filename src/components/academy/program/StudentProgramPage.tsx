@@ -18,14 +18,14 @@ import type { ProgramModuleProgress } from "@/utils/module-progress";
 
 function getModuleCtaLabel(status: ProgramModuleProgress["status"]) {
   if (status === "completed") {
-    return "Revisar modulo";
+    return "Revisar módulo";
   }
 
   if (status === "in-progress") {
-    return "Continuar modulo";
+    return "Continuar módulo";
   }
 
-  return "Comenzar modulo";
+  return "Comenzar módulo";
 }
 
 export function StudentProgramPage() {
@@ -69,10 +69,10 @@ export function StudentProgramPage() {
             Volver al dashboard
           </Link>
         }
-        eyebrow="Programa de formacion"
+        eyebrow="Programa de formación"
         title="Programa"
       >
-        Avanza por cada modulo y construye una metodologia basada en datos,
+        Avanza por cada módulo y construye una metodología basada en datos,
         estructura y disciplina.
       </StudentPageHeader>
 
@@ -83,7 +83,7 @@ export function StudentProgramPage() {
       ) : progress.totalModules > 0 ? (
         <>
           <StudentSection
-            description="Tu avance se calcula por modulo completado, no por videos ni recursos."
+            description="Tu avance se calcula por módulo completado, no por videos ni recursos."
             title="Resumen del progreso"
           >
             <StudentProgramOverview
@@ -95,8 +95,8 @@ export function StudentProgramPage() {
           </StudentSection>
 
           <StudentSection
-            description="La siguiente accion sugerida segun tu progreso actual."
-            title="Modulo actual"
+            description="La siguiente acción sugerida según tu progreso actual."
+            title="Módulo actual"
           >
             {displayCurrentModule ? (
               <CurrentProgramModuleCard
@@ -111,15 +111,15 @@ export function StudentProgramPage() {
                 actionLabel="Volver al dashboard"
                 title="Programa completado"
               >
-                Completaste los modulos disponibles. Puedes volver a revisar
-                cualquier modulo desde el listado.
+                Completaste los módulos disponibles. Puedes volver a revisar
+                cualquier módulo desde el listado.
               </StudentEmptyState>
             )}
           </StudentSection>
 
           <StudentSection
-            description="Recorre la secuencia completa del programa en orden academico."
-            title="Listado completo de modulos"
+            description="Recorre la secuencia completa del programa en orden académico."
+            title="Módulos del programa"
           >
             <div className="grid gap-4">
               {displayModuleSummaries.map((moduleSummary) => (
@@ -138,9 +138,9 @@ export function StudentProgramPage() {
         <StudentEmptyState
           actionHref="/academy"
           actionLabel="Volver al dashboard"
-          title="Tu programa todavia no tiene modulos disponibles."
+          title="Tu programa todavía no tiene módulos disponibles."
         >
-          El contenido aparecera aqui cuando sea publicado.
+          El contenido aparecerá aquí cuando sea publicado.
         </StudentEmptyState>
       )}
     </div>

@@ -14,8 +14,8 @@ export function ModuleObjectivesSection({
 }: ModuleObjectivesSectionProps) {
   return (
     <StudentSection
-      description="Competencias que orientan el estudio de este modulo."
-      title="Objetivos del modulo"
+      description="Competencias que orientan el estudio de este módulo."
+      title="Objetivos del módulo"
     >
       {objectives.length > 0 ? (
         <StudentContentGrid columns={2}>
@@ -34,8 +34,8 @@ export function ModuleObjectivesSection({
           ))}
         </StudentContentGrid>
       ) : (
-        <StudentEmptyState title="Este modulo aun no tiene objetivos publicados.">
-          Los objetivos apareceran aqui cuando el contenido sea publicado.
+        <StudentEmptyState title="Este módulo aún no tiene objetivos publicados.">
+          Los objetivos aparecerán aquí cuando el contenido sea publicado.
         </StudentEmptyState>
       )}
     </StudentSection>

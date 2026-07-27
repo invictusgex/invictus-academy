@@ -21,7 +21,7 @@ export function StudentStatusBadge({
   return (
     <span
       className={classNames(
-        "inline-flex min-h-7 w-fit items-center rounded-full border px-3 text-xs font-semibold",
+        "inline-flex min-h-7 max-w-full items-center justify-center rounded-full border px-3 text-center text-xs font-semibold break-words",
         tone === "complete" && "border-emerald-200/40 text-emerald-200",
         tone === "info" && "border-[var(--color-border)] text-[var(--color-cyan)]",
         tone === "neutral" &&

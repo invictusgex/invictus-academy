@@ -18,11 +18,11 @@ export function StudentStatCard({
   return (
     <StudentCard className="h-full">
       <div className="flex items-start justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
             {label}
           </p>
-          <p className="mt-3 text-3xl font-semibold leading-none text-white">
+          <p className="mt-3 break-words text-3xl font-semibold leading-none text-white">
             {value}
           </p>
         </div>

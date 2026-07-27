@@ -9,7 +9,7 @@ type AcademyShellProps = {
 
 export function AcademyShell({ children }: AcademyShellProps) {
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)] lg:flex">
+    <div className="min-h-screen overflow-x-hidden bg-[var(--color-page-bg)] text-[var(--color-text-primary)] lg:flex">
       <AcademySidebar navigation={academyNavigation} />
 
       <div className="min-w-0 flex-1">

@@ -36,13 +36,13 @@ export function StudentProgramOverview({
 
       <article className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5 sm:p-6">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Modulos
+          Módulos
         </p>
         <p className="mt-3 text-4xl font-semibold leading-none text-white">
           {completedModules}/{totalModules}
         </p>
         <p className="mt-4 text-sm leading-6 text-[var(--color-text-secondary)]">
-          Modulos completados dentro del contenido disponible.
+          Módulos completados dentro del contenido disponible.
         </p>
       </article>
     </div>

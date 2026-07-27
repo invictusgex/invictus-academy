@@ -29,14 +29,14 @@ export function AcademySidebar({ navigation }: AcademySidebarProps) {
 
       <nav
         aria-label="Navegación de academia"
-        className="mt-6 grid gap-2 sm:grid-cols-4 lg:grid-cols-1"
+        className="mt-6 grid gap-2 min-[420px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-1"
       >
         {visibleNavigation.map((item) => (
           <Link
             key={item.label}
             href={item.href}
             className={classNames(
-              "rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition",
+              "min-w-0 rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium break-words text-[var(--color-text-secondary)] transition",
               "hover:border-[var(--color-border)] hover:bg-[var(--color-hover-bg)] hover:text-white",
             )}
           >

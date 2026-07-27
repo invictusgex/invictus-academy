@@ -42,7 +42,7 @@ export function ModuleResourcesSection({
 }: ModuleResourcesSectionProps) {
   return (
     <StudentSection
-      description="Material complementario asociado directamente a este modulo."
+      description="Material complementario asociado directamente a este módulo."
       title="Recursos"
     >
       {resources.length > 0 ? (
@@ -89,8 +89,8 @@ export function ModuleResourcesSection({
           })}
         </StudentContentGrid>
       ) : (
-        <StudentEmptyState title="Este modulo aun no tiene recursos disponibles.">
-          Los materiales complementarios apareceran aqui cuando sean publicados.
+        <StudentEmptyState title="Este módulo aún no tiene recursos disponibles.">
+          Los materiales complementarios aparecerán aquí cuando sean publicados.
         </StudentEmptyState>
       )}
     </StudentSection>
