@@ -12,6 +12,8 @@ import type {
 const genericMutationError =
   "No fue posible actualizar el acceso administrativo.";
 
+class AdminEnrollmentInputError extends Error {}
+
 function hasValue(value: string | null | undefined) {
   return Boolean(value?.trim());
 }
@@ -24,7 +26,7 @@ function normalizeExpiration(value: string | null | undefined) {
 
 function validateRequiredId(value: string, fieldName: string) {
   if (!value.trim()) {
-    throw new Error(`${fieldName} es requerido.`);
+    throw new AdminEnrollmentInputError(`${fieldName} es requerido.`);
   }
 }
 
@@ -36,16 +38,18 @@ function validateFutureExpiration(value: string | null) {
   const time = new Date(value).getTime();
 
   if (Number.isNaN(time)) {
-    throw new Error("La fecha de vencimiento no es valida.");
+    throw new AdminEnrollmentInputError("La fecha de vencimiento no es valida.");
   }
 
   if (time <= Date.now()) {
-    throw new Error("La fecha de vencimiento debe ser futura.");
+    throw new AdminEnrollmentInputError(
+      "La fecha de vencimiento debe ser futura.",
+    );
   }
 }
 
 function toMutationError(error: unknown): EnrollmentMutationResult {
-  if (error instanceof Error && hasValue(error.message)) {
+  if (error instanceof AdminEnrollmentInputError && hasValue(error.message)) {
     return {
       error: error.message,
       ok: false,
@@ -142,7 +146,7 @@ export const AdminEnrollmentsService = {
         await AdminEnrollmentsRepository.getEnrollmentById(input.enrollmentId);
 
       if (!existingEnrollment) {
-        throw new Error("El acceso solicitado no existe.");
+        throw new AdminEnrollmentInputError("El acceso solicitado no existe.");
       }
 
       if (existingEnrollment.status === "revoked" && existingEnrollment.revokedAt) {
@@ -177,7 +181,7 @@ export const AdminEnrollmentsService = {
         await AdminEnrollmentsRepository.getEnrollmentById(input.enrollmentId);
 
       if (!existingEnrollment) {
-        throw new Error("El acceso solicitado no existe.");
+        throw new AdminEnrollmentInputError("El acceso solicitado no existe.");
       }
 
       const enrollment = await reactivateEnrollment(existingEnrollment, expiresAt);
@@ -202,7 +206,7 @@ export const AdminEnrollmentsService = {
         await AdminEnrollmentsRepository.getEnrollmentById(input.enrollmentId);
 
       if (!existingEnrollment) {
-        throw new Error("El acceso solicitado no existe.");
+        throw new AdminEnrollmentInputError("El acceso solicitado no existe.");
       }
 
       const enrollment = await AdminEnrollmentsRepository.updateEnrollment(

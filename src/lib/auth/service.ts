@@ -36,8 +36,6 @@ function mapSession(session: Session | null): AuthSession | null {
   }
 
   return {
-    accessToken: session.access_token,
-    refreshToken: session.refresh_token,
     expiresAt: session.expires_at ?? null,
     user: mapUser(session.user) as AuthUser,
   };

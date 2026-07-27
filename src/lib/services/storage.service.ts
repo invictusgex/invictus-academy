@@ -58,6 +58,19 @@ const validationRules: Record<AcademyAssetKind, StorageValidationRule> = {
   },
 };
 
+const signedUrlCacheBufferMs = 30 * 1000;
+const signedUrlCache = new Map<
+  string,
+  {
+    result: StorageSignedUrlResult;
+    validUntilMs: number;
+  }
+>();
+const pendingSignedUrlRequests = new Map<
+  string,
+  Promise<StorageSignedUrlResult | null>
+>();
+
 function createUuid() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()
     .toString(36)
@@ -86,6 +99,39 @@ function isSafeHttpUrl(value: string) {
     return url.protocol === "http:" || url.protocol === "https:";
   } catch {
     return false;
+  }
+}
+
+function createSignedUrlCacheKey(path: string, expiresInSeconds: number) {
+  return `${expiresInSeconds}:${path}`;
+}
+
+function getCachedSignedUrl(cacheKey: string) {
+  const cached = signedUrlCache.get(cacheKey);
+
+  if (!cached) {
+    return null;
+  }
+
+  if (Date.now() + signedUrlCacheBufferMs >= cached.validUntilMs) {
+    signedUrlCache.delete(cacheKey);
+    return null;
+  }
+
+  return cached.result;
+}
+
+function deleteSignedUrlCacheEntry(path: string) {
+  for (const cacheKey of signedUrlCache.keys()) {
+    if (cacheKey.endsWith(`:${path}`)) {
+      signedUrlCache.delete(cacheKey);
+    }
+  }
+
+  for (const cacheKey of pendingSignedUrlRequests.keys()) {
+    if (cacheKey.endsWith(`:${path}`)) {
+      pendingSignedUrlRequests.delete(cacheKey);
+    }
   }
 }
 
@@ -237,6 +283,7 @@ export const StorageService = {
         file,
         path,
       });
+      deleteSignedUrlCacheEntry(storedPath);
 
       return {
         ok: true,
@@ -260,6 +307,7 @@ export const StorageService = {
 
     try {
       await StorageRepository.deleteFile({ path });
+      deleteSignedUrlCacheEntry(path);
 
       return {
         ok: true,
@@ -303,6 +351,7 @@ export const StorageService = {
         file,
         path,
       });
+      deleteSignedUrlCacheEntry(storedPath);
 
       return {
         ok: true,
@@ -324,10 +373,39 @@ export const StorageService = {
       return null;
     }
 
-    return StorageRepository.createSignedUrl({
+    const cacheKey = createSignedUrlCacheKey(path, expiresInSeconds);
+    const cached = getCachedSignedUrl(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
+    const pendingRequest = pendingSignedUrlRequests.get(cacheKey);
+
+    if (pendingRequest) {
+      return pendingRequest;
+    }
+
+    const request = StorageRepository.createSignedUrl({
       expiresInSeconds,
       path,
-    });
+    })
+      .then((result) => {
+        signedUrlCache.set(cacheKey, {
+          result,
+          validUntilMs: result.expiresAt.getTime(),
+        });
+
+        return result;
+      })
+      .catch(() => null)
+      .finally(() => {
+        pendingSignedUrlRequests.delete(cacheKey);
+      });
+
+    pendingSignedUrlRequests.set(cacheKey, request);
+
+    return request;
   },
 
   async resolveAssetUrl({
