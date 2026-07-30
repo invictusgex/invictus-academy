@@ -2,15 +2,15 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { academyProductSlug } from "@/lib/academy-product";
 import { getActiveEnrollmentProducts } from "@/lib/services/enrollment.service";
 import type { Database } from "@/lib/supabase/database.types";
 import type { ActiveEnrollmentProduct } from "@/lib/types/enrollment.types";
 
-export const academyProductSlug = "trading-basado-en-datos";
-
 export type AcademyEnrollmentAccess = {
   activeProducts: ActiveEnrollmentProduct[];
-  hasAccess: boolean;
+  hasAcademyProgramAccess: boolean;
+  hasAnyActiveEnrollment: boolean;
 };
 
 export async function getAcademyEnrollmentAccess(
@@ -21,8 +21,9 @@ export async function getAcademyEnrollmentAccess(
 
   return {
     activeProducts,
-    hasAccess: activeProducts.some(
+    hasAcademyProgramAccess: activeProducts.some(
       (product) => product.productSlug === academyProductSlug,
     ),
+    hasAnyActiveEnrollment: activeProducts.length > 0,
   };
 }

@@ -16,7 +16,7 @@ type ProductRow = Pick<Database["public"]["Tables"]["products"]["Row"], "id">;
 
 type EnrollmentProductRow = Pick<
   Database["public"]["Tables"]["products"]["Row"],
-  "id" | "slug" | "status" | "title"
+  "description" | "id" | "slug" | "status" | "title"
 >;
 
 type EnrollmentWithProductRow = EnrollmentRow & {
@@ -54,6 +54,7 @@ const enrollmentProductSelect = `
   updated_at,
   products (
     id,
+    description,
     slug,
     status,
     title
@@ -107,12 +108,14 @@ function mapActiveEnrollmentProduct(
   }
 
   return {
+    enrollmentExpiresAt: row.expires_at,
     enrollmentId: row.id,
+    enrollmentStartsAt: row.starts_at,
     productId: product.id,
+    productDescription: product.description,
     productSlug: product.slug,
+    productStatus: product.status,
     productTitle: product.title,
-    startsAt: row.starts_at,
-    expiresAt: row.expires_at,
   };
 }
 

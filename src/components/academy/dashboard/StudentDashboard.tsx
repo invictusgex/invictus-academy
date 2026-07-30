@@ -8,6 +8,7 @@ import {
 } from "@/components/academy/dashboard/ContinueModuleCard";
 import { StudentModuleCard } from "@/components/academy/dashboard/StudentModuleCard";
 import { StudentProgressSummary } from "@/components/academy/dashboard/StudentProgressSummary";
+import { StudentProgramsOverview } from "@/components/academy/dashboard/StudentProgramsOverview";
 import { StudentScenarioCard } from "@/components/academy/dashboard/StudentScenarioCard";
 import {
   getStudentGreeting,
@@ -26,6 +27,7 @@ import {
 } from "@/components/student";
 import { useProgressContext } from "@/contexts/ProgressContext";
 import { useAuth } from "@/hooks/useAuth";
+import type { ActiveEnrollmentProduct } from "@/lib/types/enrollment.types";
 import type { ProgramModuleProgress } from "@/utils/module-progress";
 
 function getHeroCta({
@@ -84,7 +86,11 @@ function getVisibleModules({
   return modules.slice(startIndex, startIndex + 4);
 }
 
-export function StudentDashboard() {
+type StudentDashboardProps = {
+  activeProducts: ActiveEnrollmentProduct[];
+};
+
+export function StudentDashboard({ activeProducts }: StudentDashboardProps) {
   const { user } = useAuth();
   const {
     loading: progressLoading,
@@ -161,6 +167,20 @@ export function StudentDashboard() {
         description="La disciplina construye consistencia. La consistencia construye resultados."
         greeting={greeting}
         name={studentName}
+      />
+
+      <StudentProgramsOverview
+        academyProgress={
+          progressLoading
+            ? undefined
+            : {
+                completedModules,
+                percentage: progress.percentage,
+                statusLabel: progress.statusLabel,
+                totalModules,
+              }
+        }
+        activeProducts={activeProducts}
       />
 
       <StudentSection

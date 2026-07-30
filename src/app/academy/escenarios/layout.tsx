@@ -13,7 +13,7 @@ export default async function AcademyScenariosLayout({
   const supabase = await createSupabaseServerClient();
   const academyAccess = await getAcademyEnrollmentAccess(profile.id, supabase);
 
-  if (!academyAccess.hasAccess) {
+  if (!academyAccess.hasAcademyProgramAccess) {
     redirect("/academy");
   }
 

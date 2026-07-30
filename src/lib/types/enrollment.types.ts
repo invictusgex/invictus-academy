@@ -23,12 +23,14 @@ export interface Enrollment {
 }
 
 export interface ActiveEnrollmentProduct {
+  enrollmentExpiresAt: string | null;
   enrollmentId: string;
+  enrollmentStartsAt: string;
   productId: string;
+  productDescription: string | null;
   productSlug: string;
+  productStatus: string;
   productTitle: string;
-  startsAt: string;
-  expiresAt: string | null;
 }
 
 export type ProgramAccessInput = {

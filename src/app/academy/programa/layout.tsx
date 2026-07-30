@@ -2,10 +2,8 @@ import { redirect } from "next/navigation";
 
 import { requireAcademyAuthContext } from "@/app/academy/academy-auth";
 import { getAcademyProgram } from "@/lib/academy";
-import {
-  academyProductSlug,
-  getAcademyEnrollmentAccess,
-} from "@/lib/services/academy-access.service";
+import { academyProductSlug } from "@/lib/academy-product";
+import { getAcademyEnrollmentAccess } from "@/lib/services/academy-access.service";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ProgressProvider } from "@/providers/ProgressProvider";
 
@@ -18,7 +16,7 @@ export default async function AcademyProgramLayout({
   const supabase = await createSupabaseServerClient();
   const academyAccess = await getAcademyEnrollmentAccess(profile.id, supabase);
 
-  if (!academyAccess.hasAccess) {
+  if (!academyAccess.hasAcademyProgramAccess) {
     redirect("/academy");
   }
 
