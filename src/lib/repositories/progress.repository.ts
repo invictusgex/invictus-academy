@@ -1,4 +1,7 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { getSupabaseClient } from "@/lib/database/client";
+import type { Database } from "@/lib/supabase/database.types";
 import type {
   ModuleProgressRow,
   ModuleProgressUpsertInput,
@@ -8,6 +11,11 @@ import type {
 type ProductRow = {
   id: string;
   slug: string;
+};
+
+type MarkModuleCompletedInput = {
+  moduleKey: string;
+  productSlug: string;
 };
 
 const moduleProgressSelect = `
@@ -38,9 +46,10 @@ function toUpsertRow(input: ModuleProgressUpsertInput) {
 }
 
 export const ProgressRepository = {
-  async getProductBySlug(slug: string): Promise<ProductReference | null> {
-    const supabase = getSupabaseClient();
-
+  async getProductBySlug(
+    slug: string,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<ProductReference | null> {
     const { data, error } = await supabase
       .from("products")
       .select("id, slug")
@@ -59,9 +68,8 @@ export const ProgressRepository = {
   async listByProfileAndProduct(
     profileId: string,
     productId: string,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
   ): Promise<ModuleProgressRow[]> {
-    const supabase = getSupabaseClient();
-
     const { data, error } = await supabase
       .from("module_progress")
       .select(moduleProgressSelect)
@@ -77,9 +85,8 @@ export const ProgressRepository = {
 
   async upsertModuleProgress(
     input: ModuleProgressUpsertInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
   ): Promise<ModuleProgressRow> {
-    const supabase = getSupabaseClient();
-
     const { data, error } = await supabase
       .from("module_progress")
       .upsert(toUpsertRow(input), {
@@ -93,5 +100,21 @@ export const ProgressRepository = {
     }
 
     return data as unknown as ModuleProgressRow;
+  },
+
+  async markModuleCompleted(
+    input: MarkModuleCompletedInput,
+    supabase: SupabaseClient<Database>,
+  ): Promise<ModuleProgressRow> {
+    const { data, error } = await supabase.rpc("mark_module_completed", {
+      p_module_key: input.moduleKey,
+      p_product_slug: input.productSlug,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return data as ModuleProgressRow;
   },
 };

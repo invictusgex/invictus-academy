@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 
+import { ModuleCompletionPanel } from "@/components/academy/module/ModuleCompletionPanel";
 import { ModuleObjectivesSection } from "@/components/academy/module/ModuleObjectivesSection";
 import { ModuleResourcesSection } from "@/components/academy/module/ModuleResourcesSection";
 import { ModuleVideosSection } from "@/components/academy/module/ModuleVideosSection";
@@ -50,6 +51,8 @@ export function StudentModuleDetailPage({
         statusLabel={statusLabel}
         thumbnailUrl={thumbnailUrl}
       />
+
+      <ModuleCompletionPanel moduleId={academyModule.id} status={status} />
 
       <div id="videos">
         <ModuleVideosSection videos={academyModule.videos} />

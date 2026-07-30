@@ -14,18 +14,16 @@ import { useAuth } from "@/hooks/useAuth";
 import {
   createEmptyAcademyProgress,
   getAcademyProgressVideoStatus,
-  readAcademyProgressSnapshot,
-  updateAcademyProgressVideoStatus,
   writeAcademyProgressSnapshot,
 } from "@/lib/services/progress-cache.service";
 import {
+  fetchModuleProgress,
+  markModuleCompleted,
   moduleProgressToAcademyProgressCache,
-  syncModuleProgress,
 } from "@/lib/services/progress.service";
 import type {
   AcademyProgressState,
   Course,
-  VideoProgressStatus,
 } from "@/types/academy";
 import { getProgramProgress } from "@/utils/module-progress";
 
@@ -49,50 +47,50 @@ export function ProgressProvider({
   );
   const syncRequestRef = useRef(0);
 
-  const syncFromProgress = useCallback(
-    async (localProgress: AcademyProgressState) => {
+  const loadRemoteProgress = useCallback(
+    async () => {
       if (!user) {
-        setStoredProgress(localProgress);
+        const emptyProgress = createEmptyAcademyProgress();
+
+        writeAcademyProgressSnapshot(emptyProgress);
+        setStoredProgress(emptyProgress);
         return;
       }
 
       const syncRequestId = syncRequestRef.current + 1;
       syncRequestRef.current = syncRequestId;
-      const result = await syncModuleProgress({
-        course,
-        localProgress,
+      const moduleProgress = await fetchModuleProgress({
         productSlug,
-        profileId: user.id,
-        programId,
       });
-      const mergedProgress = moduleProgressToAcademyProgressCache({
+      const remoteProgress = moduleProgressToAcademyProgressCache({
         course,
-        moduleProgress: result.synced,
+        moduleProgress,
         programId,
-        seedProgress: localProgress,
+        seedProgress: createEmptyAcademyProgress(),
       });
 
       if (syncRequestRef.current === syncRequestId) {
-        writeAcademyProgressSnapshot(mergedProgress);
-        setStoredProgress(mergedProgress);
+        writeAcademyProgressSnapshot(remoteProgress);
+        setStoredProgress(remoteProgress);
       }
     },
     [course, productSlug, programId, user],
   );
 
   const refresh = useCallback(async () => {
-    const localProgress = readAcademyProgressSnapshot();
-
     setLoading(true);
 
     try {
-      await syncFromProgress(localProgress);
+      await loadRemoteProgress();
     } catch {
-      setStoredProgress(localProgress);
+      const emptyProgress = createEmptyAcademyProgress();
+
+      writeAcademyProgressSnapshot(emptyProgress);
+      setStoredProgress(emptyProgress);
     } finally {
       setLoading(false);
     }
-  }, [syncFromProgress]);
+  }, [loadRemoteProgress]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -104,35 +102,15 @@ export function ProgressProvider({
     };
   }, [refresh]);
 
-  const updateVideoStatus = useCallback(
-    async (
-      moduleId: string,
-      videoId: string,
-      status: VideoProgressStatus,
-    ) => {
-      const currentProgress = readAcademyProgressSnapshot();
-      const nextProgress = updateAcademyProgressVideoStatus(
-        currentProgress,
-        programId,
-        moduleId,
-        videoId,
-        status,
-      );
-
-      if (nextProgress === currentProgress) {
-        return;
-      }
-
-      writeAcademyProgressSnapshot(nextProgress);
-      setStoredProgress(nextProgress);
-
-      try {
-        await syncFromProgress(nextProgress);
-      } catch {
-        setStoredProgress(readAcademyProgressSnapshot());
-      }
+  const updateModuleCompletion = useCallback(
+    async (moduleId: string) => {
+      await markModuleCompleted({
+        moduleKey: moduleId,
+        productSlug,
+      });
+      await refresh();
     },
-    [programId, syncFromProgress],
+    [productSlug, refresh],
   );
 
   const getVideoStatus = useCallback(
@@ -157,10 +135,11 @@ export function ProgressProvider({
       getScopedVideoStatus,
       getVideoStatus,
       loading,
-      markCompleted: (moduleId: string, videoId: string) =>
-        updateVideoStatus(moduleId, videoId, "completed"),
-      markInProgress: (moduleId: string, videoId: string) =>
-        updateVideoStatus(moduleId, videoId, "in-progress"),
+      markCompleted: async (moduleId: string) => {
+        await updateModuleCompletion(moduleId);
+      },
+      markInProgress: async () => {},
+      markModuleCompleted: updateModuleCompletion,
       progress,
       refresh,
     }),
@@ -170,7 +149,7 @@ export function ProgressProvider({
       loading,
       progress,
       refresh,
-      updateVideoStatus,
+      updateModuleCompletion,
     ],
   );
 

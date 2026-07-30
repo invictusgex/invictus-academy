@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -641,6 +641,28 @@ export type Database = {
           outcome: string
           purchase_id: string
         }[]
+      }
+      mark_module_completed: {
+        Args: { p_module_key: string; p_product_slug: string }
+        Returns: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          last_seen_at: string | null
+          module_key: string
+          product_id: string
+          profile_id: string
+          progress_percent: number
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "module_progress"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {

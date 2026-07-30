@@ -13,6 +13,7 @@ export type ProgressContextValue = {
   loading: boolean;
   markCompleted: (moduleId: string, videoId: string) => Promise<void>;
   markInProgress: (moduleId: string, videoId: string) => Promise<void>;
+  markModuleCompleted: (moduleId: string) => Promise<void>;
   progress: ProgramProgress;
   refresh: () => Promise<void>;
 };

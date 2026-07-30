@@ -27,6 +27,33 @@ type SyncProgressInput = {
   programId: string;
 };
 
+type FetchModuleProgressInput = {
+  productSlug: string;
+};
+
+type MarkModuleCompletedInput = {
+  moduleKey: string;
+  productSlug: string;
+};
+
+type ProgressApiError = {
+  error: {
+    message: string;
+  };
+};
+
+type ProgressListResponse =
+  | {
+      progress: ModuleProgress[];
+    }
+  | ProgressApiError;
+
+type ProgressMutationResponse =
+  | {
+      progress: ModuleProgress;
+    }
+  | ProgressApiError;
+
 type LocalModuleProgress = {
   completedAt: string | null;
   lastSeenAt: string | null;
@@ -431,4 +458,57 @@ export async function syncModuleProgress({
     remoteBefore,
     synced: Array.from(syncedByModule.values()),
   };
+}
+
+function assertProgressResponse(
+  response: ProgressListResponse | ProgressMutationResponse,
+): asserts response is Exclude<typeof response, ProgressApiError> {
+  if ("error" in response) {
+    throw new Error(response.error.message);
+  }
+}
+
+export async function fetchModuleProgress({
+  productSlug,
+}: FetchModuleProgressInput): Promise<ModuleProgress[]> {
+  const params = new URLSearchParams({ productSlug });
+  const response = await fetch(`/api/academy/progress?${params.toString()}`, {
+    cache: "no-store",
+  });
+  const payload = (await response.json()) as ProgressListResponse;
+
+  assertProgressResponse(payload);
+
+  if (!response.ok) {
+    throw new Error("No se pudo cargar el progreso del programa.");
+  }
+
+  return payload.progress;
+}
+
+export async function markModuleCompleted({
+  moduleKey,
+  productSlug,
+}: MarkModuleCompletedInput): Promise<ModuleProgress> {
+  const response = await fetch("/api/academy/progress", {
+    body: JSON.stringify({
+      completed: true,
+      moduleKey,
+      productSlug,
+    }),
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+  const payload = (await response.json()) as ProgressMutationResponse;
+
+  assertProgressResponse(payload);
+
+  if (!response.ok) {
+    throw new Error("No se pudo actualizar el progreso del modulo.");
+  }
+
+  return payload.progress;
 }
