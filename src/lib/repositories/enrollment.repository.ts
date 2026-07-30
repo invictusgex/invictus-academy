@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseClient } from "@/lib/database/client";
 import type { Database } from "@/lib/supabase/database.types";
 import type {
+  ActiveEnrollmentProduct,
   Enrollment,
   EnrollmentAccessSource,
   EnrollmentStatus,
@@ -12,6 +13,15 @@ import type {
 type EnrollmentRow = Database["public"]["Tables"]["enrollments"]["Row"];
 
 type ProductRow = Pick<Database["public"]["Tables"]["products"]["Row"], "id">;
+
+type EnrollmentProductRow = Pick<
+  Database["public"]["Tables"]["products"]["Row"],
+  "id" | "slug" | "status" | "title"
+>;
+
+type EnrollmentWithProductRow = EnrollmentRow & {
+  products: EnrollmentProductRow | EnrollmentProductRow[] | null;
+};
 
 type EnrollmentByProductIdInput = {
   profileId: string;
@@ -29,6 +39,25 @@ const enrollmentSelect = `
   revoked_at,
   created_at,
   updated_at
+`;
+
+const enrollmentProductSelect = `
+  id,
+  profile_id,
+  product_id,
+  status,
+  access_source,
+  starts_at,
+  expires_at,
+  revoked_at,
+  created_at,
+  updated_at,
+  products (
+    id,
+    slug,
+    status,
+    title
+  )
 `;
 
 function mapEnrollment(row: EnrollmentRow): Enrollment {
@@ -60,6 +89,31 @@ function mapEnrollmentAccessSource(source: string): EnrollmentAccessSource {
   }
 
   throw new Error(`Unexpected enrollment access source: ${source}.`);
+}
+
+function normalizeProduct(
+  product: EnrollmentProductRow | EnrollmentProductRow[] | null,
+): EnrollmentProductRow | null {
+  return Array.isArray(product) ? product[0] ?? null : product;
+}
+
+function mapActiveEnrollmentProduct(
+  row: EnrollmentWithProductRow,
+): ActiveEnrollmentProduct | null {
+  const product = normalizeProduct(row.products);
+
+  if (!product || product.status !== "active") {
+    return null;
+  }
+
+  return {
+    enrollmentId: row.id,
+    productId: product.id,
+    productSlug: product.slug,
+    productTitle: product.title,
+    startsAt: row.starts_at,
+    expiresAt: row.expires_at,
+  };
 }
 
 // El repository es la unica capa de enrollment que conoce Supabase y nombres SQL.
@@ -109,6 +163,33 @@ export const EnrollmentRepository = {
     }
 
     return data?.map(mapEnrollment) ?? [];
+  },
+
+  async getActiveEnrollmentProducts(
+    userId: string,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<ActiveEnrollmentProduct[]> {
+    const now = new Date().toISOString();
+
+    const { data, error } = await supabase
+      .from("enrollments")
+      .select(enrollmentProductSelect)
+      .eq("profile_id", userId)
+      .eq("status", "active")
+      .is("revoked_at", null)
+      .lte("starts_at", now)
+      .or(`expires_at.is.null,expires_at.gt.${now}`)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data ?? []) as unknown as EnrollmentWithProductRow[])
+      .map(mapActiveEnrollmentProduct)
+      .filter((product): product is ActiveEnrollmentProduct =>
+        Boolean(product),
+      );
   },
 
   async getEnrollmentByProductId(

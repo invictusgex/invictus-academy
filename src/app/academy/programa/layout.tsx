@@ -1,6 +1,5 @@
-import { AcademyEnrollmentEmptyState } from "@/components/academy/AcademyEnrollmentEmptyState";
-import { StudentDashboard } from "@/components/academy/dashboard/StudentDashboard";
-import { AcademyShell } from "@/components/layout/academy-shell";
+import { redirect } from "next/navigation";
+
 import { requireAcademyAuthContext } from "@/app/academy/academy-auth";
 import { getAcademyProgram } from "@/lib/academy";
 import {
@@ -10,30 +9,28 @@ import {
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ProgressProvider } from "@/providers/ProgressProvider";
 
-export default async function AcademyPage() {
+export default async function AcademyProgramLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const { profile } = await requireAcademyAuthContext();
   const supabase = await createSupabaseServerClient();
   const academyAccess = await getAcademyEnrollmentAccess(profile.id, supabase);
 
   if (!academyAccess.hasAccess) {
-    return (
-      <AcademyShell>
-        <AcademyEnrollmentEmptyState />
-      </AcademyShell>
-    );
+    redirect("/academy");
   }
 
   const course = await getAcademyProgram();
 
   return (
-    <AcademyShell>
-      <ProgressProvider
-        course={course}
-        productSlug={academyProductSlug}
-        programId={course.id}
-      >
-        <StudentDashboard />
-      </ProgressProvider>
-    </AcademyShell>
+    <ProgressProvider
+      course={course}
+      productSlug={academyProductSlug}
+      programId={course.id}
+    >
+      {children}
+    </ProgressProvider>
   );
 }

@@ -1,5 +1,9 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { EnrollmentRepository } from "@/lib/repositories/enrollment.repository";
+import type { Database } from "@/lib/supabase/database.types";
 import type {
+  ActiveEnrollmentProduct,
   Enrollment,
   EnrollmentAccessResult,
   ProgramAccessInput,
@@ -121,4 +125,11 @@ export async function hasProgramAccess(
 
 export async function getEnrollments(userId: string): Promise<Enrollment[]> {
   return EnrollmentRepository.getEnrollments(userId);
+}
+
+export async function getActiveEnrollmentProducts(
+  userId: string,
+  supabase?: SupabaseClient<Database>,
+): Promise<ActiveEnrollmentProduct[]> {
+  return EnrollmentRepository.getActiveEnrollmentProducts(userId, supabase);
 }

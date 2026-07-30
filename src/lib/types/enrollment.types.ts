@@ -22,6 +22,15 @@ export interface Enrollment {
   updatedAt: string;
 }
 
+export interface ActiveEnrollmentProduct {
+  enrollmentId: string;
+  productId: string;
+  productSlug: string;
+  productTitle: string;
+  startsAt: string;
+  expiresAt: string | null;
+}
+
 export type ProgramAccessInput = {
   userId: string;
   productSlug: string;
