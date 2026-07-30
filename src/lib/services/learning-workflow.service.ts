@@ -1,0 +1,138 @@
+import "server-only";
+
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+import { LearningWorkflowRepository } from "@/lib/repositories/learning-workflow.repository";
+import type { Database } from "@/lib/supabase/database.types";
+import type {
+  LearningWorkflowEnrollmentRow,
+  LearningWorkflowEvaluation,
+  LearningWorkflowModuleRow,
+  LearningWorkflowProgressRow,
+  LearningWorkflowState,
+} from "@/lib/types/learning-workflow.types";
+
+function getCompletionPercent(completedModules: number, publishedModules: number) {
+  return publishedModules > 0
+    ? Math.round((completedModules / publishedModules) * 100)
+    : 0;
+}
+
+function isEnrollmentActive(
+  enrollment: LearningWorkflowEnrollmentRow | null,
+  now = new Date(),
+) {
+  if (!enrollment) {
+    return false;
+  }
+
+  if (enrollment.status !== "active" || enrollment.revoked_at) {
+    return false;
+  }
+
+  const nowTime = now.getTime();
+  const startsAt = new Date(enrollment.starts_at).getTime();
+  const expiresAt = enrollment.expires_at
+    ? new Date(enrollment.expires_at).getTime()
+    : null;
+
+  return startsAt <= nowTime && (expiresAt === null || expiresAt > nowTime);
+}
+
+function isModuleCompleted(progress: LearningWorkflowProgressRow | undefined) {
+  return (
+    progress?.status === "completed" ||
+    progress?.progress_percent === 100 ||
+    Boolean(progress?.completed_at)
+  );
+}
+
+function getWorkflowState({
+  allModulesCompleted,
+  completedModules,
+  enrollmentActive,
+}: {
+  allModulesCompleted: boolean;
+  completedModules: number;
+  enrollmentActive: boolean;
+}): LearningWorkflowState {
+  if (!enrollmentActive || completedModules === 0) {
+    return "not_started";
+  }
+
+  if (allModulesCompleted) {
+    return "requirements_met";
+  }
+
+  return "in_progress";
+}
+
+function mapModules(
+  modules: LearningWorkflowModuleRow[],
+  progressRows: LearningWorkflowProgressRow[],
+) {
+  const progressByModuleKey = new Map(
+    progressRows.map((progress) => [progress.module_key, progress]),
+  );
+
+  return modules.map((academyModule) => {
+    const progress = progressByModuleKey.get(academyModule.module_key);
+    const completed = isModuleCompleted(progress);
+
+    return {
+      completed,
+      completedAt: completed ? progress?.completed_at ?? null : null,
+      moduleId: academyModule.id,
+      moduleKey: academyModule.module_key,
+      order: academyModule.module_order,
+      title: academyModule.title,
+    };
+  });
+}
+
+export const LearningWorkflowService = {
+  /**
+   * Evaluates the current read-only learning workflow state for a student and product.
+   */
+  async evaluateStudentWorkflow(
+    profileId: string,
+    productId: string,
+    supabase?: SupabaseClient<Database>,
+  ): Promise<LearningWorkflowEvaluation> {
+    const [enrollment, publishedModules, progressRows] = await Promise.all([
+      LearningWorkflowRepository.getEnrollment(
+        { productId, profileId },
+        supabase,
+      ),
+      LearningWorkflowRepository.listPublishedModules(productId, supabase),
+      LearningWorkflowRepository.listModuleProgress(
+        { productId, profileId },
+        supabase,
+      ),
+    ]);
+    const enrollmentActive = isEnrollmentActive(enrollment);
+    const modules = mapModules(publishedModules, progressRows);
+    const completedModules = enrollmentActive
+      ? modules.filter((academyModule) => academyModule.completed).length
+      : 0;
+    const totalModules = publishedModules.length;
+    const allModulesCompleted =
+      enrollmentActive && totalModules > 0 && completedModules === totalModules;
+
+    return {
+      allModulesCompleted,
+      completedModules,
+      completionPercent: getCompletionPercent(completedModules, totalModules),
+      enrollmentActive,
+      modules,
+      productId,
+      profileId,
+      publishedModules: totalModules,
+      workflowState: getWorkflowState({
+        allModulesCompleted,
+        completedModules,
+        enrollmentActive,
+      }),
+    };
+  },
+};
