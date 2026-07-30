@@ -1,4 +1,7 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { getSupabaseClient } from "@/lib/database/client";
+import type { Database } from "@/lib/supabase/database.types";
 import type {
   Enrollment,
   EnrollmentAccessSource,
@@ -6,21 +9,13 @@ import type {
   ProgramAccessInput,
 } from "@/lib/types/enrollment.types";
 
-type EnrollmentRow = {
-  id: string;
-  profile_id: string;
-  product_id: string;
-  status: EnrollmentStatus;
-  access_source: EnrollmentAccessSource;
-  starts_at: string;
-  expires_at: string | null;
-  revoked_at: string | null;
-  created_at: string;
-  updated_at: string;
-};
+type EnrollmentRow = Database["public"]["Tables"]["enrollments"]["Row"];
 
-type ProductRow = {
-  id: string;
+type ProductRow = Pick<Database["public"]["Tables"]["products"]["Row"], "id">;
+
+type EnrollmentByProductIdInput = {
+  profileId: string;
+  productId: string;
 };
 
 const enrollmentSelect = `
@@ -41,14 +36,30 @@ function mapEnrollment(row: EnrollmentRow): Enrollment {
     id: row.id,
     profileId: row.profile_id,
     productId: row.product_id,
-    status: row.status,
-    accessSource: row.access_source,
+    status: mapEnrollmentStatus(row.status),
+    accessSource: mapEnrollmentAccessSource(row.access_source),
     startsAt: row.starts_at,
     expiresAt: row.expires_at,
     revokedAt: row.revoked_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
+}
+
+function mapEnrollmentStatus(status: string): EnrollmentStatus {
+  if (status === "active" || status === "revoked" || status === "expired") {
+    return status;
+  }
+
+  throw new Error(`Unexpected enrollment status: ${status}.`);
+}
+
+function mapEnrollmentAccessSource(source: string): EnrollmentAccessSource {
+  if (source === "manual" || source === "purchase" || source === "promotion") {
+    return source;
+  }
+
+  throw new Error(`Unexpected enrollment access source: ${source}.`);
 }
 
 // El repository es la unica capa de enrollment que conoce Supabase y nombres SQL.
@@ -69,26 +80,19 @@ export const EnrollmentRepository = {
       throw productError;
     }
 
-    const product = productData as ProductRow | null;
+    const product: ProductRow | null = productData;
 
     if (!product) {
       return null;
     }
 
-    const { data, error } = await supabase
-      .from("enrollments")
-      .select(enrollmentSelect)
-      .eq("profile_id", input.userId)
-      .eq("product_id", product.id)
-      .maybeSingle();
-
-    const enrollment = data as EnrollmentRow | null;
-
-    if (error) {
-      throw error;
-    }
-
-    return enrollment ? mapEnrollment(enrollment) : null;
+    return EnrollmentRepository.getEnrollmentByProductId(
+      {
+        profileId: input.userId,
+        productId: product.id,
+      },
+      supabase,
+    );
   },
 
   async getEnrollments(userId: string): Promise<Enrollment[]> {
@@ -104,6 +108,26 @@ export const EnrollmentRepository = {
       throw error;
     }
 
-    return (data as unknown as EnrollmentRow[] | null)?.map(mapEnrollment) ?? [];
+    return data?.map(mapEnrollment) ?? [];
+  },
+
+  async getEnrollmentByProductId(
+    input: EnrollmentByProductIdInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<Enrollment | null> {
+    const { data, error } = await supabase
+      .from("enrollments")
+      .select(enrollmentSelect)
+      .eq("profile_id", input.profileId)
+      .eq("product_id", input.productId)
+      .maybeSingle();
+
+    const enrollment: EnrollmentRow | null = data;
+
+    if (error) {
+      throw error;
+    }
+
+    return enrollment ? mapEnrollment(enrollment) : null;
   },
 };

@@ -48,3 +48,18 @@ que Supabase u otros proveedores se filtren a la UI.
 
 Estos tipos preparan la autorizacion futura sin crear consultas reales ni
 acoplar componentes a Supabase.
+
+## Commercial
+
+`commercial.types.ts` centraliza:
+
+- `PurchaseStatus`
+- `PurchaseEventType`
+- `PurchaseEventSource`
+- `WebhookProcessingStatus`
+- `Purchase`
+- `PurchaseEvent`
+- `StripeWebhookEvent`
+
+Estos contratos evitan strings dispersos y separan el dominio comercial interno
+del payload crudo de Stripe.

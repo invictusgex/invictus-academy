@@ -118,3 +118,32 @@ Usuario con acceso al programa
 Un usuario puede tener sesion valida y aun asi no tener una inscripcion activa.
 El acceso futuro a `Trading Basado en Datos` debe depender de `Enrollment`, no
 solo de `AuthSession`.
+
+## ProfileRepository
+
+`profile.repository.ts` resuelve perfiles internos desde un cliente Supabase
+inyectado por la capa server-side. Esto permite que Route Handlers y Server
+Actions usen el mismo cliente por request que ya conoce las cookies de sesion.
+
+Reglas:
+
+- No crea clientes Supabase propios.
+- No lee cookies directamente.
+- No recibe tokens ni sesiones desde la UI.
+- Devuelve un perfil de dominio en camelCase.
+
+## Commercial Repositories
+
+La Fase 8.3 agrega repositories comerciales separados:
+
+- `purchase.repository.ts`
+- `purchase-event.repository.ts`
+- `stripe-webhook-event.repository.ts`
+
+Reglas:
+
+- `PurchaseRepository` conoce compras internas, no decisiones Stripe.
+- `PurchaseEventRepository` registra auditoria de dominio.
+- `StripeWebhookEventRepository` prepara idempotencia por `stripe_event_id`.
+- Ninguno activa enrollments.
+- Ninguno procesa Webhooks por si solo.

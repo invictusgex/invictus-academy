@@ -1,26 +1,27 @@
+import { createBrowserClient } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import {
+  getSupabasePublicConfig,
+  isSupabaseConfigured,
+} from "@/lib/supabase/config";
+import type { Database } from "@/lib/supabase/database.types";
 
-let supabaseClient: SupabaseClient | null = null;
-
-export function isSupabaseConfigured() {
-  return Boolean(supabaseUrl && supabaseAnonKey);
-}
+let supabaseClient: SupabaseClient<Database> | null = null;
 
 export function getSupabaseClient() {
-  if (!supabaseUrl) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable.");
+  const config = getSupabasePublicConfig();
+
+  if (supabaseClient) {
+    return supabaseClient;
   }
 
-  if (!supabaseAnonKey) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable.",
-    );
-  }
-
-  supabaseClient ??= createClient(supabaseUrl, supabaseAnonKey);
+  supabaseClient =
+    typeof window === "undefined"
+      ? createClient<Database>(config.url, config.anonKey)
+      : createBrowserClient<Database>(config.url, config.anonKey);
 
   return supabaseClient;
 }
+
+export { isSupabaseConfigured };

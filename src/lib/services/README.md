@@ -59,3 +59,11 @@ Usuario con acceso al programa
 
 Esta separacion evita que una sesion activa abra contenido privado sin una
 inscripcion activa.
+
+## PurchaseService
+
+`purchase.service.ts` prepara la coordinacion comercial interna para fases
+posteriores. Expone puntos minimos para crear compras, registrar eventos de
+auditoria y registrar eventos Webhook recibidos.
+
+No procesa Webhooks, no activa enrollments y no sincroniza Stripe Customers.

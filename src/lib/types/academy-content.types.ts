@@ -14,7 +14,6 @@ export type AcademyModuleContentRow = {
   overview: string;
   learning_objectives: unknown;
   estimated_duration_minutes: number | null;
-  thumbnail_url: string | null;
   availability: ModuleAvailability;
   status: AcademyContentStatus;
   published_at: string | null;

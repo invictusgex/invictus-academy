@@ -108,7 +108,7 @@ function mapModule({
     resourceCount: moduleResources.length,
     resources: moduleResources,
     status: moduleRow.status,
-    thumbnailUrl: moduleRow.thumbnail_url,
+    thumbnailUrl: null,
     title: moduleRow.title,
     videoCount: moduleVideos.length,
     videos: moduleVideos,
@@ -824,7 +824,6 @@ export const AdminContentService = {
             nextStatus: validation.normalized.status,
           }),
           status: validation.normalized.status,
-          thumbnail_url: validation.normalized.thumbnailUrl || null,
           title: validation.normalized.title,
         });
 

@@ -39,9 +39,15 @@ base de datos.
 
 ## Cliente Supabase
 
-El archivo `client.ts` crea una unica instancia compartida del cliente Supabase.
-Su unica responsabilidad es leer variables de entorno y exponer el cliente para
-las capas internas que lo necesiten.
+El archivo `client.ts` crea una unica instancia compartida del cliente Supabase
+para el entorno actual. En navegador usa `createBrowserClient` de
+`@supabase/ssr` para mantener la sesion basada en cookies. En servidor mantiene
+un cliente anonimo simple para lecturas internas existentes que no dependen de
+cookies.
+
+Para Route Handlers, Server Actions y Server Components que necesiten identidad
+autenticada, debe usarse `src/lib/supabase/server.ts`, que crea un cliente nuevo
+por request leyendo cookies con `next/headers`.
 
 Variables esperadas:
 
@@ -53,7 +59,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 Uso previsto:
 
 ```ts
-import { supabase } from "@/lib/database/client";
+import { getSupabaseClient } from "@/lib/database/client";
 ```
 
 Reglas:
@@ -64,3 +70,19 @@ Reglas:
 - No colocar consultas de autenticacion, progreso, compras o contenido en
   `client.ts`.
 - No guardar valores reales de entorno en `.env.example`.
+
+## Auth server-side
+
+`src/lib/supabase/server.ts` existe para flujos server-side que necesitan
+validar sesion sin recibir tokens desde el navegador.
+
+Reglas:
+
+- Crear un cliente nuevo por request.
+- Leer la sesion desde cookies.
+- No exponer access tokens, refresh tokens ni sesiones crudas a componentes.
+- No usar service role keys dentro de `src`.
+
+`src/proxy.ts` ejecuta el refresco minimo de cookies recomendado por
+`@supabase/ssr` para reducir expiraciones inesperadas de sesion. No protege
+rutas, no redirige usuarios y no modifica permisos.
