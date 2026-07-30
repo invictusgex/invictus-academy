@@ -12,6 +12,34 @@ export type LearningWorkflowModuleSummary = {
   completedAt: string | null;
 };
 
+export type CompletionRuleResult = {
+  key: string;
+  label: string;
+  satisfied: boolean;
+  currentValue: number | string | boolean | null;
+  requiredValue: number | string | boolean | null;
+  metadata?: Record<string, boolean | number | string | null>;
+};
+
+export type CompletionRuleEvaluation = {
+  allSatisfied: boolean;
+  rules: CompletionRuleResult[];
+  satisfiedCount: number;
+  totalCount: number;
+};
+
+export type CompletionRuleContext = {
+  completedModules: number;
+  enrollmentActive: boolean;
+  modules: LearningWorkflowModuleSummary[];
+  publishedModules: number;
+};
+
+export type CompletionRule = {
+  key: string;
+  evaluate(context: CompletionRuleContext): CompletionRuleResult;
+};
+
 export type LearningWorkflowEvaluation = {
   allModulesCompleted: boolean;
   completedModules: number;
@@ -21,6 +49,10 @@ export type LearningWorkflowEvaluation = {
   productId: string;
   profileId: string;
   publishedModules: number;
+  requirementsSatisfied: boolean;
+  rules: CompletionRuleResult[];
+  satisfiedRequirements: number;
+  totalRequirements: number;
   workflowState: LearningWorkflowState;
 };
 

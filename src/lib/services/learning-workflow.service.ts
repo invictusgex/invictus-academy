@@ -4,6 +4,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { LearningWorkflowRepository } from "@/lib/repositories/learning-workflow.repository";
 import type { Database } from "@/lib/supabase/database.types";
+import {
+  CompletionRuleEvaluator,
+  initialLearningWorkflowRules,
+} from "@/lib/services/learning-workflow-rules.service";
 import type {
   LearningWorkflowEnrollmentRow,
   LearningWorkflowEvaluation,
@@ -47,20 +51,30 @@ function isModuleCompleted(progress: LearningWorkflowProgressRow | undefined) {
   );
 }
 
+function hasStartedProgress(progressRows: LearningWorkflowProgressRow[]) {
+  return progressRows.some(
+    (progress) =>
+      progress.status === "in_progress" ||
+      progress.status === "completed" ||
+      progress.progress_percent > 0 ||
+      Boolean(progress.completed_at),
+  );
+}
+
 function getWorkflowState({
-  allModulesCompleted,
-  completedModules,
   enrollmentActive,
+  requirementsSatisfied,
+  started,
 }: {
-  allModulesCompleted: boolean;
-  completedModules: number;
   enrollmentActive: boolean;
+  requirementsSatisfied: boolean;
+  started: boolean;
 }): LearningWorkflowState {
-  if (!enrollmentActive || completedModules === 0) {
+  if (!enrollmentActive || !started) {
     return "not_started";
   }
 
-  if (allModulesCompleted) {
+  if (requirementsSatisfied) {
     return "requirements_met";
   }
 
@@ -118,6 +132,15 @@ export const LearningWorkflowService = {
     const totalModules = publishedModules.length;
     const allModulesCompleted =
       enrollmentActive && totalModules > 0 && completedModules === totalModules;
+    const ruleEvaluation = CompletionRuleEvaluator.evaluate(
+      initialLearningWorkflowRules,
+      {
+        completedModules,
+        enrollmentActive,
+        modules,
+        publishedModules: totalModules,
+      },
+    );
 
     return {
       allModulesCompleted,
@@ -128,10 +151,14 @@ export const LearningWorkflowService = {
       productId,
       profileId,
       publishedModules: totalModules,
+      requirementsSatisfied: ruleEvaluation.allSatisfied,
+      rules: ruleEvaluation.rules,
+      satisfiedRequirements: ruleEvaluation.satisfiedCount,
+      totalRequirements: ruleEvaluation.totalCount,
       workflowState: getWorkflowState({
-        allModulesCompleted,
-        completedModules,
         enrollmentActive,
+        requirementsSatisfied: ruleEvaluation.allSatisfied,
+        started: hasStartedProgress(progressRows),
       }),
     };
   },
