@@ -159,3 +159,34 @@ export type CreateStripeWebhookEventInput = {
   errorMessage?: string | null;
   payloadSummary?: Record<string, unknown> | null;
 };
+
+export const fulfillmentOutcomes = [
+  "granted",
+  "already_fulfilled",
+  "active_enrollment_reused",
+] as const;
+
+export type FulfillmentOutcome = (typeof fulfillmentOutcomes)[number];
+
+export const fulfillmentErrorCodes = [
+  "PURCHASE_NOT_FOUND",
+  "PURCHASE_NOT_PAID",
+  "ENROLLMENT_LINK_CONFLICT",
+  "ENROLLMENT_REVOKED_CONFLICT",
+  "ENROLLMENT_EXPIRED_CONFLICT",
+  "ENROLLMENT_NOT_YET_ACTIVE_CONFLICT",
+  "ENROLLMENT_CREATION_FAILED",
+  "ENROLLMENT_LINK_FAILED",
+  "FULFILLMENT_TRANSACTION_FAILED",
+  "DATABASE_UNAVAILABLE",
+] as const;
+
+export type FulfillmentErrorCode = (typeof fulfillmentErrorCodes)[number];
+
+export type FulfillmentResult = {
+  purchaseId: string;
+  enrollmentId: string;
+  outcome: FulfillmentOutcome;
+  enrollmentCreated: boolean;
+  eventCreated: boolean;
+};

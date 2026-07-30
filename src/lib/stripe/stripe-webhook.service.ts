@@ -3,6 +3,10 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 
+import {
+  CommercialFulfillmentError,
+  CommercialFulfillmentService,
+} from "@/lib/services/commercial-fulfillment.service";
 import { PurchaseService } from "@/lib/services/purchase.service";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
@@ -48,6 +52,11 @@ class StripeWebhookProcessingError extends Error {
 
 const permanentWebhookErrorCodes = new Set<string>([
   "PURCHASE_NOT_FOUND",
+  "PURCHASE_NOT_PAID",
+  "ENROLLMENT_LINK_CONFLICT",
+  "ENROLLMENT_REVOKED_CONFLICT",
+  "ENROLLMENT_EXPIRED_CONFLICT",
+  "ENROLLMENT_NOT_YET_ACTIVE_CONFLICT",
   STRIPE_CHECKOUT_ERROR_CODES.PURCHASE_METADATA_MISMATCH,
   STRIPE_CHECKOUT_ERROR_CODES.PAYMENT_INTENT_MISMATCH,
   STRIPE_CHECKOUT_ERROR_CODES.CHECKOUT_AMOUNT_MISMATCH,
@@ -380,13 +389,17 @@ async function processPaymentIntentSucceeded(
     return null;
   }
 
-  return PurchaseService.confirmPayment(
+  const confirmedPurchase = await PurchaseService.confirmPayment(
     {
       purchaseId: purchase.id,
       summary: "Payment confirmed by provider webhook.",
     },
     supabase,
   );
+
+  await CommercialFulfillmentService.fulfillPaidPurchase(confirmedPurchase.id);
+
+  return confirmedPurchase;
 }
 
 async function processPaymentIntentFailed(
@@ -582,6 +595,8 @@ export const StripeWebhookService = {
     } catch (error) {
       const webhookError =
         error instanceof StripeWebhookProcessingError ? error : null;
+      const fulfillmentError =
+        error instanceof CommercialFulfillmentError ? error : null;
       const fallbackErrorCode =
         typeof error === "object" &&
         error !== null &&
@@ -589,15 +604,20 @@ export const StripeWebhookService = {
         typeof (error as { code?: unknown }).code === "string"
           ? (error as { code: string }).code
           : "WEBHOOK_PROCESSING_ERROR";
-      const lastErrorCode = webhookError?.code ?? fallbackErrorCode;
-      const isPermanent = permanentWebhookErrorCodes.has(lastErrorCode);
+      const lastErrorCode =
+        webhookError?.code ?? fulfillmentError?.code ?? fallbackErrorCode;
+      const isPermanent =
+        fulfillmentError?.isPermanent ??
+        permanentWebhookErrorCodes.has(lastErrorCode);
+      const purchaseId =
+        webhookError?.purchaseId ?? fulfillmentError?.purchaseId ?? null;
 
       await PurchaseService.markWebhookFailed(
         event.id,
         {
           lastErrorCode,
           errorMessage: getSafeErrorMessage(error),
-          purchaseId: webhookError?.purchaseId ?? null,
+          purchaseId,
         },
         supabase,
       );
@@ -605,7 +625,7 @@ export const StripeWebhookService = {
       return {
         stripeEventId: event.id,
         status: isPermanent ? "permanent_failure" : "retryable_failure",
-        purchaseId: webhookError?.purchaseId ?? null,
+        purchaseId,
       };
     }
   },

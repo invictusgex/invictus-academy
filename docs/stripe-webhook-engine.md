@@ -1,8 +1,9 @@
 # Stripe Webhook Engine
 
-FASE 8.4 implementa el motor inicial de Webhooks de Stripe. No activa
-enrollments, no crea Session 101, no sincroniza Stripe Customers, no envia emails
-y no implementa portal ni UI comercial.
+FASE 8.4 implementa el motor inicial de Webhooks de Stripe. FASE 8.6B agrega
+fulfillment academico atomico para `payment_intent.succeeded`. No crea Session
+101, no sincroniza Stripe Customers, no envia emails y no implementa portal ni
+UI comercial.
 
 ## Arquitectura
 
@@ -12,6 +13,8 @@ POST /api/stripe/webhook
   -> Stripe signature verification
   -> StripeWebhookService
   -> PurchaseService
+  -> CommercialFulfillmentService (solo payment_intent.succeeded)
+  -> fulfill_paid_purchase RPC
   -> Repositories
   -> Commercial tables
 ```
@@ -100,6 +103,12 @@ Todo evento no soportado se marca como `ignored`.
 - falla con `PAYMENT_INTENT_MISMATCH` si ambas rutas apuntan a compras distintas;
 - ejecuta `PurchaseService.confirmPayment()`;
 - registra `payment_confirmed`.
+- ejecuta `CommercialFulfillmentService.fulfillPaidPurchase()`;
+- crea o reutiliza un Enrollment activo mediante RPC transaccional;
+- enlaza `purchases.enrollment_id`;
+- registra `purchase_events.enrollment_granted`;
+- si la Purchase ya estaba `paid`, igualmente intenta fulfillment para recuperar
+  compras pagadas sin enrollment.
 
 `payment_intent.payment_failed`:
 
@@ -140,6 +149,8 @@ dominio.
 - evento ignorado, procesado o duplicado finalizado: 200;
 - anomalia permanente verificada: 200 con estado `permanent_failure`;
 - fallo desconocido o transitorio: 500 con estado `retryable_failure`.
+- conflicto permanente de fulfillment: 200 con estado `permanent_failure`;
+- fallo transitorio de fulfillment: 500 con estado `retryable_failure`.
 
 Stripe solo debe reintentar cuando el servidor no pudo completar una operacion
 confiable.
@@ -151,8 +162,10 @@ confiable.
 - No recibe IDs del cliente.
 - No imprime payloads completos.
 - No imprime cookies, tokens ni secrets.
-- No concede acceso academico.
-- No modifica enrollments.
+- Concede acceso academico solo mediante RPC server-only en
+  `payment_intent.succeeded`.
+- No modifica enrollments desde `checkout.session.completed`, refunds ni
+  disputes.
 
 ## Limitaciones
 

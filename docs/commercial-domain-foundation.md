@@ -2,7 +2,8 @@
 
 FASE 8.3 y 8.3A definen la fuente de verdad comercial de Invictus Trading
 Academy. Esta base no implementa Webhooks, procesamiento de eventos Stripe,
-activacion de enrollments, refunds automaticos, emails ni UI comercial.
+activacion de enrollments, refunds automaticos, emails ni UI comercial. FASE
+8.6B agrega activacion atomica de enrollments solo para compras `paid`.
 
 ## Arquitectura
 
@@ -319,5 +320,21 @@ No se creo:
 - `Invoices`;
 - `Coupons`;
 - sync de customers;
-- activacion de enrollments;
 - UI comercial.
+
+## Atomic Fulfillment
+
+FASE 8.6B crea `public.fulfill_paid_purchase(p_purchase_id uuid)` como RPC
+server-only. La funcion:
+
+- exige `purchases.status = 'paid'`;
+- bloquea la Purchase con `FOR UPDATE`;
+- crea Enrollment `active` con `access_source = 'purchase'` y `expires_at = null`
+  cuando no existe;
+- reutiliza Enrollment activo vigente cuando existe;
+- no reactiva Enrollment revocado ni expirado;
+- enlaza `purchases.enrollment_id`;
+- registra un unico `purchase_events.enrollment_granted`;
+- se ejecuta exclusivamente mediante `service_role`.
+
+Refunds y disputes no revocan acceso en esta fase.
