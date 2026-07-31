@@ -52,16 +52,19 @@ export function StudentModuleDetailPage({
         thumbnailUrl={thumbnailUrl}
       />
 
-      <ModuleCompletionPanel moduleId={academyModule.id} status={status} />
-
       <div id="videos">
-        <ModuleVideosSection videos={academyModule.videos} />
+        <ModuleVideosSection
+          moduleStatus={status}
+          videos={academyModule.videos}
+        />
       </div>
 
       <ModuleResourcesSection
         resourceUrls={resourceUrls}
         resources={academyModule.resources}
       />
+
+      <ModuleCompletionPanel moduleId={academyModule.id} status={status} />
 
       <ModuleObjectivesSection objectives={academyModule.learningObjectives} />
 
