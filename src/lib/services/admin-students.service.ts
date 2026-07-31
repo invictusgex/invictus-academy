@@ -1,3 +1,5 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import {
   AdminStudentsRepository,
   type AdminStudentEnrollmentRow,
@@ -16,6 +18,7 @@ import type {
   AdminStudentsSortBy,
 } from "@/lib/types/admin-students.types";
 import { getAcademyProgram } from "@/lib/academy";
+import type { Database } from "@/lib/supabase/database.types";
 
 const defaultPageSize = 10;
 
@@ -79,6 +82,7 @@ function mapModuleProgress(
     lastActivityAt: row.last_seen_at ?? row.updated_at,
     moduleKey: row.module_key,
     percentage: row.progress_percent,
+    productId: row.product_id,
     status: row.status,
   };
 }
@@ -189,22 +193,26 @@ function buildStudent(
 export const AdminStudentsService = {
   async listStudents(
     input: AdminStudentsListInput = {},
+    supabase?: SupabaseClient<Database>,
   ): Promise<AdminStudentsListResult> {
     const page = normalizePage(input.page);
     const pageSize = normalizePageSize(input.pageSize);
     const from = (page - 1) * pageSize;
     const sortDirection = input.sortDirection === "asc" ? "asc" : "desc";
-    const { count, profiles } = await AdminStudentsRepository.listProfiles({
-      from,
-      pageSize,
-      query: input.query?.trim() ?? "",
-      sortBy: mapSortBy(input.sortBy),
-      sortDirection,
-    });
+    const { count, profiles } = await AdminStudentsRepository.listProfiles(
+      {
+        from,
+        pageSize,
+        query: input.query?.trim() ?? "",
+        sortBy: mapSortBy(input.sortBy),
+        sortDirection,
+      },
+      supabase,
+    );
     const profileIds = profiles.map((profile) => profile.id);
     const [enrollments, moduleProgress] = await Promise.all([
-      AdminStudentsRepository.listEnrollments(profileIds),
-      AdminStudentsRepository.listModuleProgress(profileIds),
+      AdminStudentsRepository.listEnrollments(profileIds, supabase),
+      AdminStudentsRepository.listModuleProgress(profileIds, supabase),
     ]);
     const academyProgram = await getAcademyProgram();
     const academyModuleCount = academyProgram.modules.length;
@@ -242,6 +250,30 @@ export const AdminStudentsService = {
     const [enrollments, moduleProgress] = await Promise.all([
       AdminStudentsRepository.listEnrollments([userId]),
       AdminStudentsRepository.listModuleProgress([userId]),
+    ]);
+    const academyProgram = await getAcademyProgram();
+
+    return buildStudent(
+      profile,
+      enrollments,
+      moduleProgress,
+      academyProgram.modules.length,
+    );
+  },
+
+  async getStudentForAdmin(
+    profileId: string,
+    supabase: SupabaseClient<Database>,
+  ): Promise<AdminStudent | null> {
+    const profile = await AdminStudentsRepository.getProfile(profileId, supabase);
+
+    if (!profile) {
+      return null;
+    }
+
+    const [enrollments, moduleProgress] = await Promise.all([
+      AdminStudentsRepository.listEnrollments([profileId], supabase),
+      AdminStudentsRepository.listModuleProgress([profileId], supabase),
     ]);
     const academyProgram = await getAcademyProgram();
 

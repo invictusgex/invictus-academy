@@ -1,4 +1,7 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { getSupabaseClient } from "@/lib/database/client";
+import type { Database } from "@/lib/supabase/database.types";
 
 export type AdminStudentProfileRow = {
   id: string;
@@ -70,17 +73,19 @@ const moduleProgressSelect = `
 `;
 
 export const AdminStudentsRepository = {
-  async listProfiles({
-    from,
-    pageSize,
-    query,
-    sortBy,
-    sortDirection,
-  }: AdminStudentsListQuery): Promise<{
+  async listProfiles(
+    {
+      from,
+      pageSize,
+      query,
+      sortBy,
+      sortDirection,
+    }: AdminStudentsListQuery,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<{
     count: number;
     profiles: AdminStudentProfileRow[];
   }> {
-    const supabase = getSupabaseClient();
     let request = supabase
       .from("profiles")
       .select(profileSelect, { count: "exact" });
@@ -103,8 +108,10 @@ export const AdminStudentsRepository = {
     };
   },
 
-  async getProfile(userId: string): Promise<AdminStudentProfileRow | null> {
-    const supabase = getSupabaseClient();
+  async getProfile(
+    userId: string,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<AdminStudentProfileRow | null> {
     const { data, error } = await supabase
       .from("profiles")
       .select(profileSelect)
@@ -120,12 +127,12 @@ export const AdminStudentsRepository = {
 
   async listEnrollments(
     profileIds: string[],
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
   ): Promise<AdminStudentEnrollmentRow[]> {
     if (profileIds.length === 0) {
       return [];
     }
 
-    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from("enrollments")
       .select(enrollmentSelect)
@@ -141,12 +148,12 @@ export const AdminStudentsRepository = {
 
   async listModuleProgress(
     profileIds: string[],
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
   ): Promise<AdminStudentModuleProgressRow[]> {
     if (profileIds.length === 0) {
       return [];
     }
 
-    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from("module_progress")
       .select(moduleProgressSelect)

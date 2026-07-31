@@ -202,6 +202,27 @@ export const FormRepository = {
     };
   },
 
+  async listSubmissionsByScope(
+    input: {
+      productId: string;
+      profileId: string;
+    },
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<FormSubmission[]> {
+    const { data, error } = await supabase
+      .from("academy_form_submissions")
+      .select(formSubmissionSelect)
+      .eq("profile_id", input.profileId)
+      .eq("product_id", input.productId)
+      .order("submitted_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data as FormSubmissionRow[] | null) ?? []).map(mapFormSubmission);
+  },
+
   async upsertSubmission(
     scope: FormSubmissionScope,
     answers: FormAnswers,

@@ -30,6 +30,7 @@ export type AdminStudentModuleProgress = {
   lastActivityAt: string | null;
   moduleKey: string;
   percentage: number;
+  productId: string;
   status: string;
 };
 

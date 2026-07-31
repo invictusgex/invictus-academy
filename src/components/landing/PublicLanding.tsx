@@ -267,16 +267,16 @@ function TransformationSection() {
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           La transformación
         </p>
-        <div className="mt-8 grid gap-4 md:grid-cols-7">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
           {transformationSteps.map((step, index) => (
             <article
-              className="relative rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
+              className="relative min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
               key={step}
             >
               <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <h2 className="mt-3 text-base font-semibold text-white">
+              <h2 className="mt-3 break-words text-sm leading-5 font-semibold text-white xl:text-[0.8rem]">
                 {step}
               </h2>
             </article>

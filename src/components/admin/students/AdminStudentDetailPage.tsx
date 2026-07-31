@@ -1,258 +1,365 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
-import { AdminAccessManager } from "@/components/admin/access/AdminAccessManager";
-import { AdminStudentsService } from "@/lib/services/admin-students.service";
-import type { AdminStudent } from "@/lib/types/admin-students.types";
+import { adminStudentsConfig } from "@/config/admin-students";
+import { AdminEmptyState } from "@/components/admin/ui/AdminEmptyState";
+import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
+import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
+import {
+  formatAdminDate,
+  formatAdminDateTime,
+  formatEnrollmentStatus,
+} from "@/components/admin/ui/admin-formatters";
+import type {
+  AdminStudentEnrollmentDetail,
+  AdminStudentManagementDetail,
+} from "@/lib/types/admin-student-management.types";
 
 type AdminStudentDetailPageProps = {
-  userId: string;
+  detail: AdminStudentManagementDetail;
 };
 
-function formatDateTime(value: string | null) {
-  if (!value) {
-    return "Sin registro";
-  }
-
-  return new Intl.DateTimeFormat("es", {
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
+function getDisplayName(fullName: string | null) {
+  return fullName?.trim() || "Alumno sin nombre";
 }
 
-function getDisplayName(student: AdminStudent) {
-  return student.fullName?.trim() || "Alumno sin nombre";
+function getRuleLabel(key: string, fallback: string) {
+  return (
+    adminStudentsConfig.workflowLabels[
+      key as keyof typeof adminStudentsConfig.workflowLabels
+    ] ?? fallback
+  );
+}
+
+function formatMoney(amountMinor: number | null, currency: string) {
+  if (amountMinor === null) {
+    return "Sin importe";
+  }
+
+  return new Intl.NumberFormat("es", {
+    currency,
+    style: "currency",
+  }).format(amountMinor / 100);
+}
+
+function getStatusTone(status: string) {
+  if (status === "active" || status === "paid" || status === "Completado") {
+    return "success";
+  }
+
+  if (
+    status === "revoked" ||
+    status === "failed" ||
+    status === "canceled" ||
+    status === "disputed"
+  ) {
+    return "danger";
+  }
+
+  if (status === "expired" || status === "pending") {
+    return "warning";
+  }
+
+  return "neutral";
+}
+
+function EnrollmentDetailCard({
+  detail,
+}: {
+  detail: AdminStudentEnrollmentDetail;
+}) {
+  const moduleProgress = detail.workflow
+    ? `${detail.workflow.completedModules}/${detail.workflow.publishedModules}`
+    : "Sin workflow";
+
+  return (
+    <article className="min-w-0 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h3 className="break-words text-lg font-semibold text-white">
+            {detail.enrollment.course?.title ?? "Producto sin titulo"}
+          </h3>
+          <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+            Enrollment: {formatAdminDateTime(detail.enrollment.createdAt)}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <AdminStatusBadge tone={getStatusTone(detail.enrollment.status)}>
+            {formatEnrollmentStatus(detail.enrollment.status)}
+          </AdminStatusBadge>
+          <AdminStatusBadge
+            tone={detail.session101.unlocked ? "success" : "warning"}
+          >
+            {`Sesion 101 ${detail.session101.label}`}
+          </AdminStatusBadge>
+        </div>
+      </div>
+
+      <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-xl border border-[var(--color-border)] p-4">
+          <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Modulos
+          </dt>
+          <dd className="mt-2 text-2xl font-semibold text-white">
+            {moduleProgress}
+          </dd>
+        </div>
+        <div className="rounded-xl border border-[var(--color-border)] p-4">
+          <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Formularios
+          </dt>
+          <dd className="mt-2 text-2xl font-semibold text-white">
+            {detail.formSubmissions.length}/{detail.formDefinitions.length}
+          </dd>
+        </div>
+        <div className="rounded-xl border border-[var(--color-border)] p-4">
+          <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Trading days
+          </dt>
+          <dd className="mt-2 text-2xl font-semibold text-white">
+            {detail.tradingDays.length}
+          </dd>
+        </div>
+        <div className="rounded-xl border border-[var(--color-border)] p-4">
+          <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Compras
+          </dt>
+          <dd className="mt-2 text-2xl font-semibold text-white">
+            {detail.purchases.length}
+          </dd>
+        </div>
+      </dl>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="min-w-0 rounded-xl border border-[var(--color-border)] p-4">
+          <h4 className="text-sm font-semibold text-white">
+            Learning Workflow
+          </h4>
+          <div className="mt-4 grid gap-3">
+            {detail.rules.map((rule) => (
+              <div
+                className="flex min-w-0 flex-col gap-2 rounded-lg bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between"
+                key={rule.key}
+              >
+                <span className="min-w-0 break-words text-sm text-white">
+                  {getRuleLabel(rule.key, rule.label)}
+                </span>
+                <span className="text-sm text-[var(--color-text-secondary)]">
+                  {String(rule.currentValue ?? 0)} /{" "}
+                  {String(rule.requiredValue ?? 0)}
+                </span>
+              </div>
+            ))}
+            {detail.rules.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                No hay evaluacion de workflow para este enrollment.
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="min-w-0 rounded-xl border border-[var(--color-border)] p-4">
+          <h4 className="text-sm font-semibold text-white">
+            Formularios requeridos
+          </h4>
+          <div className="mt-4 grid gap-3">
+            {detail.formDefinitions.map((definition) => {
+              const submission = detail.formSubmissions.find(
+                (currentSubmission) =>
+                  currentSubmission.formDefinitionId === definition.id,
+              );
+
+              return (
+                <div
+                  className="min-w-0 rounded-lg bg-black/20 p-3"
+                  key={definition.id}
+                >
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <span className="break-words text-sm font-medium text-white">
+                      {definition.title}
+                    </span>
+                    <AdminStatusBadge tone={submission ? "success" : "warning"}>
+                      {submission ? "Enviado" : "Pendiente"}
+                    </AdminStatusBadge>
+                  </div>
+                  <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
+                    {submission
+                      ? `Enviado: ${formatAdminDateTime(submission.submittedAt)}`
+                      : "Sin submission"}
+                  </p>
+                </div>
+              );
+            })}
+            {detail.formDefinitions.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                No hay formularios requeridos publicados para este producto.
+              </p>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="min-w-0 rounded-xl border border-[var(--color-border)] p-4">
+          <h4 className="text-sm font-semibold text-white">Dias de trading</h4>
+          <div className="mt-4 grid gap-2">
+            {detail.tradingDays.map((day) => (
+              <div
+                className="min-w-0 rounded-lg bg-black/20 p-3 text-sm"
+                key={day.id}
+              >
+                <p className="font-medium text-white">
+                  {formatAdminDate(day.tradingDate)}
+                </p>
+                <p className="mt-1 break-words text-[var(--color-text-secondary)]">
+                  {day.notes ?? "Sin notas"}
+                </p>
+              </div>
+            ))}
+            {detail.tradingDays.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                No hay dias de trading registrados.
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="min-w-0 rounded-xl border border-[var(--color-border)] p-4">
+          <h4 className="text-sm font-semibold text-white">Purchases</h4>
+          <div className="mt-4 grid gap-2">
+            {detail.purchases.map((purchase) => (
+              <div
+                className="min-w-0 rounded-lg bg-black/20 p-3 text-sm"
+                key={purchase.id}
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <span className="break-all font-medium text-white">
+                    {purchase.purchaseNumber}
+                  </span>
+                  <AdminStatusBadge tone={getStatusTone(purchase.status)}>
+                    {purchase.status}
+                  </AdminStatusBadge>
+                </div>
+                <p className="mt-2 text-[var(--color-text-secondary)]">
+                  {formatMoney(purchase.amountTotalMinor, purchase.currency)} -
+                  {" "}
+                  {formatAdminDateTime(purchase.createdAt)}
+                </p>
+              </div>
+            ))}
+            {detail.purchases.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                No hay purchases relacionados con este producto.
+              </p>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
 }
 
 export function AdminStudentDetailPage({
-  userId,
+  detail,
 }: AdminStudentDetailPageProps) {
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [student, setStudent] = useState<AdminStudent | null>(null);
-
-  useEffect(() => {
-    let isActive = true;
-    const timeoutId = window.setTimeout(() => {
-      async function loadStudent() {
-        setLoading(true);
-        setError(false);
-
-        try {
-          const studentResult = await AdminStudentsService.getStudent(userId);
-
-          if (isActive) {
-            setStudent(studentResult);
-          }
-        } catch {
-          if (isActive) {
-            setError(true);
-          }
-        } finally {
-          if (isActive) {
-            setLoading(false);
-          }
-        }
-      }
-
-      void loadStudent();
-    }, 0);
-
-    return () => {
-      isActive = false;
-      window.clearTimeout(timeoutId);
-    };
-  }, [userId]);
-
-  if (loading) {
-    return (
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <p className="text-sm text-[var(--color-text-secondary)]">
-          Cargando detalle del alumno...
-        </p>
-      </section>
-    );
-  }
-
-  if (error || !student) {
-    return (
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Alumno
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold text-white">
-          No disponible
-        </h1>
-        <p className="mt-4 text-base leading-7 text-[var(--color-text-secondary)]">
-          No fue posible cargar el detalle administrativo solicitado.
-        </p>
-        <Link
-          className="mt-6 inline-flex min-h-11 items-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-          href="/admin/students"
-        >
-          Volver al listado
-        </Link>
-      </section>
-    );
-  }
+  const student = detail.student;
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <Link
-          className="text-sm font-semibold text-[var(--color-cyan)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-          href="/admin/students"
-        >
-          Volver al listado
-        </Link>
-        <p className="mt-6 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Alumno
-        </p>
-        <h1 className="mt-3 break-words text-3xl font-semibold text-white">
-          {getDisplayName(student)}
-        </h1>
-        <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
-          <p className="rounded-xl border border-[var(--color-border)] p-4 text-[var(--color-text-secondary)]">
-            <span className="block font-semibold text-white">Email</span>
-            {student.email ?? "No disponible"}
-          </p>
-          <p className="rounded-xl border border-[var(--color-border)] p-4 text-[var(--color-text-secondary)]">
-            <span className="block font-semibold text-white">Alta</span>
-            {formatDateTime(student.createdAt)}
-          </p>
-        </div>
+      <AdminPageHeader
+        actions={
+          <Link
+            className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-white/[0.03] sm:w-auto"
+            href="/admin/students"
+          >
+            Volver al listado
+          </Link>
+        }
+        eyebrow="Alumno"
+        title={getDisplayName(student.fullName)}
+      >
+        Vista server-side de perfil, enrollments, progreso academico, workflow,
+        formularios, trading days y purchases.
+      </AdminPageHeader>
+
+      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
+        <h2 className="text-xl font-semibold text-white">Perfil basico</h2>
+        <dl className="mt-5 grid gap-3 md:grid-cols-3">
+          <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4">
+            <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+              Email
+            </dt>
+            <dd className="mt-2 break-all text-sm text-white">
+              {student.email ?? "No disponible"}
+            </dd>
+          </div>
+          <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4">
+            <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+              Alta
+            </dt>
+            <dd className="mt-2 text-sm text-white">
+              {formatAdminDateTime(student.createdAt)}
+            </dd>
+          </div>
+          <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4">
+            <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+              Ultimo enrollment
+            </dt>
+            <dd className="mt-2 text-sm text-white">
+              {formatAdminDateTime(student.lastEnrollmentAt)}
+            </dd>
+          </div>
+        </dl>
       </section>
 
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <h2 className="text-xl font-semibold text-white">Cursos inscritos</h2>
-        <div className="mt-5 grid gap-4">
-          {student.enrollments.map((enrollment) => (
-            <article
-              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5"
-              key={enrollment.id}
-            >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-white">
-                    {enrollment.course?.title ?? "Curso sin titulo"}
-                  </h3>
-                  <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-                    Inscripción: {formatDateTime(enrollment.createdAt)}
-                  </p>
-                </div>
-                <span className="w-fit rounded-full border border-[var(--color-border)] px-3 py-1 text-xs font-semibold text-[var(--color-cyan)]">
-                  {enrollment.status}
-                </span>
-              </div>
-            </article>
+      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
+        <h2 className="text-xl font-semibold text-white">
+          Estado academico y comercial
+        </h2>
+        <div className="mt-5 grid gap-5">
+          {detail.enrollmentDetails.map((enrollmentDetail) => (
+            <EnrollmentDetailCard
+              detail={enrollmentDetail}
+              key={enrollmentDetail.enrollment.id}
+            />
           ))}
-          {student.enrollments.length === 0 ? (
-            <p className="text-sm text-[var(--color-text-secondary)]">
-              No hay cursos inscritos para este alumno.
-            </p>
+          {detail.enrollmentDetails.length === 0 ? (
+            <AdminEmptyState
+              description="Este alumno todavia no tiene enrollments asociados."
+              title="Sin enrollments"
+            />
           ) : null}
         </div>
       </section>
 
-      <AdminAccessManager
-        initialStudentId={student.id}
-        initialStudentLabel={getDisplayName(student)}
-        showSearch={false}
-      />
-
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <h2 className="text-xl font-semibold text-white">Progreso por curso</h2>
-        <div className="mt-5 grid gap-4">
-          {student.progress.map((progress) => {
-            const enrollment = student.enrollments.find(
-              (currentEnrollment) =>
-                currentEnrollment.productId === progress.productId,
-            );
-
-            return (
+      {detail.purchases.length > 0 ? (
+        <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
+          <h2 className="text-xl font-semibold text-white">
+            Purchases del alumno
+          </h2>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {detail.purchases.map((purchase) => (
               <article
-                className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5"
-                key={progress.productId}
+                className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
+                key={purchase.id}
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">
-                      {enrollment?.course?.title ?? "Curso sin titulo"}
-                    </h3>
-                    <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-                      {progress.completedModules} de {progress.totalModules}{" "}
-                      módulos completados
-                    </p>
-                  </div>
-                  <span className="text-2xl font-semibold text-white">
-                    {progress.percentage} %
-                  </span>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <h3 className="break-all text-sm font-semibold text-white">
+                    {purchase.purchaseNumber}
+                  </h3>
+                  <AdminStatusBadge tone={getStatusTone(purchase.status)}>
+                    {purchase.status}
+                  </AdminStatusBadge>
                 </div>
-                <p className="mt-4 text-sm text-[var(--color-text-secondary)]">
-                  Última actividad: {formatDateTime(progress.lastActivityAt)}
+                <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
+                  {formatMoney(purchase.amountTotalMinor, purchase.currency)} -
+                  {" "}
+                  {formatAdminDateTime(purchase.createdAt)}
                 </p>
               </article>
-            );
-          })}
-          {student.progress.length === 0 ? (
-            <p className="text-sm text-[var(--color-text-secondary)]">
-              No hay progreso registrado para este alumno.
-            </p>
-          ) : null}
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <h2 className="text-xl font-semibold text-white">Módulos</h2>
-        <div className="mt-5 overflow-x-auto">
-          <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
-            <thead className="bg-[var(--color-card-bg)] text-xs tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-              <tr>
-                <th className="px-5 py-4 font-semibold">Módulo</th>
-                <th className="px-5 py-4 font-semibold">Porcentaje</th>
-                <th className="px-5 py-4 font-semibold">Estado</th>
-                <th className="px-5 py-4 font-semibold">Última actividad</th>
-              </tr>
-            </thead>
-            <tbody>
-              {student.moduleProgress.map((moduleProgress) => (
-                <tr
-                  className="border-t border-[var(--color-border)]"
-                  key={`${moduleProgress.moduleKey}-${moduleProgress.status}`}
-                >
-                  <td className="px-5 py-4 font-medium text-white">
-                    {moduleProgress.moduleKey}
-                  </td>
-                  <td className="px-5 py-4 text-[var(--color-text-secondary)]">
-                    {moduleProgress.percentage} %
-                  </td>
-                  <td className="px-5 py-4 text-[var(--color-cyan)]">
-                    {moduleProgress.status}
-                  </td>
-                  <td className="px-5 py-4 text-[var(--color-text-secondary)]">
-                    {formatDateTime(moduleProgress.lastActivityAt)}
-                  </td>
-                </tr>
-              ))}
-              {student.moduleProgress.length === 0 ? (
-                <tr>
-                  <td
-                    className="px-5 py-8 text-center text-[var(--color-text-secondary)]"
-                    colSpan={4}
-                  >
-                    No hay módulos con progreso registrado.
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
