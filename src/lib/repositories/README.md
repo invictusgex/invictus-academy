@@ -100,6 +100,24 @@ por si solo si el acceso esta habilitado: esa regla vive en
 `EnrollmentService`, donde se evaluan `status`, `startsAt`, `expiresAt` y
 `revokedAt`.
 
+## FormRepository
+
+`form.repository.ts` implementa el acceso a datos del motor reutilizable de
+formularios academicos. Conoce las tablas `academy_form_definitions` y
+`academy_form_submissions`, pero no decide si una sesion esta autenticada ni
+acepta identidad del cliente.
+
+El `FormService` le entrega el alcance ya resuelto:
+
+- `profileId` desde la sesion server-side.
+- `productId` desde `productSlug`.
+- `enrollmentId` desde el enrollment activo.
+- `formDefinitionId` desde `formSlug`.
+
+Esto mantiene la regla central del proyecto: los componentes y rutas no escriben
+directamente en Supabase ni confian en identificadores sensibles enviados por el
+navegador.
+
 ## Authentication, Authorization y Enrollment
 
 Authentication confirma la identidad del usuario: quien es.

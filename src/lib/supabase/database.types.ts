@@ -9,6 +9,124 @@
 export type Database = {
   public: {
     Tables: {
+      academy_form_definitions: {
+        Row: {
+          created_at: string
+          description: string
+          display_order: number
+          form_schema: Json
+          id: string
+          is_required: boolean
+          product_id: string
+          published_at: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          display_order?: number
+          form_schema?: Json
+          id?: string
+          is_required?: boolean
+          product_id: string
+          published_at?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          display_order?: number
+          form_schema?: Json
+          id?: string
+          is_required?: boolean
+          product_id?: string
+          published_at?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_form_definitions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_form_submissions: {
+        Row: {
+          answers: Json
+          created_at: string
+          enrollment_id: string
+          form_definition_id: string
+          id: string
+          product_id: string
+          profile_id: string
+          submitted_at: string
+          updated_at: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          enrollment_id: string
+          form_definition_id: string
+          id?: string
+          product_id: string
+          profile_id: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          enrollment_id?: string
+          form_definition_id?: string
+          id?: string
+          product_id?: string
+          profile_id?: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_form_submissions_enrollment_scope_fkey"
+            columns: ["enrollment_id", "profile_id", "product_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id", "profile_id", "product_id"]
+          },
+          {
+            foreignKeyName: "academy_form_submissions_form_product_fkey"
+            columns: ["form_definition_id", "product_id"]
+            isOneToOne: false
+            referencedRelation: "academy_form_definitions"
+            referencedColumns: ["id", "product_id"]
+          },
+          {
+            foreignKeyName: "academy_form_submissions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_form_submissions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       academy_module_videos: {
         Row: {
           created_at: string

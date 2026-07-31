@@ -33,6 +33,8 @@ export type CompletionRuleContext = {
   enrollmentActive: boolean;
   modules: LearningWorkflowModuleSummary[];
   publishedModules: number;
+  requiredForms: number;
+  submittedRequiredForms: number;
 };
 
 export type CompletionRule = {
@@ -49,9 +51,11 @@ export type LearningWorkflowEvaluation = {
   productId: string;
   profileId: string;
   publishedModules: number;
+  requiredForms: number;
   requirementsSatisfied: boolean;
   rules: CompletionRuleResult[];
   satisfiedRequirements: number;
+  submittedRequiredForms: number;
   totalRequirements: number;
   workflowState: LearningWorkflowState;
 };

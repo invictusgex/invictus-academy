@@ -67,3 +67,13 @@ posteriores. Expone puntos minimos para crear compras, registrar eventos de
 auditoria y registrar eventos Webhook recibidos.
 
 No procesa Webhooks, no activa enrollments y no sincroniza Stripe Customers.
+
+## FormService
+
+`form.service.ts` centraliza el dominio de formularios academicos. Resuelve el
+producto por `slug`, valida el enrollment activo del usuario autenticado, obtiene
+la definicion publicada por `slug` y delega la escritura en `FormRepository`.
+
+La UI o una ruta server-side no deben enviar ni aceptar `profile_id` como fuente
+de verdad. La identidad del estudiante viene siempre de
+`requireServerAuthContext`.

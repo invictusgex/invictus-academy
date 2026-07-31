@@ -3,6 +3,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { LearningWorkflowRepository } from "@/lib/repositories/learning-workflow.repository";
+import { FormService } from "@/lib/services/form.service";
 import type { Database } from "@/lib/supabase/database.types";
 import {
   CompletionRuleEvaluator,
@@ -125,6 +126,14 @@ export const LearningWorkflowService = {
       ),
     ]);
     const enrollmentActive = isEnrollmentActive(enrollment);
+    const requiredFormsProgress = await FormService.getRequiredFormsProgress(
+      {
+        enrollmentId: enrollmentActive ? enrollment?.id ?? null : null,
+        productId,
+        profileId,
+      },
+      supabase,
+    );
     const modules = mapModules(publishedModules, progressRows);
     const completedModules = enrollmentActive
       ? modules.filter((academyModule) => academyModule.completed).length
@@ -139,6 +148,8 @@ export const LearningWorkflowService = {
         enrollmentActive,
         modules,
         publishedModules: totalModules,
+        requiredForms: requiredFormsProgress.requiredForms,
+        submittedRequiredForms: requiredFormsProgress.submittedRequiredForms,
       },
     );
 
@@ -151,9 +162,11 @@ export const LearningWorkflowService = {
       productId,
       profileId,
       publishedModules: totalModules,
+      requiredForms: requiredFormsProgress.requiredForms,
       requirementsSatisfied: ruleEvaluation.allSatisfied,
       rules: ruleEvaluation.rules,
       satisfiedRequirements: ruleEvaluation.satisfiedCount,
+      submittedRequiredForms: requiredFormsProgress.submittedRequiredForms,
       totalRequirements: ruleEvaluation.totalCount,
       workflowState: getWorkflowState({
         enrollmentActive,

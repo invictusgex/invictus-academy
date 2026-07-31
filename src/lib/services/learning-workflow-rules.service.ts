@@ -29,6 +29,27 @@ export const ModulesCompletedRule: CompletionRule = {
   },
 };
 
+export const RequiredFormsRule: CompletionRule = {
+  key: "required_forms",
+  evaluate(context: CompletionRuleContext): CompletionRuleResult {
+    const satisfied =
+      context.enrollmentActive &&
+      context.submittedRequiredForms === context.requiredForms;
+
+    return {
+      currentValue: context.submittedRequiredForms,
+      key: RequiredFormsRule.key,
+      label: "Responder formularios requeridos",
+      metadata: {
+        enrollmentActive: context.enrollmentActive,
+        requiredForms: context.requiredForms,
+      },
+      requiredValue: context.requiredForms,
+      satisfied,
+    };
+  },
+};
+
 export const CompletionRuleEvaluator = {
   evaluate(
     rules: CompletionRule[],
@@ -51,4 +72,5 @@ export const CompletionRuleEvaluator = {
 
 export const initialLearningWorkflowRules: CompletionRule[] = [
   ModulesCompletedRule,
+  RequiredFormsRule,
 ];
