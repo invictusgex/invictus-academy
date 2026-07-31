@@ -388,6 +388,7 @@ export type Database = {
           id: string
           product_id: string
           profile_id: string
+          revocation_source: string | null
           revoked_at: string | null
           starts_at: string
           status: string
@@ -400,6 +401,7 @@ export type Database = {
           id?: string
           product_id: string
           profile_id: string
+          revocation_source?: string | null
           revoked_at?: string | null
           starts_at?: string
           status?: string
@@ -412,6 +414,7 @@ export type Database = {
           id?: string
           product_id?: string
           profile_id?: string
+          revocation_source?: string | null
           revoked_at?: string | null
           starts_at?: string
           status?: string
@@ -836,6 +839,28 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      restore_purchase_enrollment: {
+        Args: { p_purchase_id: string; p_summary?: string }
+        Returns: {
+          enrollment_id: string
+          enrollment_restored: boolean
+          event_created: boolean
+          purchase_id: string
+        }[]
+      }
+      revoke_purchase_enrollment: {
+        Args: {
+          p_purchase_id: string
+          p_revocation_source: string
+          p_summary?: string
+        }
+        Returns: {
+          enrollment_id: string
+          enrollment_revoked: boolean
+          event_created: boolean
+          purchase_id: string
+        }[]
       }
     }
     Enums: {

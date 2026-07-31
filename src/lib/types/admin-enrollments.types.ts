@@ -1,4 +1,8 @@
 export type EnrollmentAccessStatus = "active" | "revoked" | "expired";
+export type EnrollmentRevocationSource =
+  | "manual"
+  | "stripe_refund"
+  | "stripe_dispute";
 
 export type AdminAssignableProduct = {
   id: string;
@@ -15,6 +19,7 @@ export type AdminEnrollment = {
   productId: string;
   profileId: string;
   revokedAt: string | null;
+  revocationSource: EnrollmentRevocationSource | null;
   startsAt: string;
   status: EnrollmentAccessStatus;
   updatedAt: string;

@@ -2,6 +2,9 @@ import "server-only";
 
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type {
+  EnrollmentRestorationResult,
+  EnrollmentRevocationResult,
+  EnrollmentRevocationSource,
   FulfillmentErrorCode,
   FulfillmentOutcome,
   FulfillmentResult,
@@ -20,11 +23,14 @@ export const permanentFulfillmentErrorCodes = new Set<FulfillmentErrorCode>([
   "ENROLLMENT_REVOKED_CONFLICT",
   "ENROLLMENT_EXPIRED_CONFLICT",
   "ENROLLMENT_NOT_YET_ACTIVE_CONFLICT",
+  "ENROLLMENT_REVOCATION_SOURCE_INVALID",
 ]);
 
 export const retryableFulfillmentErrorCodes = new Set<FulfillmentErrorCode>([
   "ENROLLMENT_CREATION_FAILED",
   "ENROLLMENT_LINK_FAILED",
+  "ENROLLMENT_REVOCATION_EVENT_FAILED",
+  "ENROLLMENT_RESTORATION_EVENT_FAILED",
   "FULFILLMENT_TRANSACTION_FAILED",
   "DATABASE_UNAVAILABLE",
 ]);
@@ -34,6 +40,20 @@ type FulfillPaidPurchaseRpcRow = {
   enrollment_id: string;
   event_created: boolean;
   outcome: string;
+  purchase_id: string;
+};
+
+type RevokePurchaseEnrollmentRpcRow = {
+  enrollment_id: string | null;
+  enrollment_revoked: boolean;
+  event_created: boolean;
+  purchase_id: string;
+};
+
+type RestorePurchaseEnrollmentRpcRow = {
+  enrollment_id: string | null;
+  enrollment_restored: boolean;
+  event_created: boolean;
   purchase_id: string;
 };
 
@@ -104,6 +124,28 @@ function mapFulfillmentResult(row: FulfillPaidPurchaseRpcRow): FulfillmentResult
   };
 }
 
+function mapRevocationResult(
+  row: RevokePurchaseEnrollmentRpcRow,
+): EnrollmentRevocationResult {
+  return {
+    enrollmentId: row.enrollment_id,
+    enrollmentRevoked: row.enrollment_revoked,
+    eventCreated: row.event_created,
+    purchaseId: row.purchase_id,
+  };
+}
+
+function mapRestorationResult(
+  row: RestorePurchaseEnrollmentRpcRow,
+): EnrollmentRestorationResult {
+  return {
+    enrollmentId: row.enrollment_id,
+    enrollmentRestored: row.enrollment_restored,
+    eventCreated: row.event_created,
+    purchaseId: row.purchase_id,
+  };
+}
+
 export const CommercialFulfillmentService = {
   async fulfillPaidPurchase(purchaseId: string): Promise<FulfillmentResult> {
     const supabase = getSupabaseAdminClient();
@@ -124,5 +166,57 @@ export const CommercialFulfillmentService = {
     }
 
     return mapFulfillmentResult(row);
+  },
+
+  async revokePurchaseEnrollment(input: {
+    purchaseId: string;
+    revocationSource: EnrollmentRevocationSource;
+    summary?: string | null;
+  }): Promise<EnrollmentRevocationResult> {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase.rpc("revoke_purchase_enrollment", {
+      p_purchase_id: input.purchaseId,
+      p_revocation_source: input.revocationSource,
+      p_summary: input.summary ?? undefined,
+    });
+
+    if (error) {
+      throw toFulfillmentError(error, input.purchaseId);
+    }
+
+    const row = Array.isArray(data) ? data[0] : null;
+
+    if (!row) {
+      throw new CommercialFulfillmentError("FULFILLMENT_TRANSACTION_FAILED", {
+        purchaseId: input.purchaseId,
+      });
+    }
+
+    return mapRevocationResult(row);
+  },
+
+  async restorePurchaseEnrollment(input: {
+    purchaseId: string;
+    summary?: string | null;
+  }): Promise<EnrollmentRestorationResult> {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase.rpc("restore_purchase_enrollment", {
+      p_purchase_id: input.purchaseId,
+      p_summary: input.summary ?? undefined,
+    });
+
+    if (error) {
+      throw toFulfillmentError(error, input.purchaseId);
+    }
+
+    const row = Array.isArray(data) ? data[0] : null;
+
+    if (!row) {
+      throw new CommercialFulfillmentError("FULFILLMENT_TRANSACTION_FAILED", {
+        purchaseId: input.purchaseId,
+      });
+    }
+
+    return mapRestorationResult(row);
   },
 };

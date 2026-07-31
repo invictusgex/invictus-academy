@@ -240,6 +240,7 @@ Eventos soportados inicialmente:
 - `payment_intent.payment_failed`
 - `charge.refunded`
 - `charge.dispute.created`
+- `charge.dispute.closed`
 
 La ruta no crea purchases, no crea enrollments y no concede acceso. Si un evento
 no encuentra una compra interna existente, se registra como anomalia controlada
@@ -315,3 +316,57 @@ No se recibe desde el navegador y no se reutiliza entre compras distintas.
 - No confiar montos enviados desde navegador.
 - Confirmar RLS de purchases, purchase_events y enrollments.
 - Probar pago exitoso, pago fallido, webhook duplicado, reembolso y disputa.
+
+## 11. Fase 9.6 - Payment Lifecycle Hardening
+
+Variables requeridas para entorno de pruebas o produccion:
+
+```text
+STRIPE_SECRET_KEY=
+STRIPE_MENTORSHIP_PRICE_ID=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+APP_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+```
+
+Reglas de entorno:
+
+- Las claves secretas de Stripe y Supabase viven solo en servidor.
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` es la unica variable publica de Stripe.
+- Test y Live se separan con variables de entorno, sin hardcodes en codigo.
+- No se activan claves Live hasta completar pruebas operativas del webhook.
+
+Eventos de Webhook procesados:
+
+- `checkout.session.completed`: asocia `payment_intent` si Stripe lo devuelve.
+- `payment_intent.succeeded`: confirma la compra y ejecuta fulfillment actual.
+- `payment_intent.payment_failed`: marca la compra como fallida si aun no fue pagada.
+- `charge.refunded`: actualiza `amount_refunded_minor`; el refund total revoca solo el enrollment concedido por esa Purchase.
+- `charge.dispute.created`: marca la compra como disputada y suspende el enrollment concedido por esa Purchase.
+- `charge.dispute.closed`: si Stripe marca la disputa como `won`, restaura acceso solo cuando la revocacion previa fue causada por disputa y no existe refund total; si no, mantiene el acceso revocado.
+
+Politica comercial:
+
+- Pago confirmado: mantiene `fulfill_paid_purchase`.
+- Reembolso parcial: registra `partially_refunded` sin revocar automaticamente.
+- Reembolso total: registra `refunded` y revoca con `revocation_source = 'stripe_refund'`.
+- Disputa abierta: registra `disputed` y revoca con `revocation_source = 'stripe_dispute'`.
+- Disputa ganada: vuelve la Purchase a `paid` cuando corresponde y restaura solo enrollments revocados por disputa.
+- Disputa perdida: conserva la Purchase disputada y el enrollment revocado.
+- Nunca se modifica un enrollment distinto al enlazado en `purchases.enrollment_id`.
+
+Decisiones de seguridad:
+
+- La firma del webhook se verifica con raw body y `STRIPE_WEBHOOK_SECRET`.
+- No se confia en montos, moneda, price IDs, customer IDs ni profile IDs enviados desde navegador.
+- Los cambios de enrollment por ciclo comercial viven en RPCs `security definer` ejecutables solo por `service_role`.
+- Las RPCs bloquean Purchase y Enrollment con `for update` para evitar carreras y mantener idempotencia.
+- `enrollments.revocation_source` permite distinguir revocaciones manuales de revocaciones por Stripe.
+
+Pasos futuros para Stripe Live:
+
+1. Crear productos y prices Live en Stripe.
+2. Configurar variables Live en el entorno de hosting, nunca en archivos versionados.
+3. Registrar el endpoint de webhook Live con los eventos soportados.
+4. Ejecutar pruebas de pago, refund, disputa y retry antes de abrir ventas.

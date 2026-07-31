@@ -3,6 +3,7 @@ import type {
   AdminAssignableProduct,
   AdminEnrollment,
   EnrollmentAccessStatus,
+  EnrollmentRevocationSource,
 } from "@/lib/types/admin-enrollments.types";
 
 type AdminEnrollmentProductRow = {
@@ -20,6 +21,7 @@ type AdminEnrollmentRow = {
   profile_id: string;
   products: AdminEnrollmentProductRow | AdminEnrollmentProductRow[] | null;
   revoked_at: string | null;
+  revocation_source: EnrollmentRevocationSource | null;
   starts_at: string;
   status: EnrollmentAccessStatus;
   updated_at: string;
@@ -35,6 +37,7 @@ type EnrollmentInsertInput = {
 type EnrollmentUpdateInput = {
   expiresAt?: string | null;
   revokedAt?: string | null;
+  revocationSource?: EnrollmentRevocationSource | null;
   status?: EnrollmentAccessStatus;
 };
 
@@ -47,6 +50,7 @@ const enrollmentSelect = `
   starts_at,
   expires_at,
   revoked_at,
+  revocation_source,
   created_at,
   updated_at,
   products (
@@ -82,6 +86,7 @@ function mapEnrollment(row: AdminEnrollmentRow): AdminEnrollment {
     productId: row.product_id,
     profileId: row.profile_id,
     revokedAt: row.revoked_at,
+    revocationSource: row.revocation_source,
     startsAt: row.starts_at,
     status: row.status,
     updatedAt: row.updated_at,
@@ -92,6 +97,7 @@ function toUpdateRow(input: EnrollmentUpdateInput) {
   const row: {
     expires_at?: string | null;
     revoked_at?: string | null;
+    revocation_source?: EnrollmentRevocationSource | null;
     status?: EnrollmentAccessStatus;
   } = {};
 
@@ -101,6 +107,10 @@ function toUpdateRow(input: EnrollmentUpdateInput) {
 
   if ("revokedAt" in input) {
     row.revoked_at = input.revokedAt;
+  }
+
+  if ("revocationSource" in input) {
+    row.revocation_source = input.revocationSource;
   }
 
   if ("status" in input) {
@@ -163,6 +173,7 @@ export const AdminEnrollmentsRepository = {
         product_id: input.productId,
         profile_id: input.profileId,
         revoked_at: null,
+        revocation_source: null,
         starts_at: input.startsAt,
         status: "active",
       })

@@ -69,6 +69,7 @@ async function reactivateEnrollment(
   return AdminEnrollmentsRepository.updateEnrollment(enrollment.id, {
     expiresAt,
     revokedAt: null,
+    revocationSource: null,
     status: "active",
   });
 }
@@ -124,7 +125,12 @@ export const AdminEnrollmentsService = {
       if (expiresAt !== existingEnrollment.expiresAt) {
         const enrollment = await AdminEnrollmentsRepository.updateEnrollment(
           existingEnrollment.id,
-          { expiresAt, revokedAt: null, status: "active" },
+          {
+            expiresAt,
+            revokedAt: null,
+            revocationSource: null,
+            status: "active",
+          },
         );
 
         return { enrollment, ok: true };
@@ -157,6 +163,7 @@ export const AdminEnrollmentsService = {
         input.enrollmentId,
         {
           revokedAt: new Date().toISOString(),
+          revocationSource: "manual",
           status: "revoked",
         },
       );
@@ -217,6 +224,10 @@ export const AdminEnrollmentsService = {
             existingEnrollment.status === "active"
               ? null
               : existingEnrollment.revokedAt,
+          revocationSource:
+            existingEnrollment.status === "active"
+              ? null
+              : existingEnrollment.revocationSource,
           status: existingEnrollment.status,
         },
       );

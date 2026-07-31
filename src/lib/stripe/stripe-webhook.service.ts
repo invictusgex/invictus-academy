@@ -30,6 +30,7 @@ const supportedStripeWebhookEvents = new Set<string>([
   "payment_intent.payment_failed",
   "charge.refunded",
   "charge.dispute.created",
+  "charge.dispute.closed",
 ]);
 
 class StripeWebhookProcessingError extends Error {
@@ -455,7 +456,7 @@ async function processChargeRefunded(
     return purchase;
   }
 
-  return PurchaseService.markRefunded(
+  const refundedPurchase = await PurchaseService.markRefunded(
     {
       purchaseId: purchase.id,
       amountRefundedMinor: charge.amount_refunded,
@@ -463,6 +464,19 @@ async function processChargeRefunded(
     },
     supabase,
   );
+
+  if (
+    refundedPurchase.amountTotalMinor !== null &&
+    refundedPurchase.amountRefundedMinor >= refundedPurchase.amountTotalMinor
+  ) {
+    await CommercialFulfillmentService.revokePurchaseEnrollment({
+      purchaseId: refundedPurchase.id,
+      revocationSource: "stripe_refund",
+      summary: "Academic access revoked after total refund.",
+    });
+  }
+
+  return refundedPurchase;
 }
 
 async function processChargeDisputeCreated(
@@ -483,13 +497,83 @@ async function processChargeDisputeCreated(
     return null;
   }
 
-  return PurchaseService.markDisputed(
+  const disputedPurchase = await PurchaseService.markDisputed(
     {
       purchaseId: purchase.id,
       summary: "Dispute opened by provider webhook.",
     },
     supabase,
   );
+
+  await CommercialFulfillmentService.revokePurchaseEnrollment({
+    purchaseId: disputedPurchase.id,
+    revocationSource: "stripe_dispute",
+    summary: "Academic access suspended after dispute opened.",
+  });
+
+  return disputedPurchase;
+}
+
+async function processChargeDisputeClosed(
+  event: Stripe.Event,
+  supabase: SupabaseClient<Database>,
+): Promise<Purchase | null> {
+  const dispute = event.data.object as Stripe.Dispute;
+  const paymentIntentId = getObjectId(dispute.payment_intent);
+
+  if (!paymentIntentId) {
+    return null;
+  }
+
+  const purchase =
+    await PurchaseService.getByProviderPaymentIntentId(paymentIntentId, supabase);
+
+  if (!purchase) {
+    return null;
+  }
+
+  assertAmountMatchesPurchase({
+    actualAmount: dispute.amount,
+    actualCurrency: dispute.currency,
+    purchase,
+    amountErrorCode: STRIPE_CHECKOUT_ERROR_CODES.PAYMENT_AMOUNT_MISMATCH,
+    currencyErrorCode: STRIPE_CHECKOUT_ERROR_CODES.PAYMENT_CURRENCY_MISMATCH,
+  });
+
+  if (dispute.status === "won") {
+    const restoredPurchase = await PurchaseService.closeDispute(
+      {
+        purchaseId: purchase.id,
+        outcome: "won",
+        summary: "Dispute won by provider webhook.",
+      },
+      supabase,
+    );
+
+    await CommercialFulfillmentService.restorePurchaseEnrollment({
+      purchaseId: restoredPurchase.id,
+      summary: "Academic access restored after dispute was won.",
+    });
+
+    return restoredPurchase;
+  }
+
+  const disputedPurchase = await PurchaseService.closeDispute(
+    {
+      purchaseId: purchase.id,
+      outcome: "lost",
+      summary: "Dispute lost or closed against the account.",
+    },
+    supabase,
+  );
+
+  await CommercialFulfillmentService.revokePurchaseEnrollment({
+    purchaseId: disputedPurchase.id,
+    revocationSource: "stripe_dispute",
+    summary: "Academic access remains suspended after dispute was lost.",
+  });
+
+  return disputedPurchase;
 }
 
 async function processSupportedEvent(
@@ -507,6 +591,8 @@ async function processSupportedEvent(
       return processChargeRefunded(event, supabase);
     case "charge.dispute.created":
       return processChargeDisputeCreated(event, supabase);
+    case "charge.dispute.closed":
+      return processChargeDisputeClosed(event, supabase);
     default:
       return null;
   }

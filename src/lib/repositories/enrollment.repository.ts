@@ -37,6 +37,7 @@ const enrollmentSelect = `
   starts_at,
   expires_at,
   revoked_at,
+  revocation_source,
   created_at,
   updated_at
 `;
@@ -50,6 +51,7 @@ const enrollmentProductSelect = `
   starts_at,
   expires_at,
   revoked_at,
+  revocation_source,
   created_at,
   updated_at,
   products (

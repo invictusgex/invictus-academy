@@ -25,6 +25,10 @@ type RefundOperationInput = PurchaseStatusOperationInput & {
   amountRefundedMinor: number;
 };
 
+type DisputeClosedOperationInput = PurchaseStatusOperationInput & {
+  outcome: "won" | "lost";
+};
+
 type PurchaseTransitionResult = {
   purchase: Purchase;
   changed: boolean;
@@ -467,16 +471,22 @@ export const PurchaseService = {
       return currentPurchase;
     }
 
-    const targetStatus =
-      input.amountRefundedMinor >= currentPurchase.amountTotalMinor
-        ? "refunded"
+    const isTotalRefund =
+      input.amountRefundedMinor >= currentPurchase.amountTotalMinor;
+    const targetStatus = isTotalRefund
+      ? "refunded"
+      : currentPurchase.status === "disputed"
+        ? "disputed"
         : "partially_refunded";
 
     if (currentPurchase.status === "refunded") {
       return currentPurchase;
     }
 
-    if (!canTransitionPurchase(currentPurchase, targetStatus)) {
+    if (
+      currentPurchase.status !== targetStatus &&
+      !canTransitionPurchase(currentPurchase, targetStatus)
+    ) {
       throw new PurchaseDomainError(
         "PURCHASE_STATE_TRANSITION_INVALID",
         `Cannot transition purchase from ${currentPurchase.status} to ${targetStatus}.`,
@@ -495,9 +505,9 @@ export const PurchaseService = {
     await PurchaseEventRepository.create(
       {
         purchaseId: purchase.id,
-        eventType: targetStatus === "partially_refunded"
-          ? "partial_refund_completed"
-          : "refund_completed",
+        eventType: isTotalRefund
+          ? "refund_completed"
+          : "partial_refund_completed",
         source: "stripe_webhook",
         summary: input.summary ?? "Refund recorded.",
       },
@@ -544,6 +554,92 @@ export const PurchaseService = {
           eventType: "dispute_opened",
           source: "stripe_webhook",
           summary: input.summary ?? "Dispute opened.",
+        },
+        supabase,
+      );
+    }
+
+    return result.purchase;
+  },
+
+  async closeDispute(
+    input: DisputeClosedOperationInput,
+    supabase?: SupabaseClient<Database>,
+  ): Promise<Purchase> {
+    const currentPurchase = await PurchaseRepository.getById(
+      input.purchaseId,
+      supabase,
+    );
+
+    if (!currentPurchase) {
+      throw new PurchaseDomainError(
+        "PURCHASE_NOT_FOUND",
+        "Purchase was not found.",
+      );
+    }
+
+    if (input.outcome === "lost") {
+      let purchase = currentPurchase;
+
+      if (
+        !["refunded", "canceled", "failed", "disputed"].includes(
+          currentPurchase.status,
+        )
+      ) {
+        const result = await transitionPurchaseStatus(
+          {
+            purchaseId: input.purchaseId,
+            status: "disputed",
+          },
+          supabase,
+        );
+
+        purchase = result.purchase;
+      }
+
+      await PurchaseEventRepository.create(
+        {
+          purchaseId: purchase.id,
+          eventType: "dispute_lost",
+          source: "stripe_webhook",
+          summary: input.summary ?? "Dispute lost.",
+        },
+        supabase,
+      );
+
+      return purchase;
+    }
+
+    if (currentPurchase.status === "refunded") {
+      return currentPurchase;
+    }
+
+    if (currentPurchase.status !== "disputed") {
+      return currentPurchase;
+    }
+
+    if (
+      currentPurchase.amountTotalMinor !== null &&
+      currentPurchase.amountRefundedMinor >= currentPurchase.amountTotalMinor
+    ) {
+      return currentPurchase;
+    }
+
+    const result = await transitionPurchaseStatus(
+      {
+        purchaseId: input.purchaseId,
+        status: "paid",
+      },
+      supabase,
+    );
+
+    if (result.changed) {
+      await PurchaseEventRepository.create(
+        {
+          purchaseId: result.purchase.id,
+          eventType: "dispute_won",
+          source: "stripe_webhook",
+          summary: input.summary ?? "Dispute won.",
         },
         supabase,
       );

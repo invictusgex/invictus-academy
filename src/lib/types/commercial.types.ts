@@ -120,7 +120,7 @@ export type UpdatePurchaseStatusInput = {
 
 export type UpdatePurchaseRefundInput = {
   purchaseId: string;
-  status: Extract<PurchaseStatus, "partially_refunded" | "refunded">;
+  status: Extract<PurchaseStatus, "partially_refunded" | "refunded" | "disputed">;
   amountRefundedMinor: number;
 };
 
@@ -177,6 +177,9 @@ export const fulfillmentErrorCodes = [
   "ENROLLMENT_NOT_YET_ACTIVE_CONFLICT",
   "ENROLLMENT_CREATION_FAILED",
   "ENROLLMENT_LINK_FAILED",
+  "ENROLLMENT_REVOCATION_SOURCE_INVALID",
+  "ENROLLMENT_REVOCATION_EVENT_FAILED",
+  "ENROLLMENT_RESTORATION_EVENT_FAILED",
   "FULFILLMENT_TRANSACTION_FAILED",
   "DATABASE_UNAVAILABLE",
 ] as const;
@@ -188,5 +191,21 @@ export type FulfillmentResult = {
   enrollmentId: string;
   outcome: FulfillmentOutcome;
   enrollmentCreated: boolean;
+  eventCreated: boolean;
+};
+
+export type EnrollmentRevocationSource = "stripe_refund" | "stripe_dispute";
+
+export type EnrollmentRevocationResult = {
+  purchaseId: string;
+  enrollmentId: string | null;
+  enrollmentRevoked: boolean;
+  eventCreated: boolean;
+};
+
+export type EnrollmentRestorationResult = {
+  purchaseId: string;
+  enrollmentId: string | null;
+  enrollmentRestored: boolean;
   eventCreated: boolean;
 };
