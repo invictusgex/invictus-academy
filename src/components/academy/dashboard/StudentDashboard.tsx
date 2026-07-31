@@ -18,6 +18,9 @@ import {
 import { useModuleThumbnailUrls } from "@/components/academy/dashboard/useModuleThumbnailUrls";
 import { useRecentPublishedScenarios } from "@/components/academy/dashboard/useRecentPublishedScenarios";
 import {
+  academyWorkflowConfig,
+} from "@/config/academy-workflow";
+import {
   StudentActionCard,
   StudentContentGrid,
   StudentEmptyState,
@@ -89,9 +92,13 @@ function getVisibleModules({
 
 type StudentDashboardProps = {
   activeProducts: ActiveEnrollmentProduct[];
+  session101Unlocked: boolean;
 };
 
-export function StudentDashboard({ activeProducts }: StudentDashboardProps) {
+export function StudentDashboard({
+  activeProducts,
+  session101Unlocked,
+}: StudentDashboardProps) {
   const { user } = useAuth();
   const {
     loading: progressLoading,
@@ -256,6 +263,34 @@ export function StudentDashboard({ activeProducts }: StudentDashboardProps) {
         title="Dias de trading"
       >
         <TradingDaysPanel />
+      </StudentSection>
+
+      <StudentSection
+        description="La siguiente etapa se habilita automaticamente cuando el workflow academico queda completo."
+        title="Sesion 101"
+      >
+        <StudentActionCard
+          badge={
+            session101Unlocked
+              ? academyWorkflowConfig.session101.unlocked.statusLabel
+              : academyWorkflowConfig.session101.blocked.statusLabel
+          }
+          ctaHref="/academy/sesion-101"
+          ctaLabel={
+            session101Unlocked
+              ? academyWorkflowConfig.session101.unlocked.ctaLabel
+              : academyWorkflowConfig.session101.blocked.ctaLabel
+          }
+          title={
+            session101Unlocked
+              ? academyWorkflowConfig.session101.unlocked.dashboardTitle
+              : academyWorkflowConfig.session101.blocked.dashboardTitle
+          }
+        >
+          {session101Unlocked
+            ? academyWorkflowConfig.session101.unlocked.dashboardDescription
+            : academyWorkflowConfig.session101.blocked.dashboardDescription}
+        </StudentActionCard>
       </StudentSection>
 
       <StudentSection

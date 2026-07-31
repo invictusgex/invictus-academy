@@ -6,6 +6,7 @@ import { requireAcademyAuthContext } from "@/app/academy/academy-auth";
 import { getAcademyProgram } from "@/lib/academy";
 import { academyProductSlug } from "@/lib/academy-product";
 import { getAcademyEnrollmentAccess } from "@/lib/services/academy-access.service";
+import { LearningWorkflowService } from "@/lib/services/learning-workflow.service";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ProgressProvider } from "@/providers/ProgressProvider";
 
@@ -31,6 +32,16 @@ export default async function AcademyPage() {
   }
 
   const course = await getAcademyProgram();
+  const academyProduct = academyAccess.activeProducts.find(
+    (product) => product.productSlug === academyProductSlug,
+  );
+  const session101Workflow = academyProduct
+    ? await LearningWorkflowService.evaluateStudentWorkflow(
+        profile.id,
+        academyProduct.productId,
+        supabase,
+      )
+    : null;
 
   return (
     <AcademyShell>
@@ -39,7 +50,10 @@ export default async function AcademyPage() {
         productSlug={academyProductSlug}
         programId={course.id}
       >
-        <StudentDashboard activeProducts={academyAccess.activeProducts} />
+        <StudentDashboard
+          activeProducts={academyAccess.activeProducts}
+          session101Unlocked={Boolean(session101Workflow?.requirementsSatisfied)}
+        />
       </ProgressProvider>
     </AcademyShell>
   );
