@@ -1,9 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
+
+type LoginFormProps = {
+  nextPath: string;
+};
 
 function getFriendlyAuthError(error: unknown) {
   if (error instanceof Error) {
@@ -23,7 +28,7 @@ function getFriendlyAuthError(error: unknown) {
   return "No pudimos iniciar sesion. Revisa tus datos e intenta nuevamente.";
 }
 
-export function LoginForm() {
+export function LoginForm({ nextPath }: LoginFormProps) {
   const router = useRouter();
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
@@ -38,7 +43,7 @@ export function LoginForm() {
 
     try {
       await signIn({ email, password });
-      router.push("/academy");
+      router.push(nextPath);
     } catch (error) {
       setErrorMessage(getFriendlyAuthError(error));
     } finally {
@@ -98,6 +103,24 @@ export function LoginForm() {
       >
         {submitting ? "Iniciando sesion..." : "Iniciar sesion"}
       </button>
+
+      <div className="mt-5 flex flex-col gap-3 text-center text-sm text-[var(--color-text-secondary)]">
+        <p>
+          No tienes cuenta?{" "}
+          <Link
+            className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
+            href={`/registro?next=${encodeURIComponent(nextPath)}`}
+          >
+            Registrate
+          </Link>
+        </p>
+        <Link
+          className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
+          href={`/forgot-password?next=${encodeURIComponent(nextPath)}`}
+        >
+          Olvide mi contrasena
+        </Link>
+      </div>
     </form>
   );
 }

@@ -1,6 +1,16 @@
 import { LoginForm } from "@/components/auth/LoginForm";
+import { getSafeInternalRedirect } from "@/lib/auth/redirects";
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    next?: string;
+  }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const params = await searchParams;
+  const nextPath = getSafeInternalRedirect(params.next);
+
   return (
     <main className="flex min-h-screen flex-1 items-center justify-center bg-[var(--color-page-bg)] px-5 py-16">
       <section className="w-full max-w-md">
@@ -15,7 +25,7 @@ export default function LoginPage() {
           Academy.
         </p>
         <div className="mt-8">
-          <LoginForm />
+          <LoginForm nextPath={nextPath} />
         </div>
       </section>
     </main>

@@ -1,0 +1,3 @@
+-- Empty seed file.
+-- The local Supabase config references this file for `supabase db reset`.
+-- Production data must not be seeded from this project phase.

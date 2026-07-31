@@ -42,4 +42,47 @@ export const ProfileRepository = {
 
     return data ? mapProfile(data) : null;
   },
+
+  async upsertStudentProfile(
+    supabase: SupabaseClient<Database>,
+    input: {
+      email: string;
+      fullName: string;
+      profileId: string;
+    },
+  ): Promise<Profile> {
+    const existingProfile = await ProfileRepository.getById(
+      supabase,
+      input.profileId,
+    );
+
+    if (existingProfile) {
+      return existingProfile;
+    }
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .insert({
+        email: input.email,
+        full_name: input.fullName,
+        id: input.profileId,
+        role: "student",
+      })
+      .select("id, email, full_name, role")
+      .single();
+
+    if (error) {
+      if (error.code === "23505") {
+        const profile = await ProfileRepository.getById(supabase, input.profileId);
+
+        if (profile) {
+          return profile;
+        }
+      }
+
+      throw error;
+    }
+
+    return mapProfile(data);
+  },
 };
