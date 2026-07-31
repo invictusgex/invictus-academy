@@ -256,7 +256,15 @@ export function TradingDaysPanel() {
         </div>
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
           <div
+            aria-label={progressLabel}
+            aria-valuemax={academyWorkflowConfig.requiredTradingDays}
+            aria-valuemin={0}
+            aria-valuenow={Math.min(
+              tradingDays.length,
+              academyWorkflowConfig.requiredTradingDays,
+            )}
             className="h-full rounded-full bg-[var(--color-cyan)] transition-[width] duration-300 motion-reduce:transition-none"
+            role="progressbar"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -329,6 +337,7 @@ export function TradingDaysPanel() {
                 </p>
                 <div className="mt-3 grid gap-3">
                   <input
+                    aria-label={`Editar fecha de trading ${formatTradingDate(day.tradingDate)}`}
                     className="min-h-10 w-full rounded-xl border border-[var(--color-border)] bg-black/30 px-3 text-sm text-white outline-none transition focus:border-[var(--color-cyan)] motion-reduce:transition-none"
                     max={getTodayInputValue()}
                     onChange={(event) =>
@@ -344,6 +353,7 @@ export function TradingDaysPanel() {
                     value={draft.tradingDate}
                   />
                   <textarea
+                    aria-label={`Editar notas de trading ${formatTradingDate(day.tradingDate)}`}
                     className="min-h-20 w-full resize-y rounded-xl border border-[var(--color-border)] bg-black/30 px-3 py-2 text-sm text-white outline-none transition focus:border-[var(--color-cyan)] motion-reduce:transition-none"
                     onChange={(event) =>
                       setEditingRows((currentRows) => ({

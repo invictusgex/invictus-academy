@@ -284,9 +284,9 @@ export async function createCheckoutSession(
         },
       ],
       success_url: buildCheckoutUrl(
-        "/oferta/exito?session_id={CHECKOUT_SESSION_ID}",
+        "/checkout/success?session_id={CHECKOUT_SESSION_ID}",
       ),
-      cancel_url: buildCheckoutUrl("/oferta/cancelado"),
+      cancel_url: buildCheckoutUrl("/oferta"),
       client_reference_id: purchase.id,
       customer_email: input.userEmail ?? undefined,
       metadata,

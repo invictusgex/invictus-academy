@@ -154,8 +154,8 @@ El servidor decidira:
 - `STRIPE_MENTORSHIP_PRICE_ID`;
 - `mode: payment`;
 - `quantity: 1`;
-- `success_url` desde `APP_URL` + `/oferta/exito?session_id={CHECKOUT_SESSION_ID}`;
-- `cancel_url` desde `APP_URL` + `/oferta/cancelado`;
+- `success_url` desde `APP_URL` + `/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+- `cancel_url` desde `APP_URL` + `/oferta`;
 - metadata minima para conciliacion futura;
 - `customer_email` desde el usuario/perfil autenticado cuando exista.
 

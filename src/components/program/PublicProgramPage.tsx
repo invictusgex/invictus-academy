@@ -122,7 +122,7 @@ function JourneyIntro() {
             prepararse, ejecutarse, gestionarse y revisarse con disciplina.
           </p>
         </div>
-        <ol className="mt-8 grid gap-3 md:grid-cols-7">
+        <ol className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
           {publicProgramTrajectory.map((step, index) => (
             <li
               className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
@@ -131,7 +131,9 @@ function JourneyIntro() {
               <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <p className="mt-3 text-sm font-semibold text-white">{step}</p>
+              <p className="mt-3 break-words text-sm font-semibold text-white">
+                {step}
+              </p>
             </li>
           ))}
         </ol>

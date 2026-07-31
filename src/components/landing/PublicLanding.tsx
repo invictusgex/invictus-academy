@@ -353,7 +353,7 @@ function ProgramPreview({ course }: PublicLandingProps) {
                 {academyModule.description}
               </p>
               <Link
-                href={`/programa#modulo-${academyModule.id}`}
+                href={`/programa#${academyModule.id}`}
                 className="mt-5 inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
               >
                 Ver más
