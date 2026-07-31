@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getSiteUrl, siteDescription, siteName } from "@/config/site";
 import { AuthProvider } from "@/providers/AuthProvider";
 import "./globals.css";
 
@@ -14,9 +15,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Invictus Trading Academy",
-  description:
-    "Plataforma educativa de trading basada en datos, Order Flow, Heatmap, Perfil de Volumen y Exposición de Gamma.",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: siteName,
+    template: `%s | ${siteName}`,
+  },
+  description: siteDescription,
+  applicationName: siteName,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    description: siteDescription,
+    locale: "es_US",
+    siteName,
+    title: siteName,
+    type: "website",
+    url: "/",
+  },
+  twitter: {
+    card: "summary",
+    description: siteDescription,
+    title: siteName,
+  },
 };
 
 export default function RootLayout({
