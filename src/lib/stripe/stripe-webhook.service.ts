@@ -151,6 +151,34 @@ function assertAmountMatchesPurchase(
   }
 }
 
+async function syncProviderAmountWithPurchase(
+  input: {
+    actualAmount: number | null | undefined;
+    actualCurrency: string | null | undefined;
+    purchase: Purchase;
+  },
+  supabase: SupabaseClient<Database>,
+) {
+  if (input.actualAmount === null || input.actualAmount === undefined) {
+    return input.purchase;
+  }
+
+  const actualCurrency = normalizeCurrency(input.actualCurrency);
+
+  if (!actualCurrency) {
+    return input.purchase;
+  }
+
+  return PurchaseService.recordProviderAmount(
+    {
+      purchaseId: input.purchase.id,
+      amountTotalMinor: input.actualAmount,
+      currency: actualCurrency,
+    },
+    supabase,
+  );
+}
+
 function buildPayloadSummary(event: Stripe.Event) {
   const eventObject = event.data.object as {
     id?: string;
@@ -282,10 +310,19 @@ async function processCheckoutSessionCompleted(
     );
   }
 
+  const syncedPurchase = await syncProviderAmountWithPurchase(
+    {
+      actualAmount: session.amount_total,
+      actualCurrency: session.currency,
+      purchase,
+    },
+    supabase,
+  );
+
   assertAmountMatchesPurchase({
     actualAmount: session.amount_total,
     actualCurrency: session.currency,
-    purchase,
+    purchase: syncedPurchase,
     amountErrorCode: STRIPE_CHECKOUT_ERROR_CODES.CHECKOUT_AMOUNT_MISMATCH,
     currencyErrorCode: STRIPE_CHECKOUT_ERROR_CODES.CHECKOUT_CURRENCY_MISMATCH,
   });
@@ -295,14 +332,14 @@ async function processCheckoutSessionCompleted(
   if (paymentIntentId) {
     await PurchaseService.attachProviderPaymentIntent(
       {
-        purchaseId: purchase.id,
+        purchaseId: syncedPurchase.id,
         providerPaymentIntentId: paymentIntentId,
       },
       supabase,
     );
   }
 
-  return purchase;
+  return syncedPurchase;
 }
 
 async function resolvePurchaseFromPaymentIntent(
@@ -345,25 +382,34 @@ async function resolvePurchaseFromPaymentIntent(
     product: STRIPE_CHECKOUT_ERROR_CODES.PAYMENT_METADATA_MISMATCH,
   });
 
+  const syncedPurchase = await syncProviderAmountWithPurchase(
+    {
+      actualAmount: paymentIntent.amount,
+      actualCurrency: paymentIntent.currency,
+      purchase,
+    },
+    supabase,
+  );
+
   assertAmountMatchesPurchase({
     actualAmount: paymentIntent.amount,
     actualCurrency: paymentIntent.currency,
-    purchase,
+    purchase: syncedPurchase,
     amountErrorCode: STRIPE_CHECKOUT_ERROR_CODES.PAYMENT_AMOUNT_MISMATCH,
     currencyErrorCode: STRIPE_CHECKOUT_ERROR_CODES.PAYMENT_CURRENCY_MISMATCH,
   });
 
-  if (!purchase.providerPaymentIntentId) {
+  if (!syncedPurchase.providerPaymentIntentId) {
     await PurchaseService.attachProviderPaymentIntent(
       {
-        purchaseId: purchase.id,
+        purchaseId: syncedPurchase.id,
         providerPaymentIntentId: paymentIntent.id,
       },
       supabase,
     );
   }
 
-  return purchase;
+  return syncedPurchase;
 }
 
 async function processPaymentIntentSucceeded(

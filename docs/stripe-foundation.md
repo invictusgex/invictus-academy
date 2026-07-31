@@ -58,12 +58,15 @@ APP_URL=
 Reglas:
 
 - `STRIPE_SECRET_KEY` solo servidor.
-- `STRIPE_MENTORSHIP_PRICE_ID` solo servidor.
+- `STRIPE_MENTORSHIP_PRICE_ID` solo servidor y unica fuente de verdad del
+  Price usado por Checkout para el programa actual.
 - `STRIPE_WEBHOOK_SECRET` solo servidor.
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` puede exponerse al cliente cuando se implemente Stripe.js.
 - `APP_URL` se usa para construir redirecciones server-side confiables.
 - Ninguna secret key debe usar prefijo `NEXT_PUBLIC`.
 - No se colocan valores reales en `.env.example`.
+- Test y Live deben usar valores de entorno separados. Para cambiar precio no se
+  modifica codigo: se reemplaza el Price ID configurado.
 
 ## 4. Instalacion del SDK
 
@@ -274,6 +277,10 @@ El importe y la moneda se obtienen desde `STRIPE_MENTORSHIP_PRICE_ID` usando el
 SDK server-side de Stripe. No se aceptan `amount`, `currency`, `priceId`,
 `customerId` ni `profileId` desde el navegador.
 
+Stripe Checkout permite Promotion Codes mediante `allow_promotion_codes: true`.
+Los cupones, limites, expiraciones y descuentos se administran en Stripe
+Dashboard. La aplicacion no calcula descuentos manualmente.
+
 Metadata final de Session y PaymentIntent:
 
 - `purchase_id`
@@ -300,6 +307,72 @@ No se recibe desde el navegador y no se reutiliza entre compras distintas.
 - Si se importa `stripe-server.ts` desde cliente en una fase futura, se podria exponer arquitectura server-side al bundle. Debe mantenerse solo en rutas server/actions.
 - La publishable key es publica por diseno, pero no debe usarse para confiar precio o acceso.
 - Sin webhook verificado, ningun pago debe conceder enrollment.
+
+## 9.7 - Price config y Promotion Codes
+
+Fase 11.2 deja Checkout preparado para cambios de precio y cupones sin cambiar
+logica de negocio.
+
+Fuente de verdad del Price:
+
+```text
+STRIPE_MENTORSHIP_PRICE_ID=
+```
+
+Reglas:
+
+- el Price ID no se hardcodea en `CheckoutService`;
+- el Product ID de Stripe no se hardcodea en la aplicacion;
+- el precio numerico no se hardcodea en la aplicacion;
+- el catalogo comercial resuelve el Price desde configuracion server-side;
+- cada entorno usa su propia variable: local/test, preview/test y
+  production/live cuando sea autorizado.
+
+Para crear un nuevo Price:
+
+1. Entrar a Stripe Dashboard.
+2. Abrir el producto comercial correspondiente.
+3. Crear un nuevo Price de pago unico.
+4. Copiar el Price ID del entorno correcto.
+5. Reemplazar `STRIPE_MENTORSHIP_PRICE_ID` en el entorno correspondiente.
+6. Ejecutar una compra de prueba antes de abrir ventas.
+
+Para crear cupones:
+
+1. Entrar a Stripe Dashboard -> Product catalog -> Coupons.
+2. Crear Coupon con descuento fijo o porcentaje.
+3. Definir duracion segun politica comercial.
+4. Limitar productos si el coupon solo aplica a Trading Basado en Datos.
+
+Para crear Promotion Codes:
+
+1. Entrar a Stripe Dashboard -> Product catalog -> Promotion codes.
+2. Crear Promotion Code asociado al Coupon.
+3. Definir codigo visible para el cliente.
+4. Configurar limites de uso, expiracion, importe minimo y restricciones de
+   cliente cuando aplique.
+5. Activar/desactivar desde Stripe Dashboard sin cambiar codigo.
+
+Monto real:
+
+- `purchases.amount_total_minor` se crea inicialmente desde el Price configurado
+  para conservar una referencia interna de compra pendiente.
+- Cuando Stripe devuelve `checkout.session.completed` o
+  `payment_intent.succeeded`, el sistema sincroniza el monto y moneda reales
+  proporcionados por Stripe.
+- Si existe descuento por Promotion Code, el monto final de Stripe reemplaza el
+  monto inicial antes de confirmar el pago.
+- No se requiere migracion porque `purchases.amount_total_minor` ya representa
+  el total real de la compra.
+
+Stripe sigue siendo fuente de verdad para:
+
+- precio final;
+- descuentos;
+- cupones;
+- Promotion Codes;
+- impuestos futuros;
+- monto pagado.
 
 ## 10. Checklist previo a produccion
 

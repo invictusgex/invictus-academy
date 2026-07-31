@@ -261,6 +261,65 @@ export const PurchaseService = {
     return result.purchase;
   },
 
+  async recordProviderAmount(
+    input: {
+      purchaseId: string;
+      amountTotalMinor: number;
+      currency: string;
+    },
+    supabase?: SupabaseClient<Database>,
+  ): Promise<Purchase> {
+    assertSafeMinorAmount(input.amountTotalMinor, "amountTotalMinor");
+
+    const normalizedCurrency = input.currency.toUpperCase();
+
+    if (!/^[A-Z]{3}$/.test(normalizedCurrency)) {
+      throw new PurchaseDomainError(
+        "PURCHASE_CURRENCY_INVALID",
+        "Purchase currency must be a valid ISO currency code.",
+      );
+    }
+
+    const currentPurchase = await PurchaseRepository.getById(
+      input.purchaseId,
+      supabase,
+    );
+
+    if (!currentPurchase) {
+      throw new PurchaseDomainError(
+        "PURCHASE_NOT_FOUND",
+        "Purchase was not found.",
+      );
+    }
+
+    if (
+      currentPurchase.amountTotalMinor === input.amountTotalMinor &&
+      currentPurchase.currency === normalizedCurrency
+    ) {
+      return currentPurchase;
+    }
+
+    if (
+      ["refunded", "partially_refunded", "disputed"].includes(
+        currentPurchase.status,
+      )
+    ) {
+      throw new PurchaseDomainError(
+        "PURCHASE_AMOUNT_INVALID",
+        "Cannot change provider amount after refund or dispute processing.",
+      );
+    }
+
+    return PurchaseRepository.updateAmount(
+      {
+        purchaseId: input.purchaseId,
+        amountTotalMinor: input.amountTotalMinor,
+        currency: normalizedCurrency,
+      },
+      supabase,
+    );
+  },
+
   recordPaymentPending(
     input: PurchaseStatusOperationInput,
     supabase?: SupabaseClient<Database>,

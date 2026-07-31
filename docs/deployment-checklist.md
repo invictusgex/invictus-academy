@@ -23,6 +23,13 @@ en Hostinger.
 
 - Mantener Stripe Live desactivado hasta autorizacion comercial.
 - Crear producto y Price Live solo cuando se autorice.
+- Configurar `STRIPE_MENTORSHIP_PRICE_ID` con el Price ID del entorno correcto.
+- Confirmar que el Price es de pago unico, esta activo y pertenece al producto
+  comercial aprobado.
+- Crear Coupons y Promotion Codes desde Stripe Dashboard cuando la politica
+  comercial los autorice.
+- Limitar Promotion Codes por producto, usos maximos, expiracion, cliente o
+  importe minimo segun corresponda.
 - Configurar webhook Live apuntando a `/api/stripe/webhook`.
 - Configurar solo eventos requeridos por el lifecycle comercial.
 - Guardar `STRIPE_WEBHOOK_SECRET` en variables de produccion.

@@ -9,6 +9,7 @@ import type {
   PaymentProvider,
   Purchase,
   PurchaseStatus,
+  UpdatePurchaseAmountInput,
   UpdatePurchaseRefundInput,
   UpdatePurchaseStatusInput,
 } from "@/lib/types/commercial.types";
@@ -257,6 +258,29 @@ export const PurchaseRepository = {
     const purchaseUpdate = {
       status: input.status,
       amount_refunded_minor: input.amountRefundedMinor,
+    } satisfies PurchaseUpdate;
+
+    const { data, error } = await supabase
+      .from("purchases")
+      .update(purchaseUpdate)
+      .eq("id", input.purchaseId)
+      .select(purchaseSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapPurchase(data);
+  },
+
+  async updateAmount(
+    input: UpdatePurchaseAmountInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<Purchase> {
+    const purchaseUpdate = {
+      amount_total_minor: input.amountTotalMinor,
+      currency: input.currency,
     } satisfies PurchaseUpdate;
 
     const { data, error } = await supabase

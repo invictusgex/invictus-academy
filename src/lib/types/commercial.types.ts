@@ -124,6 +124,12 @@ export type UpdatePurchaseRefundInput = {
   amountRefundedMinor: number;
 };
 
+export type UpdatePurchaseAmountInput = {
+  purchaseId: string;
+  amountTotalMinor: number;
+  currency: string;
+};
+
 export type AttachProviderCheckoutSessionInput = {
   purchaseId: string;
   providerCheckoutSessionId: string;
