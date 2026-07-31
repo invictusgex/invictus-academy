@@ -10,6 +10,7 @@ import { StudentModuleCard } from "@/components/academy/dashboard/StudentModuleC
 import { StudentProgressSummary } from "@/components/academy/dashboard/StudentProgressSummary";
 import { StudentProgramsOverview } from "@/components/academy/dashboard/StudentProgramsOverview";
 import { StudentScenarioCard } from "@/components/academy/dashboard/StudentScenarioCard";
+import { TradingDaysPanel } from "@/components/academy/dashboard/TradingDaysPanel";
 import {
   getStudentGreeting,
   getStudentNameFromEmail,
@@ -248,6 +249,13 @@ export function StudentDashboard({ activeProducts }: StudentDashboardProps) {
             </StudentContentGrid>
           </div>
         )}
+      </StudentSection>
+
+      <StudentSection
+        description="Registra fechas reales de practica para avanzar hacia la siguiente etapa academica."
+        title="Dias de trading"
+      >
+        <TradingDaysPanel />
       </StudentSection>
 
       <StudentSection

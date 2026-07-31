@@ -50,6 +50,27 @@ export const RequiredFormsRule: CompletionRule = {
   },
 };
 
+export const TradingDaysRule: CompletionRule = {
+  key: "trading_days",
+  evaluate(context: CompletionRuleContext): CompletionRuleResult {
+    const satisfied =
+      context.enrollmentActive &&
+      context.tradingDays >= context.requiredTradingDays;
+
+    return {
+      currentValue: context.tradingDays,
+      key: TradingDaysRule.key,
+      label: "Registrar dias de trading",
+      metadata: {
+        enrollmentActive: context.enrollmentActive,
+        requiredTradingDays: context.requiredTradingDays,
+      },
+      requiredValue: context.requiredTradingDays,
+      satisfied,
+    };
+  },
+};
+
 export const CompletionRuleEvaluator = {
   evaluate(
     rules: CompletionRule[],
@@ -73,4 +94,5 @@ export const CompletionRuleEvaluator = {
 export const initialLearningWorkflowRules: CompletionRule[] = [
   ModulesCompletedRule,
   RequiredFormsRule,
+  TradingDaysRule,
 ];

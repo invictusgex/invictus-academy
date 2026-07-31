@@ -307,6 +307,61 @@ export type Database = {
           },
         ]
       }
+      academy_trading_days: {
+        Row: {
+          created_at: string
+          enrollment_id: string
+          id: string
+          notes: string | null
+          product_id: string
+          profile_id: string
+          trading_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          notes?: string | null
+          product_id: string
+          profile_id: string
+          trading_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          notes?: string | null
+          product_id?: string
+          profile_id?: string
+          trading_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_trading_days_enrollment_scope_fkey"
+            columns: ["enrollment_id", "profile_id", "product_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id", "profile_id", "product_id"]
+          },
+          {
+            foreignKeyName: "academy_trading_days_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_trading_days_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_users: {
         Row: {
           created_at: string

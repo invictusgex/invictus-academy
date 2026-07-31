@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { LearningWorkflowRepository } from "@/lib/repositories/learning-workflow.repository";
 import { FormService } from "@/lib/services/form.service";
+import { TradingDayService } from "@/lib/services/trading-day.service";
 import type { Database } from "@/lib/supabase/database.types";
 import {
   CompletionRuleEvaluator,
@@ -134,6 +135,14 @@ export const LearningWorkflowService = {
       },
       supabase,
     );
+    const tradingDaysProgress = await TradingDayService.getTradingDaysProgress(
+      {
+        enrollmentId: enrollmentActive ? enrollment?.id ?? null : null,
+        productId,
+        profileId,
+      },
+      supabase,
+    );
     const modules = mapModules(publishedModules, progressRows);
     const completedModules = enrollmentActive
       ? modules.filter((academyModule) => academyModule.completed).length
@@ -149,7 +158,9 @@ export const LearningWorkflowService = {
         modules,
         publishedModules: totalModules,
         requiredForms: requiredFormsProgress.requiredForms,
+        requiredTradingDays: tradingDaysProgress.requiredTradingDays,
         submittedRequiredForms: requiredFormsProgress.submittedRequiredForms,
+        tradingDays: tradingDaysProgress.registeredTradingDays,
       },
     );
 
@@ -163,10 +174,12 @@ export const LearningWorkflowService = {
       profileId,
       publishedModules: totalModules,
       requiredForms: requiredFormsProgress.requiredForms,
+      requiredTradingDays: tradingDaysProgress.requiredTradingDays,
       requirementsSatisfied: ruleEvaluation.allSatisfied,
       rules: ruleEvaluation.rules,
       satisfiedRequirements: ruleEvaluation.satisfiedCount,
       submittedRequiredForms: requiredFormsProgress.submittedRequiredForms,
+      tradingDays: tradingDaysProgress.registeredTradingDays,
       totalRequirements: ruleEvaluation.totalCount,
       workflowState: getWorkflowState({
         enrollmentActive,

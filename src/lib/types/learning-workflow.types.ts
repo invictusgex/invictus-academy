@@ -34,7 +34,9 @@ export type CompletionRuleContext = {
   modules: LearningWorkflowModuleSummary[];
   publishedModules: number;
   requiredForms: number;
+  requiredTradingDays: number;
   submittedRequiredForms: number;
+  tradingDays: number;
 };
 
 export type CompletionRule = {
@@ -52,10 +54,12 @@ export type LearningWorkflowEvaluation = {
   profileId: string;
   publishedModules: number;
   requiredForms: number;
+  requiredTradingDays: number;
   requirementsSatisfied: boolean;
   rules: CompletionRuleResult[];
   satisfiedRequirements: number;
   submittedRequiredForms: number;
+  tradingDays: number;
   totalRequirements: number;
   workflowState: LearningWorkflowState;
 };
