@@ -4,6 +4,7 @@ import type {
   CompletionRuleResult,
   LearningWorkflowEvaluation,
 } from "@/lib/types/learning-workflow.types";
+import type { AdminMentorshipPreparationSummary } from "@/lib/services/mentorship-preparation.service";
 import type { TradingDay } from "@/lib/types/trading-day.types";
 import type {
   AdminStudent,
@@ -38,6 +39,7 @@ export type AdminStudentEnrollmentDetail = {
   enrollment: AdminStudentEnrollment;
   formDefinitions: FormDefinition[];
   formSubmissions: FormSubmission[];
+  mentorshipPreparation: AdminMentorshipPreparationSummary | null;
   purchases: Purchase[];
   rules: CompletionRuleResult[];
   session101: AdminStudentSession101Status;

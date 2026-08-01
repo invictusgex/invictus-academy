@@ -41,6 +41,14 @@ function formatMoney(amountMinor: number | null, currency: string) {
   }).format(amountMinor / 100);
 }
 
+function formatFileSize(sizeBytes: number) {
+  if (sizeBytes < 1024 * 1024) {
+    return `${Math.max(Math.round(sizeBytes / 1024), 1)} KB`;
+  }
+
+  return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 function getStatusTone(status: string) {
   if (status === "active" || status === "paid" || status === "Completado") {
     return "success";
@@ -60,6 +68,187 @@ function getStatusTone(status: string) {
   }
 
   return "neutral";
+}
+
+function MentorshipPreparationSection({
+  detail,
+}: {
+  detail: AdminStudentEnrollmentDetail;
+}) {
+  const preparation = detail.mentorshipPreparation;
+
+  if (!preparation) {
+    return null;
+  }
+
+  return (
+    <section className="mt-5 min-w-0 rounded-xl border border-[var(--color-border)] p-4">
+      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
+          <h4 className="text-base font-semibold text-white">
+            Preparacion de mentoria
+          </h4>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)]">
+            Consulta el recorrido del participante antes de su sesion
+            individual.
+          </p>
+        </div>
+        <AdminStatusBadge
+          tone={preparation.requirementsSatisfied ? "success" : "warning"}
+        >
+          {preparation.status}
+        </AdminStatusBadge>
+      </div>
+
+      <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-lg bg-black/20 p-3">
+          <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Programa
+          </dt>
+          <dd className="mt-2 break-words text-sm font-semibold text-white">
+            {detail.enrollment.course?.title ?? "Producto sin titulo"}
+          </dd>
+        </div>
+        <div className="rounded-lg bg-black/20 p-3">
+          <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Progreso
+          </dt>
+          <dd className="mt-2 text-sm font-semibold text-white">
+            {preparation.completionPercent}% · {preparation.completedModules}/
+            {preparation.publishedModules} modulos
+          </dd>
+        </div>
+        <div className="rounded-lg bg-black/20 p-3">
+          <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Reflexiones
+          </dt>
+          <dd className="mt-2 text-sm font-semibold text-white">
+            {preparation.moduleReflectionCount} modulos ·{" "}
+            {preparation.totalAttachments} imagenes
+          </dd>
+        </div>
+        <div className="rounded-lg bg-black/20 p-3">
+          <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            Practica
+          </dt>
+          <dd className="mt-2 text-sm font-semibold text-white">
+            {preparation.tradingDays}/{preparation.requiredTradingDays} dias
+          </dd>
+        </div>
+      </dl>
+
+      <div className="mt-5 grid gap-4">
+        {preparation.modules.map((moduleItem) => (
+          <article
+            className="min-w-0 rounded-lg border border-[var(--color-border)] bg-black/20 p-4"
+            key={moduleItem.moduleKey}
+          >
+            <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+                  Modulo {moduleItem.order}
+                </p>
+                <h5 className="mt-2 break-words text-sm font-semibold text-white">
+                  {moduleItem.title}
+                </h5>
+                <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
+                  Ultima actualizacion:{" "}
+                  {formatAdminDateTime(moduleItem.reflectionUpdatedAt)}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <AdminStatusBadge
+                  tone={moduleItem.completed ? "success" : "warning"}
+                >
+                  {moduleItem.completed ? "Completado" : "Pendiente"}
+                </AdminStatusBadge>
+                <AdminStatusBadge
+                  tone={moduleItem.hasReflection ? "success" : "warning"}
+                >
+                  {moduleItem.hasReflection
+                    ? "Con reflexion"
+                    : "Sin reflexion"}
+                </AdminStatusBadge>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-lg border border-[var(--color-border)] p-3">
+              <p className="whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
+                {moduleItem.reflectionContent ??
+                  "El participante todavia no documento una reflexion en este modulo."}
+              </p>
+            </div>
+
+            <div className="mt-4 flex min-w-0 flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+                  Imagenes adjuntas
+                </p>
+                <div className="mt-3 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                  {moduleItem.attachments.map((attachment) => (
+                    <figure
+                      className="min-w-0 overflow-hidden rounded-lg border border-[var(--color-border)] bg-black/30"
+                      key={attachment.id}
+                    >
+                      {attachment.signedUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          alt={`Adjunto ${attachment.originalName}`}
+                          className="aspect-video w-full object-cover"
+                          src={attachment.signedUrl}
+                        />
+                      ) : (
+                        <div className="flex aspect-video items-center justify-center px-3 text-center text-xs text-[var(--color-text-muted)]">
+                          Vista no disponible
+                        </div>
+                      )}
+                      <figcaption className="min-w-0 p-2 text-xs text-[var(--color-text-secondary)]">
+                        <span className="block truncate">
+                          {attachment.originalName}
+                        </span>
+                        <span>{formatFileSize(attachment.sizeBytes)}</span>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+                {moduleItem.attachments.length === 0 ? (
+                  <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
+                    No hay imagenes adjuntas en este modulo.
+                  </p>
+                ) : null}
+              </div>
+
+              <Link
+                className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-white/[0.03] sm:w-auto"
+                href={`/admin/content/modules/${moduleItem.moduleId}`}
+              >
+                Ver contenido
+              </Link>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-5 rounded-lg border border-[var(--color-border)] p-4">
+        <h5 className="text-sm font-semibold text-white">
+          Puntos pendientes antes de la mentoria
+        </h5>
+        {preparation.pendingItems.length > 0 ? (
+          <ul className="mt-3 grid gap-2 text-sm text-[var(--color-text-secondary)]">
+            {preparation.pendingItems.map((item) => (
+              <li className="break-words" key={item}>
+                {item}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
+            No hay puntos pendientes objetivos registrados.
+          </p>
+        )}
+      </div>
+    </section>
+  );
 }
 
 function EnrollmentDetailCard({
@@ -128,6 +317,8 @@ function EnrollmentDetailCard({
           </dd>
         </div>
       </dl>
+
+      <MentorshipPreparationSection detail={detail} />
 
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
         <div className="min-w-0 rounded-xl border border-[var(--color-border)] p-4">

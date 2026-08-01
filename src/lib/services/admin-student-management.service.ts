@@ -8,6 +8,7 @@ import { PurchaseRepository } from "@/lib/repositories/purchase.repository";
 import { TradingDayRepository } from "@/lib/repositories/trading-day.repository";
 import { AdminStudentsService } from "@/lib/services/admin-students.service";
 import { LearningWorkflowService } from "@/lib/services/learning-workflow.service";
+import { MentorshipPreparationService } from "@/lib/services/mentorship-preparation.service";
 import type { Database } from "@/lib/supabase/database.types";
 import type {
   AdminStudentManagementDetail,
@@ -161,6 +162,17 @@ export const AdminStudentManagementService = {
           ),
           getWorkflowForEnrollment(student, enrollment, supabase),
         ]);
+        const mentorshipPreparation =
+          enrollment.status === "active"
+            ? await MentorshipPreparationService.getAdminStudentPreparation(
+                {
+                  productId: enrollment.productId,
+                  profileId,
+                  workflow: workflow ?? undefined,
+                },
+                supabase,
+              )
+            : null;
 
         return {
           enrollment,
@@ -168,6 +180,7 @@ export const AdminStudentManagementService = {
             (definition) => definition.isRequired,
           ),
           formSubmissions,
+          mentorshipPreparation,
           purchases: purchases.filter(
             (purchase) => purchase.productId === enrollment.productId,
           ),
