@@ -11,9 +11,11 @@ import type {
   MentorshipBooking,
   MentorshipSlot,
 } from "@/lib/types/mentorship-scheduling.types";
+import type { MentorshipOutcome } from "@/lib/types/mentorship-outcome.types";
 
 type MentorshipSchedulingPanelProps = {
   bookings: MentorshipBooking[];
+  outcomes: MentorshipOutcome[];
   requirementsSatisfied: boolean;
   slots: MentorshipSlot[];
 };
@@ -72,6 +74,10 @@ function getConfirmedBooking(bookings: MentorshipBooking[]) {
   );
 }
 
+function getCompletedBooking(bookings: MentorshipBooking[]) {
+  return bookings.find((booking) => booking.status === "completed") ?? null;
+}
+
 function getLastCancelledBooking(bookings: MentorshipBooking[]) {
   return (
     bookings.find((booking) => booking.status === "cancelled") ?? null
@@ -80,6 +86,7 @@ function getLastCancelledBooking(bookings: MentorshipBooking[]) {
 
 export function MentorshipSchedulingPanel({
   bookings: initialBookings,
+  outcomes,
   requirementsSatisfied,
   slots: initialSlots,
 }: MentorshipSchedulingPanelProps) {
@@ -97,9 +104,15 @@ export function MentorshipSchedulingPanel({
   const confirmedBooking = useMemo(() => getConfirmedBooking(bookings), [
     bookings,
   ]);
+  const completedBooking = useMemo(() => getCompletedBooking(bookings), [
+    bookings,
+  ]);
   const cancelledBooking = useMemo(() => getLastCancelledBooking(bookings), [
     bookings,
   ]);
+  const completedOutcome = completedBooking
+    ? outcomes.find((outcome) => outcome.bookingId === completedBooking.id) ?? null
+    : null;
   const effectiveSelectedSlotId = selectedSlotId || slots[0]?.id || "";
 
   async function refreshScheduling() {
@@ -238,6 +251,85 @@ export function MentorshipSchedulingPanel({
             Cuando completes los requisitos pendientes, podrás elegir un horario
             disponible para tu mentoría individual desde esta misma sección.
           </p>
+        </StudentCard>
+      </StudentSection>
+    );
+  }
+
+  if (completedBooking) {
+    return (
+      <StudentSection title="Mentoria completada">
+        <StudentCard elevated>
+          {completedOutcome ? (
+            <div className="grid gap-5">
+              <div>
+                <h2 className="text-2xl font-semibold text-white">
+                  Cierre de tu mentoria
+                </h2>
+                {completedBooking.slotStartsAt ? (
+                  <p className="mt-4 text-sm leading-6 text-[var(--color-text-secondary)]">
+                    Fecha de la sesion:{" "}
+                    {formatSlotDate(
+                      completedBooking.slotStartsAt,
+                      completedBooking.participantTimezone,
+                    )}
+                  </p>
+                ) : null}
+                {completedOutcome.sharedAt ? (
+                  <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                    Publicado:{" "}
+                    {formatSlotDate(
+                      completedOutcome.sharedAt,
+                      completedBooking.participantTimezone,
+                    )}
+                  </p>
+                ) : null}
+              </div>
+              <div className="grid gap-4 lg:grid-cols-3">
+                <div className="rounded-xl border border-[var(--color-border)] p-4">
+                  <h3 className="text-sm font-semibold text-white">
+                    Resumen
+                  </h3>
+                  <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
+                    {completedOutcome.summary ?? "Sin resumen publicado."}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-[var(--color-border)] p-4">
+                  <h3 className="text-sm font-semibold text-white">
+                    Proximos pasos
+                  </h3>
+                  <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
+                    {completedOutcome.nextSteps ??
+                      "Sin proximos pasos publicados."}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-[var(--color-border)] p-4">
+                  <h3 className="text-sm font-semibold text-white">
+                    Recursos recomendados
+                  </h3>
+                  <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
+                    {completedOutcome.resources ??
+                      "Sin recursos publicados."}
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
+                Has completado esta etapa de tu formacion. Los proximos pasos
+                te ayudaran a consolidar la metodologia mediante practica
+                consciente y revision continua.
+              </p>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-2xl font-semibold text-white">
+                Mentoria completada
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
+                Tu sesion ha sido registrada. El mentor esta preparando el
+                cierre y los proximos pasos de tu formacion.
+              </p>
+            </div>
+          )}
         </StudentCard>
       </StudentSection>
     );

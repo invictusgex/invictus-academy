@@ -6,8 +6,10 @@ import { requireAdminServerContext } from "@/app/admin/admin-auth";
 import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
 import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
 import { MentorshipNoteService } from "@/lib/services/mentorship-note.service";
+import { MentorshipOutcomeService } from "@/lib/services/mentorship-outcome.service";
 import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
 import type { MentorshipPrivateNote } from "@/lib/types/mentorship-note.types";
+import type { MentorshipOutcome } from "@/lib/types/mentorship-outcome.types";
 import type {
   AdminMentorshipBooking,
   MentorshipBookingStatus,
@@ -196,6 +198,33 @@ async function savePrivateNoteAction(formData: FormData) {
     revalidatePath(adminMentorshipPath);
   } catch {
     message = "No pudimos guardar las notas privadas.";
+  }
+
+  redirectWithMessage(message);
+}
+
+async function shareParticipantOutcomeAction(formData: FormData) {
+  "use server";
+
+  const { profile, supabase } = await requireAdminServerContext();
+  const bookingId = getString(formData, "bookingId");
+  let message = "Cierre compartido con el participante.";
+
+  try {
+    await MentorshipOutcomeService.shareAdminOutcome(
+      {
+        bookingId,
+        nextSteps: getString(formData, "participantNextSteps"),
+        resources: getString(formData, "participantResources"),
+        sharedBy: profile.id,
+        summary: getString(formData, "participantSummary"),
+      },
+      supabase,
+    );
+    revalidatePath(adminMentorshipPath);
+    revalidatePath("/academy/mentoria");
+  } catch {
+    message = "No pudimos compartir el cierre con el participante.";
   }
 
   redirectWithMessage(message);
@@ -452,6 +481,64 @@ function PrivateNotesForm({
   );
 }
 
+function ParticipantOutcomeForm({
+  booking,
+  outcome,
+}: {
+  booking: AdminMentorshipBooking;
+  outcome: MentorshipOutcome | null;
+}) {
+  return (
+    <section className="mt-5 rounded-xl border border-[var(--color-border)] p-4">
+      <div className="min-w-0">
+        <h4 className="text-base font-semibold text-white">
+          Cierre visible para el participante
+        </h4>
+        <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+          Este contenido si sera visible para el participante cuando lo
+          compartas. No se copia automaticamente desde las notas privadas.
+        </p>
+        {outcome?.sharedAt ? (
+          <p className="mt-2 text-sm text-[var(--color-cyan)]">
+            Compartido: {formatDateTime(outcome.sharedAt, booking.participantTimezone)}
+          </p>
+        ) : null}
+      </div>
+
+      <form action={shareParticipantOutcomeAction} className="mt-5 grid gap-4">
+        <input name="bookingId" type="hidden" value={booking.id} />
+        <label className="grid gap-2 text-sm font-semibold text-white">
+          Resumen de la sesion
+          <textarea
+            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            defaultValue={outcome?.summary ?? ""}
+            name="participantSummary"
+          />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-white">
+          Proximos pasos
+          <textarea
+            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            defaultValue={outcome?.nextSteps ?? ""}
+            name="participantNextSteps"
+          />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-white">
+          Recursos recomendados
+          <textarea
+            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            defaultValue={outcome?.resources ?? ""}
+            name="participantResources"
+          />
+        </label>
+        <button className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-black transition hover:bg-white sm:w-fit">
+          Compartir cierre con el participante
+        </button>
+      </form>
+    </section>
+  );
+}
+
 export default async function AdminMentorshipRoute({
   searchParams,
 }: AdminMentorshipRouteProps) {
@@ -465,8 +552,15 @@ export default async function AdminMentorshipRoute({
     bookings.map((booking) => booking.id),
     supabase,
   );
+  const outcomes = await MentorshipOutcomeService.listAdminOutcomesByBookingIds(
+    bookings.map((booking) => booking.id),
+    supabase,
+  );
   const notesByBookingId = new Map(
     notes.map((note) => [note.bookingId, note]),
+  );
+  const outcomesByBookingId = new Map(
+    outcomes.map((outcome) => [outcome.bookingId, outcome]),
   );
   const nowTime = new Date().getTime();
   const availableFutureSlots = slots.filter(
@@ -656,6 +750,10 @@ export default async function AdminMentorshipRoute({
               <PrivateNotesForm
                 booking={booking}
                 note={notesByBookingId.get(booking.id) ?? null}
+              />
+              <ParticipantOutcomeForm
+                booking={booking}
+                outcome={outcomesByBookingId.get(booking.id) ?? null}
               />
             </article>
           ))}

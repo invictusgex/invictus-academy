@@ -9,6 +9,7 @@ import {
 } from "@/components/student";
 import { MentorshipSchedulingPanel } from "@/components/academy/mentorship/MentorshipSchedulingPanel";
 import type { MentorshipPreparationSummary } from "@/lib/services/mentorship-preparation.service";
+import type { MentorshipOutcome } from "@/lib/types/mentorship-outcome.types";
 import type {
   MentorshipBooking,
   MentorshipSlot,
@@ -16,6 +17,7 @@ import type {
 
 type MentorshipPreparationPageProps = {
   bookings: MentorshipBooking[];
+  outcomes: MentorshipOutcome[];
   preparation: MentorshipPreparationSummary;
   slots: MentorshipSlot[];
 };
@@ -40,6 +42,7 @@ function formatUpdatedAt(value: string | null) {
 
 export function MentorshipPreparationPage({
   bookings,
+  outcomes,
   preparation,
   slots,
 }: MentorshipPreparationPageProps) {
@@ -196,6 +199,7 @@ export function MentorshipPreparationPage({
 
       <MentorshipSchedulingPanel
         bookings={bookings}
+        outcomes={outcomes}
         requirementsSatisfied={preparation.requirementsSatisfied}
         slots={slots}
       />
