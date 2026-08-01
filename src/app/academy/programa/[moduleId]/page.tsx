@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { StudentModuleDetailPage } from "@/components/academy/module/StudentModuleDetailPage";
 import { AcademyShell } from "@/components/layout/academy-shell";
 import { getAcademyModule } from "@/lib/academy";
+import { academyProductSlug } from "@/lib/academy-product";
 
 type ModulePageProps = {
   params: Promise<{
@@ -20,7 +21,10 @@ export default async function AcademyModulePage({ params }: ModulePageProps) {
 
   return (
     <AcademyShell>
-      <StudentModuleDetailPage academyModule={academyModule} />
+      <StudentModuleDetailPage
+        academyModule={academyModule}
+        productSlug={academyProductSlug}
+      />
     </AcademyShell>
   );
 }

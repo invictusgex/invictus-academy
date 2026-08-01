@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -120,6 +120,68 @@ export type Database = {
           },
           {
             foreignKeyName: "academy_form_submissions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_module_reflections: {
+        Row: {
+          content: string
+          created_at: string
+          enrollment_id: string
+          id: string
+          module_key: string
+          product_id: string
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          module_key: string
+          product_id: string
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          module_key?: string
+          product_id?: string
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_module_reflections_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_module_reflections_module_scope_fkey"
+            columns: ["product_id", "module_key"]
+            isOneToOne: false
+            referencedRelation: "academy_modules"
+            referencedColumns: ["product_id", "module_key"]
+          },
+          {
+            foreignKeyName: "academy_module_reflections_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_module_reflections_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"

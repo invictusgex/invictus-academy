@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 import { ModuleCompletionPanel } from "@/components/academy/module/ModuleCompletionPanel";
 import { ModuleObjectivesSection } from "@/components/academy/module/ModuleObjectivesSection";
+import { ModuleReflectionPanel } from "@/components/academy/module/ModuleReflectionPanel";
 import { ModuleResourcesSection } from "@/components/academy/module/ModuleResourcesSection";
 import { ModuleVideosSection } from "@/components/academy/module/ModuleVideosSection";
 import { StudentModuleHero } from "@/components/academy/module/StudentModuleHero";
@@ -18,10 +19,12 @@ import { formatModuleProgressStatusLabel } from "@/utils/module-progress";
 
 type StudentModuleDetailPageProps = {
   academyModule: Module;
+  productSlug: string;
 };
 
 export function StudentModuleDetailPage({
   academyModule,
+  productSlug,
 }: StudentModuleDetailPageProps) {
   const { progress } = useProgressContext();
   const moduleProgress = progress.modulesById[academyModule.id];
@@ -62,6 +65,11 @@ export function StudentModuleDetailPage({
       <ModuleResourcesSection
         resourceUrls={resourceUrls}
         resources={academyModule.resources}
+      />
+
+      <ModuleReflectionPanel
+        moduleKey={academyModule.id}
+        productSlug={productSlug}
       />
 
       <ModuleCompletionPanel moduleId={academyModule.id} status={status} />
