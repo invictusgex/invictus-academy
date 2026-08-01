@@ -2,25 +2,18 @@ import Link from "next/link";
 
 import { formationCtaHref } from "@/config/public-cta";
 import {
+  publicFormationJourney,
   publicGlobalCompetencies,
   publicMethodologySteps,
   publicProgramAudience,
   publicProgramModules,
   publicProgramNonAudience,
-  publicProgramTrajectory,
 } from "@/content/public-program";
 import type { Course } from "@/types/academy";
 
 type PublicProgramPageProps = {
   course: Course;
 };
-
-function getTotalSessions(course: Course) {
-  return course.modules.reduce(
-    (total, academyModule) => total + academyModule.videos.length,
-    0,
-  );
-}
 
 function PublicProgramHeader() {
   return (
@@ -29,17 +22,17 @@ function PublicProgramHeader() {
         href="/"
         className="max-w-[13rem] text-xs font-semibold tracking-[0.12em] text-white uppercase transition hover:text-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:max-w-none sm:text-sm"
       >
-        Invictus Trading Academy
+        Invictus GEX
       </Link>
       <nav
-        aria-label="Navegación del programa"
+        aria-label="Navegacion del programa"
         className="hidden items-center gap-6 text-sm text-[var(--color-text-secondary)] md:flex"
       >
-        <a className="transition hover:text-white" href="#modulos">
-          Módulos
+        <a className="transition hover:text-white" href="#recorrido">
+          Recorrido
         </a>
-        <a className="transition hover:text-white" href="#metodologia">
-          Metodología
+        <a className="transition hover:text-white" href="#modulos">
+          Modulos
         </a>
         <a className="transition hover:text-white" href="#perfil">
           Perfil
@@ -56,27 +49,27 @@ function PublicProgramHeader() {
 }
 
 function ProgramHero({ course }: PublicProgramPageProps) {
-  const totalSessions = getTotalSessions(course);
   const stats = [
-    `${course.modules.length} módulos`,
-    `${totalSessions} sesiones`,
-    "Progresión estructurada",
-    "Enfoque basado en proceso",
+    `${course.modules.length} modulos`,
+    "Proceso guiado",
+    "Practica con evidencia",
+    "Mentoria individual preparada",
   ];
 
   return (
     <section className="mx-auto w-full max-w-6xl px-5 pt-10 pb-14 sm:px-6 sm:pt-14 lg:px-8 lg:pt-16">
       <div className="max-w-4xl">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Programa de formación
+          Programa de formacion profesional
         </p>
         <h1 className="mt-5 text-4xl leading-tight font-semibold text-white sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
-          Trading Basado en Datos
+          Invictus GEX
         </h1>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
-          Una formación estructurada para desarrollar una metodología de
-          análisis que integra contexto, exposición gamma, estructura,
-          confirmación y gestión del riesgo.
+          Un recorrido estructurado para desarrollar criterio profesional en
+          lectura de mercado basada en datos. La formacion integra contexto,
+          exposicion gamma, liquidez, volumen, estructura, riesgo y revision
+          del proceso.
         </p>
       </div>
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -94,13 +87,13 @@ function ProgramHero({ course }: PublicProgramPageProps) {
           href={formationCtaHref}
           className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
         >
-          Comenzar mi formación
+          Iniciar mi formacion
         </Link>
         <a
           href="#modulos"
           className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--color-border)] px-6 text-sm font-semibold text-white transition hover:border-[var(--color-blue)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
         >
-          Explorar los módulos
+          Explorar la estructura
         </a>
       </div>
     </section>
@@ -109,21 +102,27 @@ function ProgramHero({ course }: PublicProgramPageProps) {
 
 function JourneyIntro() {
   return (
-    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+    <section
+      id="recorrido"
+      className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]"
+    >
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <div className="max-w-4xl">
-          <h2 className="text-3xl font-semibold text-white">
-            No estás adquiriendo una colección de estrategias.
+          <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+            Como se desarrolla tu formacion
+          </p>
+          <h2 className="mt-3 text-3xl font-semibold text-white">
+            No compras contenido aislado. Ingresas a una secuencia de
+            preparacion profesional.
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
-            Cada módulo desarrolla una competencia que se apoya en la anterior.
-            El recorrido comienza transformando la manera de interpretar el
-            mercado y termina convirtiendo ese análisis en un proceso capaz de
-            prepararse, ejecutarse, gestionarse y revisarse con disciplina.
+            Cada etapa cumple una funcion: formar criterio, aplicar la
+            metodologia, reflexionar sobre la practica y preparar una mentoria
+            individual con informacion concreta de tu recorrido.
           </p>
         </div>
         <ol className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
-          {publicProgramTrajectory.map((step, index) => (
+          {publicFormationJourney.map((step, index) => (
             <li
               className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
               key={step}
@@ -147,10 +146,10 @@ function PublicModulesSection() {
     <section id="modulos" className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
       <div className="max-w-3xl">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Módulos del programa
+          Estructura academica
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
-          Una progresión conectada de análisis a ejecución.
+          Siete modulos para avanzar de interpretacion a consolidacion.
         </h2>
       </div>
       <div className="mt-8 space-y-5">
@@ -163,7 +162,7 @@ function PublicModulesSection() {
             <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
               <div>
                 <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-                  Módulo {academyModule.number}
+                  Modulo {academyModule.number}
                 </p>
                 <h3 className="mt-3 text-2xl font-semibold text-white">
                   {academyModule.title}
@@ -184,7 +183,7 @@ function PublicModulesSection() {
                 <div className="mt-6 grid gap-4 lg:grid-cols-2">
                   <div>
                     <h4 className="text-sm font-semibold text-white">
-                      Competencias
+                      Criterios que desarrolla
                     </h4>
                     <ul className="mt-3 space-y-2">
                       {academyModule.competencies.map((competency) => (
@@ -199,7 +198,7 @@ function PublicModulesSection() {
                   </div>
                   <div>
                     <h4 className="text-sm font-semibold text-white">
-                      Resultado
+                      Al completar esta etapa
                     </h4>
                     <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
                       {academyModule.result}
@@ -222,13 +221,10 @@ function PublicModulesSection() {
 
 function MethodologyBlock() {
   return (
-    <section
-      id="metodologia"
-      className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]"
-    >
+    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-semibold text-white">
-          Una metodología. Cinco decisiones.
+          La metodologia ordena cinco preguntas profesionales.
         </h2>
         <div className="mt-8 grid gap-4 md:grid-cols-5">
           {publicMethodologySteps.map((step, index) => (
@@ -249,28 +245,51 @@ function MethodologyBlock() {
           ))}
         </div>
         <p className="mt-8 rounded-xl border border-[var(--color-cyan)] bg-[var(--color-card-bg)] p-5 text-base font-semibold text-white">
-          La entrada aparece al final del proceso. Nunca al principio.
+          La decision aparece al final de la lectura, no al comienzo.
         </p>
       </div>
     </section>
   );
 }
 
+function MentorshipPreparationBlock() {
+  return (
+    <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-6 lg:grid-cols-[0.86fr_1.14fr] lg:px-8">
+      <div>
+        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+          La mentoria comienza desde el primer modulo
+        </p>
+        <h2 className="mt-3 text-3xl font-semibold text-white">
+          Tu avance prepara una conversacion individual mas precisa.
+        </h2>
+      </div>
+      <p className="text-base leading-7 text-[var(--color-text-secondary)]">
+        A medida que avanzas, el programa invita a observar dudas, ejemplos,
+        decisiones revisadas y puntos de dificultad. Esa evidencia permite que
+        la etapa individual no sea generica, sino conectada con tu manera real
+        de interpretar y aplicar la metodologia.
+      </p>
+    </section>
+  );
+}
+
 function CompetenciesBlock() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-        Lo que desarrollarás
-      </p>
-      <div className="mt-6 grid gap-3 md:grid-cols-2">
-        {publicGlobalCompetencies.map((competency) => (
-          <p
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm leading-6 text-[var(--color-text-secondary)]"
-            key={competency}
-          >
-            {competency}
-          </p>
-        ))}
+    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+      <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
+        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+          Lo que desarrollaras
+        </p>
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          {publicGlobalCompetencies.map((competency) => (
+            <p
+              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm leading-6 text-[var(--color-text-secondary)]"
+              key={competency}
+            >
+              {competency}
+            </p>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -278,40 +297,37 @@ function CompetenciesBlock() {
 
 function AudienceBlock() {
   return (
-    <section
-      id="perfil"
-      className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]"
-    >
-      <div className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-14 sm:px-6 lg:grid-cols-2 lg:px-8">
-        <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-          <h2 className="text-2xl font-semibold text-white">Para quién es</h2>
-          <ul className="mt-6 space-y-4">
-            {publicProgramAudience.map((profile) => (
-              <li
-                className="text-base leading-7 text-[var(--color-text-secondary)]"
-                key={profile}
-              >
-                {profile}
-              </li>
-            ))}
-          </ul>
-        </article>
-        <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-          <h2 className="text-2xl font-semibold text-white">
-            Para quién no es
-          </h2>
-          <ul className="mt-6 space-y-4">
-            {publicProgramNonAudience.map((profile) => (
-              <li
-                className="text-base leading-7 text-[var(--color-text-secondary)]"
-                key={profile}
-              >
-                {profile}
-              </li>
-            ))}
-          </ul>
-        </article>
-      </div>
+    <section id="perfil" className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-14 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
+        <h2 className="text-2xl font-semibold text-white">
+          Este programa es para ti si...
+        </h2>
+        <ul className="mt-6 space-y-4">
+          {publicProgramAudience.map((profile) => (
+            <li
+              className="text-base leading-7 text-[var(--color-text-secondary)]"
+              key={profile}
+            >
+              {profile}
+            </li>
+          ))}
+        </ul>
+      </article>
+      <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
+        <h2 className="text-2xl font-semibold text-white">
+          Este programa probablemente no sea para ti si...
+        </h2>
+        <ul className="mt-6 space-y-4">
+          {publicProgramNonAudience.map((profile) => (
+            <li
+              className="text-base leading-7 text-[var(--color-text-secondary)]"
+              key={profile}
+            >
+              {profile}
+            </li>
+          ))}
+        </ul>
+      </article>
     </section>
   );
 }
@@ -321,21 +337,22 @@ function FinalCta() {
     <section className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
       <div className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8 lg:p-10">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          El siguiente paso
+          Siguiente paso
         </p>
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white">
-          No necesitas más señales. Necesitas un proceso.
+          Forma parte de Invictus GEX como proceso profesional, no como consumo
+          de contenido.
         </h2>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Comienza una formación diseñada para desarrollar criterio, estructura
-          y disciplina en cada etapa de la decisión.
+          Si buscas estructura, metodo y preparacion individual, el programa
+          esta disenado para acompanar tu desarrollo con sobriedad y exigencia.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
           <Link
             href={formationCtaHref}
             className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
           >
-            Comenzar mi formación
+            Iniciar mi formacion
           </Link>
           <Link
             href="/"
@@ -352,8 +369,8 @@ function FinalCta() {
 function Footer() {
   return (
     <footer className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-[var(--color-text-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-      <p>Invictus Trading Academy</p>
-      <p>Educación financiera con enfoque analítico.</p>
+      <p>Invictus GEX</p>
+      <p>Formacion profesional en lectura de mercado basada en datos.</p>
     </footer>
   );
 }
@@ -367,6 +384,7 @@ export function PublicProgramPage({ course }: PublicProgramPageProps) {
         <JourneyIntro />
         <PublicModulesSection />
         <MethodologyBlock />
+        <MentorshipPreparationBlock />
         <CompetenciesBlock />
         <AudienceBlock />
         <FinalCta />
