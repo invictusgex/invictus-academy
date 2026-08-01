@@ -294,6 +294,21 @@ export function StudentDashboard({
       </StudentSection>
 
       <StudentSection
+        description="Consulta como tu avance se convierte en contexto para la etapa individual."
+        title="Preparación de mentoría"
+      >
+        <StudentActionCard
+          badge="En proceso"
+          ctaHref="/academy/mentoria"
+          ctaLabel="Ver mi preparación"
+          title="Preparación de mentoría"
+        >
+          Consulta cómo tu progreso, reflexiones y práctica están preparando tu
+          sesión individual.
+        </StudentActionCard>
+      </StudentSection>
+
+      <StudentSection
         actions={
           <Link
             className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto motion-reduce:transition-none motion-reduce:hover:translate-y-0"

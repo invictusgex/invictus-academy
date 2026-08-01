@@ -87,6 +87,26 @@ export const ModuleReflectionRepository = {
     return data as unknown as ModuleReflectionRow | null;
   },
 
+  async listByProfileAndProduct(
+    input: {
+      productId: string;
+      profileId: string;
+    },
+    supabase: SupabaseClient<Database>,
+  ): Promise<ModuleReflectionRow[]> {
+    const { data, error } = await supabase
+      .from("academy_module_reflections")
+      .select(reflectionSelect)
+      .eq("profile_id", input.profileId)
+      .eq("product_id", input.productId);
+
+    if (error) {
+      throw error;
+    }
+
+    return (data as unknown as ModuleReflectionRow[] | null) ?? [];
+  },
+
   async upsertReflection(
     input: ModuleReflectionUpsertInput,
     supabase: SupabaseClient<Database>,
@@ -139,6 +159,27 @@ export const ModuleReflectionRepository = {
       .from("academy_module_reflection_attachments")
       .select(attachmentSelect)
       .eq("reflection_id", reflectionId)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return (data as unknown as ModuleReflectionAttachmentRow[] | null) ?? [];
+  },
+
+  async listAttachmentsByProfileAndProduct(
+    input: {
+      productId: string;
+      profileId: string;
+    },
+    supabase: SupabaseClient<Database>,
+  ): Promise<ModuleReflectionAttachmentRow[]> {
+    const { data, error } = await supabase
+      .from("academy_module_reflection_attachments")
+      .select(attachmentSelect)
+      .eq("profile_id", input.profileId)
+      .eq("product_id", input.productId)
       .order("created_at", { ascending: true });
 
     if (error) {
