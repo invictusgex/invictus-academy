@@ -18,6 +18,7 @@ const pathPrefixByKind: Record<AcademyAssetKind, AcademyAssetPathPrefix> = {
   resource_doc: "resources/docs",
   resource_image: "resources/images",
   resource_pdf: "resources/pdf",
+  reflection_image: "reflections",
   scenario_thumbnail: "scenarios/thumbnails",
 };
 
@@ -49,6 +50,12 @@ const validationRules: Record<AcademyAssetKind, StorageValidationRule> = {
     allowedMimeTypes: ["application/pdf"],
     maxSizeBytes: 20 * 1024 * 1024,
     pathPrefix: "resources/pdf",
+  },
+  reflection_image: {
+    allowedExtensions: ["jpg", "jpeg", "png", "webp"],
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
+    maxSizeBytes: 8 * 1024 * 1024,
+    pathPrefix: "reflections",
   },
   scenario_thumbnail: {
     allowedExtensions: ["jpg", "jpeg", "png", "webp"],
@@ -172,6 +179,21 @@ export const StorageService = {
     );
 
     return `${prefix}/${filename}`;
+  },
+
+  createReflectionStoragePath({
+    filename,
+    profileId,
+    reflectionId,
+  }: {
+    filename: string;
+    profileId: string;
+    reflectionId: string;
+  }) {
+    const sanitizedFilename = StorageService.sanitizeFilename(filename) || "image";
+    const uniqueFilename = `${createUuid()}-${sanitizedFilename}`;
+
+    return `reflections/${profileId}/${reflectionId}/${uniqueFilename}`;
   },
 
   determineAssetKindFromFile(file: StorageFileBody, filename: string) {

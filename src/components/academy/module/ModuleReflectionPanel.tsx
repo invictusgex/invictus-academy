@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 
-import type { ModuleReflection } from "@/lib/types/module-reflection.types";
+import type {
+  ModuleReflection,
+  ModuleReflectionAttachment,
+} from "@/lib/types/module-reflection.types";
 
 type ModuleReflectionPanelProps = {
   moduleKey: string;
@@ -12,6 +21,12 @@ type ModuleReflectionPanelProps = {
 type ReflectionResponse =
   | {
       reflection: ModuleReflection | null;
+    }
+  | {
+      attachment: ModuleReflectionAttachment;
+    }
+  | {
+      ok: true;
     }
   | {
       error: {
@@ -35,15 +50,29 @@ function formatUpdatedAt(value: string) {
   }).format(new Date(value));
 }
 
+function formatFileSize(sizeBytes: number) {
+  if (sizeBytes >= 1024 * 1024) {
+    return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  return `${Math.max(1, Math.round(sizeBytes / 1024))} KB`;
+}
+
 export function ModuleReflectionPanel({
   moduleKey,
   productSlug,
 }: ModuleReflectionPanelProps) {
   const [content, setContent] = useState("");
+  const [attachments, setAttachments] = useState<ModuleReflectionAttachment[]>([]);
+  const [attachmentMessage, setAttachmentMessage] = useState<string | null>(null);
+  const [deletingAttachmentId, setDeletingAttachmentId] = useState<string | null>(
+    null,
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const updatedAtLabel = useMemo(
     () => (updatedAt ? formatUpdatedAt(updatedAt) : null),
@@ -78,6 +107,7 @@ export function ModuleReflectionPanel({
 
         if (!cancelled) {
           setContent(payload.reflection?.content ?? "");
+          setAttachments(payload.reflection?.attachments ?? []);
           setUpdatedAt(payload.reflection?.updatedAt ?? null);
         }
       } catch {
@@ -126,12 +156,111 @@ export function ModuleReflectionPanel({
       }
 
       setContent(payload.reflection.content);
+      setAttachments(payload.reflection.attachments ?? []);
       setUpdatedAt(payload.reflection.updatedAt);
       setSaved(true);
     } catch {
       setErrorMessage("No se pudo guardar la reflexión del módulo.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleAttachmentChange(event: ChangeEvent<HTMLInputElement>) {
+    const selectedFiles = Array.from(event.target.files ?? []);
+    event.target.value = "";
+
+    if (selectedFiles.length === 0) {
+      return;
+    }
+
+    const availableSlots = Math.max(0, 5 - attachments.length);
+    const filesToUpload = selectedFiles.slice(0, availableSlots);
+
+    setAttachmentMessage(null);
+
+    if (filesToUpload.length < selectedFiles.length) {
+      setAttachmentMessage("Solo puedes adjuntar hasta 5 imágenes.");
+    }
+
+    for (const file of filesToUpload) {
+      setUploading(true);
+
+      try {
+        const formData = new FormData();
+        formData.append("productSlug", productSlug);
+        formData.append("moduleKey", moduleKey);
+        formData.append("file", file);
+
+        const response = await fetch("/api/academy/module-reflections", {
+          body: formData,
+          cache: "no-store",
+          method: "POST",
+        });
+        const payload = (await response.json()) as ReflectionResponse;
+
+        if ("error" in payload) {
+          throw new Error(payload.error.message);
+        }
+
+        if (!response.ok || !("attachment" in payload)) {
+          throw new Error("No se pudo adjuntar la imagen.");
+        }
+
+        setAttachments((currentAttachments) => [
+          ...currentAttachments,
+          payload.attachment,
+        ]);
+      } catch (error) {
+        setAttachmentMessage(
+          error instanceof Error
+            ? error.message
+            : "No se pudo adjuntar la imagen.",
+        );
+      } finally {
+        setUploading(false);
+      }
+    }
+  }
+
+  async function handleDeleteAttachment(attachmentId: string) {
+    setDeletingAttachmentId(attachmentId);
+    setAttachmentMessage(null);
+
+    try {
+      const response = await fetch("/api/academy/module-reflections", {
+        body: JSON.stringify({
+          attachmentId,
+          moduleKey,
+          productSlug,
+        }),
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "DELETE",
+      });
+      const payload = (await response.json()) as ReflectionResponse;
+
+      if ("error" in payload) {
+        throw new Error(payload.error.message);
+      }
+
+      if (!response.ok) {
+        throw new Error("No se pudo eliminar la imagen.");
+      }
+
+      setAttachments((currentAttachments) =>
+        currentAttachments.filter((attachment) => attachment.id !== attachmentId),
+      );
+    } catch (error) {
+      setAttachmentMessage(
+        error instanceof Error
+          ? error.message
+          : "No se pudo eliminar la imagen.",
+      );
+    } finally {
+      setDeletingAttachmentId(null);
     }
   }
 
@@ -192,6 +321,80 @@ export function ModuleReflectionPanel({
               Esta información será revisada únicamente por tu mentor y
               utilizada para preparar tu sesión personalizada.
             </p>
+            <div className="mt-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4 sm:p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    Imágenes adjuntas
+                  </h3>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
+                    Puedes adjuntar capturas o ejemplos del mercado que quieras
+                    revisar durante tu mentoría.
+                  </p>
+                </div>
+                <label className="inline-flex min-h-10 cursor-pointer items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)]">
+                  <span>{uploading ? "Adjuntando..." : "Adjuntar imágenes"}</span>
+                  <input
+                    accept="image/jpeg,image/png,image/webp"
+                    className="sr-only"
+                    disabled={uploading || attachments.length >= 5}
+                    multiple
+                    onChange={handleAttachmentChange}
+                    type="file"
+                  />
+                </label>
+              </div>
+              {attachments.length > 0 ? (
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {attachments.map((attachment) => (
+                    <article
+                      className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)]"
+                      key={attachment.id}
+                    >
+                      {attachment.signedUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          alt={attachment.originalName}
+                          className="h-40 w-full object-cover"
+                          src={attachment.signedUrl}
+                        />
+                      ) : (
+                        <div className="flex h-40 items-center justify-center bg-[var(--color-panel-bg)] px-4 text-center text-sm text-[var(--color-text-muted)]">
+                          Vista previa no disponible.
+                        </div>
+                      )}
+                      <div className="space-y-3 p-4">
+                        <div>
+                          <p className="truncate text-sm font-medium text-white">
+                            {attachment.originalName}
+                          </p>
+                          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                            {formatFileSize(attachment.sizeBytes)}
+                          </p>
+                        </div>
+                        <button
+                          className="inline-flex min-h-9 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-xs font-semibold text-white transition hover:border-red-200 disabled:cursor-not-allowed disabled:opacity-60"
+                          disabled={deletingAttachmentId === attachment.id}
+                          onClick={() => {
+                            void handleDeleteAttachment(attachment.id);
+                          }}
+                          type="button"
+                        >
+                          {deletingAttachmentId === attachment.id
+                            ? "Eliminando..."
+                            : "Eliminar"}
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : null}
+              {attachmentMessage ? (
+                <p className="mt-4 text-sm font-medium text-red-200">
+                  {attachmentMessage}
+                </p>
+              ) : null}
+            </div>
             <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div aria-live="polite" className="min-h-5 text-sm">
                 {saved ? (

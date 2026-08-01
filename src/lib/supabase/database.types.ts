@@ -127,6 +127,84 @@ export type Database = {
           },
         ]
       }
+      academy_module_reflection_attachments: {
+        Row: {
+          created_at: string
+          enrollment_id: string
+          id: string
+          mime_type: string
+          module_key: string
+          original_name: string
+          product_id: string
+          profile_id: string
+          reflection_id: string
+          size_bytes: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          mime_type: string
+          module_key: string
+          original_name: string
+          product_id: string
+          profile_id: string
+          reflection_id: string
+          size_bytes: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          mime_type?: string
+          module_key?: string
+          original_name?: string
+          product_id?: string
+          profile_id?: string
+          reflection_id?: string
+          size_bytes?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_module_reflection_attachments_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_module_reflection_attachments_module_scope_fkey"
+            columns: ["product_id", "module_key"]
+            isOneToOne: false
+            referencedRelation: "academy_modules"
+            referencedColumns: ["product_id", "module_key"]
+          },
+          {
+            foreignKeyName: "academy_module_reflection_attachments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_module_reflection_attachments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_module_reflection_attachments_reflection_id_fkey"
+            columns: ["reflection_id"]
+            isOneToOne: false
+            referencedRelation: "academy_module_reflections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       academy_module_reflections: {
         Row: {
           content: string

@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "@/lib/database/client";
+import type { Database } from "@/lib/supabase/database.types";
 import type {
   StorageDeleteInput,
   StorageReplaceInput,
@@ -10,10 +11,13 @@ import {
   academyAssetsBucket,
   defaultSignedUrlDurationSeconds,
 } from "@/lib/types/storage.types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const StorageRepository = {
-  async uploadFile(input: StorageUploadInput): Promise<string> {
-    const supabase = getSupabaseClient();
+  async uploadFile(
+    input: StorageUploadInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<string> {
     const { data, error } = await supabase.storage
       .from(academyAssetsBucket)
       .upload(input.path, input.file, {
@@ -28,8 +32,10 @@ export const StorageRepository = {
     return data.path;
   },
 
-  async deleteFile(input: StorageDeleteInput): Promise<void> {
-    const supabase = getSupabaseClient();
+  async deleteFile(
+    input: StorageDeleteInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<void> {
     const { error } = await supabase.storage
       .from(academyAssetsBucket)
       .remove([input.path]);
@@ -39,19 +45,22 @@ export const StorageRepository = {
     }
   },
 
-  async replaceFile(input: StorageReplaceInput): Promise<string> {
+  async replaceFile(
+    input: StorageReplaceInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<string> {
     return StorageRepository.uploadFile({
       contentType: input.contentType,
       file: input.file,
       path: input.path,
       upsert: true,
-    });
+    }, supabase);
   },
 
   async createSignedUrl(
     input: StorageSignedUrlInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
   ): Promise<StorageSignedUrlResult> {
-    const supabase = getSupabaseClient();
     const expiresInSeconds =
       input.expiresInSeconds ?? defaultSignedUrlDurationSeconds;
     const { data, error } = await supabase.storage

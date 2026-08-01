@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/lib/supabase/database.types";
 import type {
+  ModuleReflectionAttachmentRow,
   ModuleReflectionRow,
   ModuleReflectionScope,
   ModuleReflectionUpsertInput,
@@ -19,6 +20,28 @@ const reflectionSelect = `
   created_at,
   updated_at
 `;
+
+const attachmentSelect = `
+  id,
+  reflection_id,
+  profile_id,
+  product_id,
+  module_key,
+  enrollment_id,
+  storage_path,
+  original_name,
+  mime_type,
+  size_bytes,
+  created_at
+`;
+
+type AttachmentInsertInput = ModuleReflectionScope & {
+  mimeType: string;
+  originalName: string;
+  reflectionId: string;
+  sizeBytes: number;
+  storagePath: string;
+};
 
 export const ModuleReflectionRepository = {
   async getAvailablePublishedModule(
@@ -90,5 +113,104 @@ export const ModuleReflectionRepository = {
     }
 
     return data as unknown as ModuleReflectionRow;
+  },
+
+  async countAttachmentsByReflection(
+    reflectionId: string,
+    supabase: SupabaseClient<Database>,
+  ): Promise<number> {
+    const { count, error } = await supabase
+      .from("academy_module_reflection_attachments")
+      .select("id", { count: "exact", head: true })
+      .eq("reflection_id", reflectionId);
+
+    if (error) {
+      throw error;
+    }
+
+    return count ?? 0;
+  },
+
+  async listAttachmentsByReflection(
+    reflectionId: string,
+    supabase: SupabaseClient<Database>,
+  ): Promise<ModuleReflectionAttachmentRow[]> {
+    const { data, error } = await supabase
+      .from("academy_module_reflection_attachments")
+      .select(attachmentSelect)
+      .eq("reflection_id", reflectionId)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return (data as unknown as ModuleReflectionAttachmentRow[] | null) ?? [];
+  },
+
+  async createAttachment(
+    input: AttachmentInsertInput,
+    supabase: SupabaseClient<Database>,
+  ): Promise<ModuleReflectionAttachmentRow> {
+    const { data, error } = await supabase
+      .from("academy_module_reflection_attachments")
+      .insert({
+        enrollment_id: input.enrollmentId,
+        mime_type: input.mimeType,
+        module_key: input.moduleKey,
+        original_name: input.originalName,
+        product_id: input.productId,
+        profile_id: input.profileId,
+        reflection_id: input.reflectionId,
+        size_bytes: input.sizeBytes,
+        storage_path: input.storagePath,
+      })
+      .select(attachmentSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as ModuleReflectionAttachmentRow;
+  },
+
+  async getAttachmentById(
+    input: {
+      attachmentId: string;
+      profileId: string;
+    },
+    supabase: SupabaseClient<Database>,
+  ): Promise<ModuleReflectionAttachmentRow | null> {
+    const { data, error } = await supabase
+      .from("academy_module_reflection_attachments")
+      .select(attachmentSelect)
+      .eq("id", input.attachmentId)
+      .eq("profile_id", input.profileId)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return data as unknown as ModuleReflectionAttachmentRow | null;
+  },
+
+  async deleteAttachmentById(
+    input: {
+      attachmentId: string;
+      profileId: string;
+    },
+    supabase: SupabaseClient<Database>,
+  ): Promise<void> {
+    const { error } = await supabase
+      .from("academy_module_reflection_attachments")
+      .delete()
+      .eq("id", input.attachmentId)
+      .eq("profile_id", input.profileId);
+
+    if (error) {
+      throw error;
+    }
   },
 };

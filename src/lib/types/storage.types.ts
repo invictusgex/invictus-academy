@@ -7,6 +7,7 @@ export const academyAssetPathPrefixValues = [
   "resources/pdf",
   "resources/docs",
   "resources/images",
+  "reflections",
 ] as const;
 
 export type AcademyAssetsBucket = typeof academyAssetsBucket;
@@ -18,6 +19,7 @@ export type AcademyAssetKind =
   | "resource_doc"
   | "resource_image"
   | "resource_pdf"
+  | "reflection_image"
   | "scenario_thumbnail";
 
 export type StorageFileBody = Blob | File;

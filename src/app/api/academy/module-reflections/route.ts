@@ -20,6 +20,12 @@ type ModuleReflectionResponseBody =
       reflection: ModuleReflection | null;
     }
   | {
+      attachment: NonNullable<ModuleReflection["attachments"]>[number];
+    }
+  | {
+      ok: true;
+    }
+  | {
       error: {
         code: string;
         message: string;
@@ -114,6 +120,84 @@ async function readReflectionPayload(request: Request) {
   };
 }
 
+async function readAttachmentPayload(request: Request) {
+  const formData = await request.formData();
+  const productSlug = formData.get("productSlug");
+  const moduleKey = formData.get("moduleKey");
+  const file = formData.get("file");
+
+  if (
+    typeof productSlug !== "string" ||
+    typeof moduleKey !== "string" ||
+    !(file instanceof File)
+  ) {
+    throw new ModuleReflectionServiceError(
+      MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
+      "La solicitud debe incluir productSlug, moduleKey y una imagen.",
+      400,
+    );
+  }
+
+  return {
+    file,
+    moduleKey,
+    productSlug,
+  };
+}
+
+async function readDeletePayload(request: Request) {
+  const contentType = request.headers.get("content-type")?.toLowerCase() ?? "";
+
+  if (!contentType.includes("application/json")) {
+    throw new ModuleReflectionServiceError(
+      MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
+      "La solicitud debe enviarse como application/json.",
+      400,
+    );
+  }
+
+  const payload = (await request.json()) as unknown;
+
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    throw new ModuleReflectionServiceError(
+      MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
+      "El cuerpo de la solicitud debe ser un objeto JSON.",
+      400,
+    );
+  }
+
+  const body = payload as Record<string, unknown>;
+  const forbiddenField = Object.keys(body).find((key) =>
+    forbiddenReflectionFields.has(key),
+  );
+
+  if (forbiddenField) {
+    throw new ModuleReflectionServiceError(
+      MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
+      "La identidad del estudiante se resuelve exclusivamente en el servidor.",
+      400,
+    );
+  }
+
+  if (
+    typeof body.productSlug !== "string" ||
+    typeof body.moduleKey !== "string" ||
+    typeof body.attachmentId !== "string"
+  ) {
+    throw new ModuleReflectionServiceError(
+      MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
+      "La solicitud debe incluir productSlug, moduleKey y attachmentId.",
+      400,
+    );
+  }
+
+  return {
+    attachmentId: body.attachmentId,
+    moduleKey: body.moduleKey,
+    productSlug: body.productSlug,
+  };
+}
+
 function mapAuthError(error: ServerAuthError) {
   if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
     return new ModuleReflectionServiceError(
@@ -179,9 +263,25 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const payload = await readReflectionPayload(request);
+    const contentType = request.headers.get("content-type")?.toLowerCase() ?? "";
     const { profile } = await requireServerAuthContext();
     const supabase = await createSupabaseServerClient();
+
+    if (contentType.includes("multipart/form-data")) {
+      const payload = await readAttachmentPayload(request);
+      const attachment =
+        await ModuleReflectionService.uploadModuleReflectionAttachment(
+          {
+            ...payload,
+            profileId: profile.id,
+          },
+          supabase,
+        );
+
+      return jsonResponse({ attachment }, 200);
+    }
+
+    const payload = await readReflectionPayload(request);
     const reflection = await ModuleReflectionService.saveModuleReflection(
       {
         ...payload,
@@ -191,6 +291,36 @@ export async function POST(request: Request) {
     );
 
     return jsonResponse({ reflection }, 200);
+  } catch (error) {
+    const reflectionError = mapReflectionError(error);
+
+    return jsonResponse(
+      {
+        error: {
+          code: reflectionError.code,
+          message: reflectionError.message,
+        },
+      },
+      reflectionError.status,
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const payload = await readDeletePayload(request);
+    const { profile } = await requireServerAuthContext();
+    const supabase = await createSupabaseServerClient();
+
+    await ModuleReflectionService.deleteModuleReflectionAttachment(
+      {
+        ...payload,
+        profileId: profile.id,
+      },
+      supabase,
+    );
+
+    return jsonResponse({ ok: true }, 200);
   } catch (error) {
     const reflectionError = mapReflectionError(error);
 
