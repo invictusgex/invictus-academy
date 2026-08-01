@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -121,6 +121,124 @@ export type Database = {
           {
             foreignKeyName: "academy_form_submissions_profile_id_fkey"
             columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_mentorship_bookings: {
+        Row: {
+          booked_at: string
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          enrollment_id: string
+          id: string
+          participant_note: string | null
+          participant_timezone: string
+          product_id: string
+          profile_id: string
+          slot_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          booked_at?: string
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          participant_note?: string | null
+          participant_timezone: string
+          product_id: string
+          profile_id: string
+          slot_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          booked_at?: string
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          participant_note?: string | null
+          participant_timezone?: string
+          product_id?: string
+          profile_id?: string
+          slot_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_mentorship_bookings_enrollment_scope_fkey"
+            columns: ["enrollment_id", "profile_id", "product_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id", "profile_id", "product_id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_bookings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_bookings_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "academy_mentorship_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_mentorship_slots: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          ends_at: string
+          id: string
+          starts_at: string
+          status: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          ends_at: string
+          id?: string
+          starts_at: string
+          status?: string
+          timezone: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string
+          id?: string
+          starts_at?: string
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_mentorship_slots_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -948,6 +1066,58 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      book_mentorship_slot: {
+        Args: {
+          p_note?: string
+          p_participant_timezone: string
+          p_slot_id: string
+        }
+        Returns: {
+          booked_at: string
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          enrollment_id: string
+          id: string
+          participant_note: string | null
+          participant_timezone: string
+          product_id: string
+          profile_id: string
+          slot_id: string
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "academy_mentorship_bookings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      cancel_mentorship_booking: {
+        Args: { p_booking_id: string }
+        Returns: {
+          booked_at: string
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          enrollment_id: string
+          id: string
+          participant_note: string | null
+          participant_timezone: string
+          product_id: string
+          profile_id: string
+          slot_id: string
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "academy_mentorship_bookings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       fulfill_paid_purchase: {
         Args: { p_purchase_id: string }
         Returns: {

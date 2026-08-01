@@ -5,6 +5,7 @@ import { requireAcademyAuthContext } from "@/app/academy/academy-auth";
 import { academyProductSlug } from "@/lib/academy-product";
 import { getAcademyEnrollmentAccess } from "@/lib/services/academy-access.service";
 import { MentorshipPreparationService } from "@/lib/services/mentorship-preparation.service";
+import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function AcademyMentorshipPage() {
@@ -30,10 +31,20 @@ export default async function AcademyMentorshipPage() {
     },
     supabase,
   );
+  const [slots, bookings] = preparation.requirementsSatisfied
+    ? await Promise.all([
+        MentorshipSchedulingService.listAvailableSlots(supabase),
+        MentorshipSchedulingService.listStudentBookings(profile.id, supabase),
+      ])
+    : [[], []];
 
   return (
     <AcademyShell>
-      <MentorshipPreparationPage preparation={preparation} />
+      <MentorshipPreparationPage
+        bookings={bookings}
+        preparation={preparation}
+        slots={slots}
+      />
     </AcademyShell>
   );
 }

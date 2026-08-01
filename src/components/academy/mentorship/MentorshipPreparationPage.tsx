@@ -7,10 +7,17 @@ import {
   StudentStatCard,
   StudentStatusBadge,
 } from "@/components/student";
+import { MentorshipSchedulingPanel } from "@/components/academy/mentorship/MentorshipSchedulingPanel";
 import type { MentorshipPreparationSummary } from "@/lib/services/mentorship-preparation.service";
+import type {
+  MentorshipBooking,
+  MentorshipSlot,
+} from "@/lib/types/mentorship-scheduling.types";
 
 type MentorshipPreparationPageProps = {
+  bookings: MentorshipBooking[];
   preparation: MentorshipPreparationSummary;
+  slots: MentorshipSlot[];
 };
 
 const journeySteps = [
@@ -32,7 +39,9 @@ function formatUpdatedAt(value: string | null) {
 }
 
 export function MentorshipPreparationPage({
+  bookings,
   preparation,
+  slots,
 }: MentorshipPreparationPageProps) {
   return (
     <div className="space-y-6">
@@ -185,6 +194,13 @@ export function MentorshipPreparationPage({
         </div>
       </StudentSection>
 
+      <MentorshipSchedulingPanel
+        bookings={bookings}
+        requirementsSatisfied={preparation.requirementsSatisfied}
+        slots={slots}
+      />
+
+      {false ? (
       <StudentSection title="Siguiente etapa">
         <StudentCard elevated>
           {preparation.requirementsSatisfied ? (
@@ -220,6 +236,7 @@ export function MentorshipPreparationPage({
           )}
         </StudentCard>
       </StudentSection>
+      ) : null}
     </div>
   );
 }
