@@ -8,29 +8,29 @@ import {
 
 const offerIncludes = [
   {
-    title: "Programa profesional Invictus GEX",
+    title: "Ingreso a Invictus GEX",
     description:
-      "Acceso al recorrido principal de formacion en lectura de mercado basada en datos.",
+      "Acceso al recorrido profesional de formacion en lectura de mercado basada en datos.",
   },
   {
     title: "7 modulos estructurados",
     description:
-      "Una progresion academica desde criterio, mecanicas y regimenes hasta gestion y consolidacion.",
+      "Una progresion desde criterio, mecanicas y regimenes hasta gestion y consolidacion.",
   },
   {
-    title: "Herramientas de lectura",
+    title: "Lectura profesional",
     description:
-      "Integracion metodologica de GEX, liquidez, volumen, estructura, reaccion y riesgo.",
+      "Integracion de GEX, liquidez, volumen, estructura, reaccion y riesgo.",
   },
   {
     title: "Preparacion individual",
     description:
-      "El proceso orienta al participante a documentar dudas, ejemplos y observaciones relevantes.",
+      "El proceso orienta al participante a ordenar dudas, ejemplos y observaciones relevantes.",
   },
   {
     title: "Mentoria personalizada",
     description:
-      "La etapa individual se prepara con evidencia del recorrido para revisar criterio, dudas y aplicacion.",
+      "La etapa individual se prepara con evidencia del recorrido para revisar criterio y aplicacion.",
   },
 ];
 
@@ -52,7 +52,7 @@ const faqs = [
   {
     question: "Que estoy incorporando al ingresar a Invictus GEX?",
     answer:
-      "Ingresas a un programa de formacion profesional. No es una compra de videos ni una plataforma aislada; es un proceso diseñado para formar criterio de lectura de mercado.",
+      "Ingresas a un programa de formacion profesional. No es una compra de videos ni una plataforma aislada; es un proceso disenado para formar criterio de lectura de mercado.",
   },
   {
     question: "La propuesta promete resultados financieros?",
@@ -112,19 +112,18 @@ function OfferHero() {
           Ingreso a Invictus GEX
         </p>
         <h1 className="mt-5 text-4xl leading-tight font-semibold text-white sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
-          Un programa profesional para formar criterio de mercado.
+          Una invitacion a formarte con estructura, practica y criterio.
         </h1>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
-          La propuesta integra formacion estructurada, aplicacion practica,
-          reflexion sobre el aprendizaje, preparacion personalizada y mentoria
-          individual. El objetivo es que el participante avance con metodo, no
-          con presion comercial.
+          El ingreso a Invictus GEX abre un proceso: comprendes el programa,
+          comienzas tu formacion, practicas, documentas tu avance y llegas a
+          una mentoria preparada con tu recorrido.
         </p>
         <Link
           href={formationCtaHref}
           className="mt-10 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
         >
-          Iniciar mi formacion
+          Comenzar mi formacion
         </Link>
       </div>
     </section>
@@ -139,7 +138,7 @@ function IncludesSection() {
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Que incluye el ingreso
+          Que recibes al ingresar
         </p>
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {offerIncludes.map((item) => (
@@ -169,7 +168,7 @@ function JourneySection() {
           Como se desarrolla tu formacion
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
-          El valor esta en el recorrido completo.
+          El valor esta en avanzar con orden.
         </h2>
       </div>
       <ol className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
@@ -200,14 +199,13 @@ function MentorshipSection() {
             Preparacion personalizada
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            La mentoria se construye con informacion real de tu avance.
+            La mentoria se construye con informacion real de tu proceso.
           </h2>
         </div>
         <p className="text-base leading-7 text-[var(--color-text-secondary)]">
-          Desde el inicio, el participante va ordenando dudas, ejemplos,
-          reflexiones y observaciones de practica. Esa preparacion permite que
-          la mentoria individual se enfoque en su criterio, sus dificultades y
-          su manera de aplicar la metodologia.
+          Desde el inicio, el participante ordena dudas, ejemplos y
+          observaciones. Esa preparacion permite que la mentoria individual se
+          enfoque en su criterio y en su manera de aplicar la metodologia.
         </p>
       </div>
     </section>
@@ -315,13 +313,13 @@ function FinalCta() {
         </p>
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white">
           Si buscas formacion, criterio y preparacion individual, Invictus GEX
-          esta diseñado para ese recorrido.
+          esta disenado para ese recorrido.
         </h2>
         <Link
           href={formationCtaHref}
           className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
         >
-          Iniciar mi formacion
+          Comenzar mi formacion
         </Link>
       </div>
     </section>

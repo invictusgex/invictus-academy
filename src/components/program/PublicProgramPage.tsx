@@ -60,16 +60,16 @@ function ProgramHero({ course }: PublicProgramPageProps) {
     <section className="mx-auto w-full max-w-6xl px-5 pt-10 pb-14 sm:px-6 sm:pt-14 lg:px-8 lg:pt-16">
       <div className="max-w-4xl">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Programa de formacion profesional
+          Programa profesional Invictus GEX
         </p>
         <h1 className="mt-5 text-4xl leading-tight font-semibold text-white sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
           Invictus GEX
         </h1>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
-          Un recorrido estructurado para desarrollar criterio profesional en
-          lectura de mercado basada en datos. La formacion integra contexto,
-          exposicion gamma, liquidez, volumen, estructura, riesgo y revision
-          del proceso.
+          Una formacion privada para desarrollar criterio profesional en
+          lectura de mercado basada en datos. El recorrido integra estudio,
+          practica, documentacion del proceso y una mentoria preparada con tu
+          avance.
         </p>
       </div>
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -87,13 +87,13 @@ function ProgramHero({ course }: PublicProgramPageProps) {
           href={formationCtaHref}
           className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
         >
-          Iniciar mi formacion
+          Comenzar mi formacion
         </Link>
         <a
           href="#modulos"
           className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--color-border)] px-6 text-sm font-semibold text-white transition hover:border-[var(--color-blue)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
         >
-          Explorar la estructura
+          Explorar el programa
         </a>
       </div>
     </section>
@@ -112,13 +112,13 @@ function JourneyIntro() {
             Como se desarrolla tu formacion
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            No compras contenido aislado. Ingresas a una secuencia de
+            No revisas contenido aislado. Avanzas por una secuencia de
             preparacion profesional.
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
-            Cada etapa cumple una funcion: formar criterio, aplicar la
-            metodologia, reflexionar sobre la practica y preparar una mentoria
-            individual con informacion concreta de tu recorrido.
+            Cada etapa cumple una funcion: comprender, practicar, documentar y
+            preparar una conversacion individual con informacion concreta de tu
+            recorrido.
           </p>
         </div>
         <ol className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
@@ -149,7 +149,7 @@ function PublicModulesSection() {
           Estructura academica
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
-          Siete modulos para avanzar de interpretacion a consolidacion.
+          Siete etapas para avanzar de interpretacion a consolidacion.
         </h2>
       </div>
       <div className="mt-8 space-y-5">
@@ -257,17 +257,16 @@ function MentorshipPreparationBlock() {
     <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-6 lg:grid-cols-[0.86fr_1.14fr] lg:px-8">
       <div>
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          La mentoria comienza desde el primer modulo
+          La mentoria se prepara durante todo el programa
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
-          Tu avance prepara una conversacion individual mas precisa.
+          Tu avance permite una conversacion individual mas precisa.
         </h2>
       </div>
       <p className="text-base leading-7 text-[var(--color-text-secondary)]">
-        A medida que avanzas, el programa invita a observar dudas, ejemplos,
-        decisiones revisadas y puntos de dificultad. Esa evidencia permite que
-        la etapa individual no sea generica, sino conectada con tu manera real
-        de interpretar y aplicar la metodologia.
+        A medida que avanzas, documentas dudas, ejemplos y puntos de revision.
+        Esa evidencia permite que la etapa individual no sea generica, sino
+        conectada con tu manera real de interpretar y aplicar la metodologia.
       </p>
     </section>
   );
@@ -340,19 +339,18 @@ function FinalCta() {
           Siguiente paso
         </p>
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white">
-          Forma parte de Invictus GEX como proceso profesional, no como consumo
-          de contenido.
+          Si este recorrido responde a lo que buscas, comienza tu formacion.
         </h2>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Si buscas estructura, metodo y preparacion individual, el programa
-          esta disenado para acompanar tu desarrollo con sobriedad y exigencia.
+          Invictus GEX esta disenado para quienes quieren desarrollar criterio
+          con estructura, practica y preparacion individual.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
           <Link
             href={formationCtaHref}
             className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
           >
-            Iniciar mi formacion
+            Comenzar mi formacion
           </Link>
           <Link
             href="/"

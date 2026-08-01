@@ -148,13 +148,13 @@ export const publicProgramModules: PublicProgramModule[] = [
 ];
 
 export const publicFormationJourney = [
-  "Ingreso al Programa",
-  "Formacion estructurada",
-  "Aplicacion practica",
-  "Reflexion sobre el aprendizaje",
-  "Preparacion personalizada",
-  "Mentoria individual",
-  "Consolidacion del criterio profesional",
+  "Descubres Invictus GEX",
+  "Comprendes el programa",
+  "Comienzas tu formacion",
+  "Estudias y practicas",
+  "Documentas tu proceso",
+  "Reservas tu mentoria",
+  "Continuas tu desarrollo",
 ];
 
 export const publicMethodologySteps = [
@@ -196,7 +196,7 @@ export const publicProgramAudience = [
   "Quieres ordenar liquidez, volumen, GEX, estructura y riesgo dentro de un mismo proceso.",
   "Estas dispuesto a estudiar, practicar y documentar tu avance con honestidad.",
   "Prefieres desarrollar criterio antes que depender de indicaciones externas.",
-  "Valoras una mentoría individual preparada con evidencia de tu propio recorrido.",
+  "Valoras una mentoria individual preparada con evidencia de tu propio recorrido.",
 ];
 
 export const publicProgramNonAudience = [
