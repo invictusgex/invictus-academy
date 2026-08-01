@@ -17,10 +17,12 @@ export const module01: Module = {
   videos: [
     {
       id: "modulo-1-video",
-      title: "Video principal del Módulo 1",
+      title: "Fundamentos del Mercado Basado en Datos",
+      description:
+        "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
       placeholder: "",
       provider: "youtube",
-      providerVideoId: "Y8_dohq1Y-Q",
+      providerVideoId: "qu3VkXQMbfQ",
     },
   ],
   resources: [],

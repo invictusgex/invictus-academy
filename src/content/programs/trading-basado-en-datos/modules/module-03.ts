@@ -13,12 +13,16 @@ export const module03: Module = {
     "Objetivo de aprendizaje 3",
     "Objetivo de aprendizaje 4",
   ],
-  availability: "coming-soon",
+  availability: "available",
   videos: [
     {
       id: "modulo-3-video",
-      title: "Video principal del Módulo 3",
-      placeholder: "Área reservada para el video del módulo.",
+      title: "Opciones, Gamma y Posicionamiento Institucional",
+      description:
+        "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
+      placeholder: "",
+      provider: "youtube",
+      providerVideoId: "aLidpQUOg9o",
     },
   ],
   resources: [],

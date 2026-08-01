@@ -13,17 +13,25 @@ export const module04: Module = {
     "Objetivo de aprendizaje 3",
     "Objetivo de aprendizaje 4",
   ],
-  availability: "coming-soon",
+  availability: "available",
   videos: [
     {
       id: "modulo-4-video-1",
-      title: "Lectura de GEX y fundamentos",
-      placeholder: "Área reservada para el video del módulo.",
+      title: "Lectura de GEX",
+      description:
+        "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
+      placeholder: "",
+      provider: "youtube",
+      providerVideoId: "wHE-TzqnfAc",
     },
     {
       id: "modulo-4-video-2",
-      title: "GEXBot: Classic, State y Orderflow",
-      placeholder: "Área reservada para el video del módulo.",
+      title: "Conociendo GEXBot",
+      description:
+        "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
+      placeholder: "",
+      provider: "youtube",
+      providerVideoId: "Huh1LVMvLAE",
     },
   ],
   resources: [],

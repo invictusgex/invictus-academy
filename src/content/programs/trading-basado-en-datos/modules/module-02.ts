@@ -13,12 +13,16 @@ export const module02: Module = {
     "Objetivo de aprendizaje 3",
     "Objetivo de aprendizaje 4",
   ],
-  availability: "coming-soon",
+  availability: "available",
   videos: [
     {
       id: "modulo-2-video",
-      title: "Video principal del Módulo 2",
-      placeholder: "Área reservada para el video del módulo.",
+      title: "Mecánicas Reales del Mercado",
+      description:
+        "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
+      placeholder: "",
+      provider: "youtube",
+      providerVideoId: "_JKt1_DL43w",
     },
   ],
   resources: [],
