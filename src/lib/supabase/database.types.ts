@@ -204,6 +204,95 @@ export type Database = {
           },
         ]
       }
+      academy_mentorship_notes: {
+        Row: {
+          booking_id: string
+          concepts_to_reinforce: string | null
+          created_at: string
+          created_by: string
+          enrollment_id: string
+          id: string
+          next_steps: string | null
+          preparation_notes: string | null
+          product_id: string
+          profile_id: string
+          resources_to_send: string | null
+          session_conclusions: string | null
+          updated_at: string
+        }
+        Insert: {
+          booking_id: string
+          concepts_to_reinforce?: string | null
+          created_at?: string
+          created_by: string
+          enrollment_id: string
+          id?: string
+          next_steps?: string | null
+          preparation_notes?: string | null
+          product_id: string
+          profile_id: string
+          resources_to_send?: string | null
+          session_conclusions?: string | null
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string
+          concepts_to_reinforce?: string | null
+          created_at?: string
+          created_by?: string
+          enrollment_id?: string
+          id?: string
+          next_steps?: string | null
+          preparation_notes?: string | null
+          product_id?: string
+          profile_id?: string
+          resources_to_send?: string | null
+          session_conclusions?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_mentorship_notes_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "academy_mentorship_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_notes_booking_scope_fkey"
+            columns: ["booking_id", "profile_id", "product_id", "enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "academy_mentorship_bookings"
+            referencedColumns: [
+              "id",
+              "profile_id",
+              "product_id",
+              "enrollment_id",
+            ]
+          },
+          {
+            foreignKeyName: "academy_mentorship_notes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_notes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_notes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       academy_mentorship_slots: {
         Row: {
           created_at: string

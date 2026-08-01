@@ -5,7 +5,9 @@ import { revalidatePath } from "next/cache";
 import { requireAdminServerContext } from "@/app/admin/admin-auth";
 import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
 import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
+import { MentorshipNoteService } from "@/lib/services/mentorship-note.service";
 import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
+import type { MentorshipPrivateNote } from "@/lib/types/mentorship-note.types";
 import type {
   AdminMentorshipBooking,
   MentorshipBookingStatus,
@@ -171,6 +173,34 @@ async function updateBookingStatusAction(formData: FormData) {
   redirectWithMessage(message);
 }
 
+async function savePrivateNoteAction(formData: FormData) {
+  "use server";
+
+  const { profile, supabase } = await requireAdminServerContext();
+  const bookingId = getString(formData, "bookingId");
+  let message = "Notas actualizadas";
+
+  try {
+    await MentorshipNoteService.saveAdminNote(
+      {
+        bookingId,
+        conceptsToReinforce: getString(formData, "conceptsToReinforce"),
+        createdBy: profile.id,
+        nextSteps: getString(formData, "nextSteps"),
+        preparationNotes: getString(formData, "preparationNotes"),
+        resourcesToSend: getString(formData, "resourcesToSend"),
+        sessionConclusions: getString(formData, "sessionConclusions"),
+      },
+      supabase,
+    );
+    revalidatePath(adminMentorshipPath);
+  } catch {
+    message = "No pudimos guardar las notas privadas.";
+  }
+
+  redirectWithMessage(message);
+}
+
 function formatDateTime(value: string, timezone: string) {
   return new Intl.DateTimeFormat("es", {
     dateStyle: "medium",
@@ -283,6 +313,10 @@ function SlotActions({
   );
 }
 
+function formatNullableDateTime(value: string | null, timezone: string) {
+  return value ? formatDateTime(value, timezone) : null;
+}
+
 function BookingActions({ booking }: { booking: AdminMentorshipBooking }) {
   if (booking.status !== "confirmed") {
     return null;
@@ -315,6 +349,109 @@ function BookingActions({ booking }: { booking: AdminMentorshipBooking }) {
   );
 }
 
+function PrivateNotesForm({
+  booking,
+  note,
+}: {
+  booking: AdminMentorshipBooking;
+  note: MentorshipPrivateNote | null;
+}) {
+  const completedAt = formatNullableDateTime(
+    booking.completedAt,
+    booking.participantTimezone,
+  );
+
+  return (
+    <section className="mt-5 rounded-xl border border-[var(--color-border)] p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
+          <h4 className="text-base font-semibold text-white">
+            Preparacion y cierre de mentoria
+          </h4>
+          <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+            Estas notas son internas y no son visibles para el participante.
+          </p>
+          {completedAt ? (
+            <p className="mt-2 text-sm text-[var(--color-cyan)]">
+              Finalizada: {completedAt}
+            </p>
+          ) : null}
+        </div>
+      </div>
+
+      {booking.status === "completed" ? (
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-lg bg-black/20 p-3">
+            <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+              Conclusiones
+            </p>
+            <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
+              {note?.sessionConclusions ?? "Sin conclusiones documentadas."}
+            </p>
+          </div>
+          <div className="rounded-lg bg-black/20 p-3">
+            <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+              Proximos pasos
+            </p>
+            <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
+              {note?.nextSteps ?? "Sin proximos pasos documentados."}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      <form action={savePrivateNoteAction} className="mt-5 grid gap-4">
+        <input name="bookingId" type="hidden" value={booking.id} />
+        <label className="grid gap-2 text-sm font-semibold text-white">
+          Preparacion de la sesion
+          <textarea
+            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            defaultValue={note?.preparationNotes ?? ""}
+            name="preparationNotes"
+          />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-white">
+          Conceptos que requieren refuerzo
+          <textarea
+            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            defaultValue={note?.conceptsToReinforce ?? ""}
+            name="conceptsToReinforce"
+          />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-white">
+          Conclusiones
+          <textarea
+            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            defaultValue={note?.sessionConclusions ?? ""}
+            name="sessionConclusions"
+          />
+        </label>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <label className="grid gap-2 text-sm font-semibold text-white">
+            Proximos pasos
+            <textarea
+              className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+              defaultValue={note?.nextSteps ?? ""}
+              name="nextSteps"
+            />
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-white">
+            Recursos por enviar
+            <textarea
+              className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+              defaultValue={note?.resourcesToSend ?? ""}
+              name="resourcesToSend"
+            />
+          </label>
+        </div>
+        <button className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-black transition hover:bg-white sm:w-fit">
+          Guardar notas privadas
+        </button>
+      </form>
+    </section>
+  );
+}
+
 export default async function AdminMentorshipRoute({
   searchParams,
 }: AdminMentorshipRouteProps) {
@@ -324,6 +461,13 @@ export default async function AdminMentorshipRoute({
     MentorshipSchedulingService.listAdminSlots(supabase),
     MentorshipSchedulingService.listAdminBookings(supabase),
   ]);
+  const notes = await MentorshipNoteService.listAdminNotesByBookingIds(
+    bookings.map((booking) => booking.id),
+    supabase,
+  );
+  const notesByBookingId = new Map(
+    notes.map((note) => [note.bookingId, note]),
+  );
   const nowTime = new Date().getTime();
   const availableFutureSlots = slots.filter(
     (slot) =>
@@ -509,6 +653,10 @@ export default async function AdminMentorshipRoute({
                 </div>
                 <BookingActions booking={booking} />
               </div>
+              <PrivateNotesForm
+                booking={booking}
+                note={notesByBookingId.get(booking.id) ?? null}
+              />
             </article>
           ))}
           {bookings.length === 0 ? (
