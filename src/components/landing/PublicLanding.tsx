@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { formationCtaHref } from "@/config/public-cta";
 import {
-  publicFormationJourney,
   publicProgramAudience,
   publicProgramNonAudience,
 } from "@/content/public-program";
@@ -35,6 +34,29 @@ const mentorshipEvidence = [
   "Ejemplos reales que ayudan a entender tu lectura.",
   "Observaciones sobre contexto, decisión y riesgo.",
   "Práctica documentada para preparar una conversación individual.",
+];
+
+const academicMap = [
+  {
+    title: "Comprendes el programa",
+    description:
+      "Conoces cómo se desarrollará tu formación y qué puedes esperar de cada etapa antes de comenzar.",
+  },
+  {
+    title: "Comienzas tu formación",
+    description:
+      "Accedes al programa y comienzas a desarrollar una metodología para interpretar el mercado mediante un proceso estructurado.",
+  },
+  {
+    title: "Documentas tu proceso",
+    description:
+      "Registra dudas, observaciones y ejemplos reales que servirán para preparar una mentoría adaptada a tu recorrido.",
+  },
+  {
+    title: "Recibes tu mentoría personalizada",
+    description:
+      "La sesión se prepara utilizando el recorrido que construiste durante todo el programa para consolidar la metodología.",
+  },
 ];
 
 function Header() {
@@ -107,18 +129,23 @@ function Hero() {
       >
         <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-chart-bg)] p-5">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Recorrido institucional
+            Mapa académico
           </p>
-          <div className="mt-6 grid gap-3">
-            {publicFormationJourney.slice(0, 5).map((step, index) => (
+          <div className="mt-8 grid gap-5">
+            {academicMap.map((step, index) => (
               <div
-                className="flex items-center gap-3 rounded-lg border border-[var(--color-border-soft)] bg-[var(--color-chart-surface)] p-3"
-                key={step}
+                className="rounded-lg border border-[var(--color-border-soft)] bg-[var(--color-chart-surface)] p-4"
+                key={step.title}
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--color-cyan)] text-xs font-semibold text-[var(--color-cyan)]">
+                <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <span className="text-sm font-medium text-white">{step}</span>
+                <p className="mt-3 text-sm font-semibold text-white">
+                  {step.title}
+                </p>
+                <p className="mt-4 text-xs leading-5 text-[var(--color-text-secondary)]">
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>
@@ -189,17 +216,20 @@ function JourneySection() {
           Comprender el programa
         </Link>
       </div>
-      <ol className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
-        {publicFormationJourney.map((step, index) => (
+      <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {academicMap.map((step, index) => (
           <li
-            className="min-w-0 border-t border-[var(--color-border)] pt-4"
-            key={step}
+            className="min-w-0 border-t border-[var(--color-border)] pt-5"
+            key={step.title}
           >
             <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <p className="mt-3 break-words text-sm leading-5 font-semibold text-white">
-              {step}
+            <p className="mt-4 break-words text-sm leading-5 font-semibold text-white">
+              {step.title}
+            </p>
+            <p className="mt-5 text-xs leading-5 text-[var(--color-text-secondary)]">
+              {step.description}
             </p>
           </li>
         ))}
@@ -259,7 +289,7 @@ function ProgramPreview({ course }: PublicLandingProps) {
           href="/programa"
           className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
         >
-          Ver detalle institucional
+          Ver detalles de la formación
         </Link>
       </div>
       <div className="mt-10 grid gap-4 md:grid-cols-2">
