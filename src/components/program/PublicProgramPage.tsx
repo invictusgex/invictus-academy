@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { formationCtaHref } from "@/config/public-cta";
+import { getSupportMailtoHref } from "@/config/site";
 import {
   publicFormationJourney,
   publicGlobalCompetencies,
@@ -15,7 +16,11 @@ type PublicProgramPageProps = {
   course: Course;
 };
 
+const CONTACT_SUBJECT = "Consulta sobre Invictus GEX";
+
 function PublicProgramHeader() {
+  const contactHref = getSupportMailtoHref(CONTACT_SUBJECT);
+
   return (
     <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
       <Link
@@ -25,7 +30,7 @@ function PublicProgramHeader() {
         Invictus GEX
       </Link>
       <nav
-        aria-label="Navegacion del programa"
+        aria-label="Navegación del programa"
         className="hidden items-center gap-6 text-sm text-[var(--color-text-secondary)] md:flex"
       >
         <a className="transition hover:text-white" href="#recorrido">
@@ -34,16 +39,24 @@ function PublicProgramHeader() {
         <a className="transition hover:text-white" href="#modulos">
           Módulos
         </a>
-        <a className="transition hover:text-white" href="#perfil">
-          Perfil
+        <a className="transition hover:text-white" href={contactHref}>
+          Contacto
         </a>
       </nav>
-      <Link
-        href="/"
-        className="shrink-0 rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-      >
-        Volver al inicio
-      </Link>
+      <div className="flex shrink-0 items-center gap-3">
+        <a
+          href={contactHref}
+          className="text-sm font-medium text-[var(--color-text-secondary)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] md:hidden"
+        >
+          Contacto
+        </a>
+        <Link
+          href="/"
+          className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+        >
+          Volver al inicio
+        </Link>
+      </div>
     </header>
   );
 }

@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
+import { getSupportMailtoHref } from "@/config/site";
+
 const SUPPORT_PANEL_ID = "academy-support-panel";
 const SUPPORT_TITLE_ID = "academy-support-title";
 const SUPPORT_SUBJECT = "Soporte Invictus Trading Academy";
@@ -13,10 +15,7 @@ export function AcademySupport() {
   const panelRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLAnchorElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim();
-  const supportHref = supportEmail
-    ? `mailto:${supportEmail}?subject=${encodeURIComponent(SUPPORT_SUBJECT)}`
-    : undefined;
+  const supportHref = getSupportMailtoHref(SUPPORT_SUBJECT);
 
   const closePanel = useCallback(() => {
     setIsOpen(false);
@@ -98,19 +97,13 @@ export function AcademySupport() {
             funcionamiento de la plataforma.
           </p>
 
-          {supportHref ? (
-            <a
-              ref={contactRef}
-              href={supportHref}
-              className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-            >
-              Contactar con soporte
-            </a>
-          ) : (
-            <p className="mt-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] px-4 py-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-              El canal de soporte aún no ha sido configurado.
-            </p>
-          )}
+          <a
+            ref={contactRef}
+            href={supportHref}
+            className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+          >
+            Contactar con soporte
+          </a>
 
           <button
             ref={closeRef}

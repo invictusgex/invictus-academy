@@ -29,6 +29,8 @@ Mejoras futuras:
 7. Certificados.
 8. Comunidad.
 9. IA.
+10. Añadir "El Método Invictus" al menú público.
+11. Crear una sección o página dedicada a la filosofía, metodología y diferencia institucional de Invictus GEX.
 
 ## Dependencias por fase
 
