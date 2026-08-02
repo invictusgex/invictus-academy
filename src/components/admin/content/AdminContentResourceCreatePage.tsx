@@ -57,7 +57,7 @@ export function AdminContentResourceCreatePage({
     return (
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
         <p className="text-sm text-[var(--color-text-secondary)]">
-          Cargando modulo...
+          Cargando módulo...
         </p>
       </section>
     );
@@ -70,10 +70,10 @@ export function AdminContentResourceCreatePage({
           Recursos
         </p>
         <h1 className="mt-3 text-3xl font-semibold text-white">
-          Modulo no disponible
+          Módulo no disponible
         </h1>
         <p className="mt-4 text-base leading-7 text-[var(--color-text-secondary)]">
-          No fue posible cargar el modulo para agregar el recurso.
+          No fue posible cargar el módulo para agregar el recurso.
         </p>
         <Link
           className="mt-6 inline-flex min-h-11 items-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
@@ -92,10 +92,10 @@ export function AdminContentResourceCreatePage({
           className="text-sm font-semibold text-[var(--color-cyan)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
           href={`/admin/content/modules/${academyModule.id}`}
         >
-          Volver al modulo
+          Volver al módulo
         </Link>
         <p className="mt-6 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Modulo {academyModule.position}
+          Módulo {academyModule.position}
         </p>
         <h1 className="mt-3 break-words text-3xl font-semibold text-white">
           Agregar recurso

@@ -90,7 +90,7 @@ export function AdminContentResourceEditPage({
           className="mt-6 inline-flex min-h-11 items-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
           href={`/admin/content/modules/${moduleId}`}
         >
-          Volver al modulo
+          Volver al módulo
         </Link>
       </section>
     );
@@ -103,10 +103,10 @@ export function AdminContentResourceEditPage({
           className="text-sm font-semibold text-[var(--color-cyan)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
           href={`/admin/content/modules/${academyModule.id}`}
         >
-          Volver al modulo
+          Volver al módulo
         </Link>
         <p className="mt-6 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Modulo {academyModule.position}
+          Módulo {academyModule.position}
         </p>
         <h1 className="mt-3 break-words text-3xl font-semibold text-white">
           Editar recurso

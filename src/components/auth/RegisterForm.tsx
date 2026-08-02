@@ -113,7 +113,7 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
 
       <div className="mt-5">
         <label className="text-sm font-medium text-white" htmlFor="password">
-          Contrasena
+          Contraseña
         </label>
         <input
           autoComplete="new-password"
@@ -185,7 +185,7 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
       </button>
 
       <p className="mt-5 text-center text-sm text-[var(--color-text-secondary)]">
-        Ya tienes cuenta?{" "}
+        ¿Ya tienes cuenta?{" "}
         <Link
           className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
           href={`/login?next=${encodeURIComponent(nextPath)}`}

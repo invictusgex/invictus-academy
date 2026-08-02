@@ -143,7 +143,7 @@ export function ScenarioDetailPage({ scenarioKey }: ScenarioDetailPageProps) {
       </section>
 
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
-        <h2 className="text-xl font-semibold text-white">Descripcion</h2>
+        <h2 className="text-xl font-semibold text-white">Descripción</h2>
         <p className="mt-4 whitespace-pre-line text-sm leading-7 text-[var(--color-text-secondary)]">
           {scenario.description || "Sin descripción registrada."}
         </p>

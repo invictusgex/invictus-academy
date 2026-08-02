@@ -26,7 +26,7 @@ const ruleCtas: Record<string, { href: string; label: string }> = {
 
 function formatRuleValue(value: CompletionRuleResult["currentValue"]) {
   if (typeof value === "boolean") {
-    return value ? "Si" : "No";
+    return value ? "Sí" : "No";
   }
 
   return value === null ? "0" : String(value);
@@ -83,8 +83,8 @@ function LockedSession101({ workflow }: { workflow: LearningWorkflowEvaluation |
         eyebrow="Session 101"
         title="Sesión 101 bloqueada"
       >
-        Completa los requisitos academicos del programa antes de acceder a las
-        instrucciones de la Sesion 101.
+        Completa los requisitos académicos del programa antes de acceder a las
+        instrucciones de la Sesión 101.
       </StudentPageHeader>
 
       <StudentSection

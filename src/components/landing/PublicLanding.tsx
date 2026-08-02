@@ -97,7 +97,7 @@ function Hero() {
     <section className="mx-auto grid w-full max-w-6xl items-center gap-10 px-5 pt-10 pb-14 sm:px-6 sm:pt-14 sm:pb-16 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14 lg:px-8 lg:pt-16 lg:pb-18">
       <div className="max-w-[45rem]">
         <p className="mb-6 text-sm font-semibold tracking-[0.2em] text-[var(--color-cyan)] uppercase">
-          Admision al programa profesional
+          Admisión al programa profesional
         </p>
         <h1 className="max-w-[44rem] text-4xl leading-tight font-semibold text-balance text-white sm:text-5xl lg:text-[3.65rem] lg:leading-[1.05]">
           Invictus GEX es una formación privada para desarrollar criterio de mercado.
@@ -124,7 +124,7 @@ function Hero() {
       </div>
 
       <aside
-        aria-label="Sintesis visual del proceso de admision"
+        aria-label="Síntesis visual del proceso de admisión"
         className="rounded-xl border border-[var(--color-border)] bg-[linear-gradient(180deg,var(--color-panel-bg),var(--color-card-bg))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:p-6 lg:p-7"
       >
         <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-chart-bg)] p-5">
@@ -299,7 +299,7 @@ function ProgramPreview({ course }: PublicLandingProps) {
             key={academyModule.id}
           >
             <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
-              Modulo {academyModule.number}
+              Módulo {academyModule.number}
             </p>
             <h3 className="mt-3 text-xl font-semibold text-white">
               {academyModule.title}
@@ -393,7 +393,7 @@ function Footer() {
   return (
     <footer className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-[var(--color-text-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
       <p>Invictus GEX © {currentYear}</p>
-      <p>Formacion profesional en lectura de mercado basada en datos.</p>
+      <p>Formación profesional en lectura de mercado basada en datos.</p>
     </footer>
   );
 }

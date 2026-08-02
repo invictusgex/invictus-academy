@@ -393,7 +393,7 @@ export function TradingDaysPanel() {
         </div>
       ) : (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white/[0.03] p-5 text-sm leading-6 text-[var(--color-text-secondary)]">
-          Aun no registraste días de trading. Agrega tus primeras fechas cuando
+          Aún no registraste días de trading. Agrega tus primeras fechas cuando
           hayas completado práctica real de mercado.
         </div>
       )}

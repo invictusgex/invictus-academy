@@ -8,7 +8,7 @@ export function AcademyEnrollmentEmptyState() {
         Academia
       </p>
       <h1 className="mt-4 text-2xl font-semibold text-white sm:text-3xl">
-        Aun no tienes un programa activo
+        Aún no tienes un programa activo
       </h1>
       <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[var(--color-text-secondary)]">
         Cuando adquieras una formación, aparecerá aquí junto con tu progreso y

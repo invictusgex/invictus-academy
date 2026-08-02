@@ -7,7 +7,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 export const runtime = "nodejs";
 
 const genericMessage =
-  "Si el email corresponde a una cuenta, recibiras instrucciones para continuar.";
+  "Si el email corresponde a una cuenta, recibirás instrucciones para continuar.";
 
 function normalizeEmail(value: unknown) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";

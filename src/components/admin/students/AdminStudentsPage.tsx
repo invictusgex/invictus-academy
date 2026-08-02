@@ -62,8 +62,8 @@ export function AdminStudentsPage({
   return (
     <div className="space-y-6">
       <AdminPageHeader eyebrow="Alumnos" title="Gestión de alumnos">
-        Consulta alumnos, enrollment activo, producto, avance academico y estado
-        de Sesion 101 desde datos server-side.
+        Consulta alumnos, enrollment activo, producto, avance académico y estado
+        de Sesión 101 desde datos server-side.
       </AdminPageHeader>
 
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
@@ -178,7 +178,7 @@ export function AdminStudentsPage({
                   <th className="px-5 py-4 font-semibold">Enrollment activo</th>
                   <th className="px-5 py-4 font-semibold">Producto</th>
                   <th className="px-5 py-4 font-semibold">Progreso</th>
-                  <th className="px-5 py-4 font-semibold">Sesion 101</th>
+                  <th className="px-5 py-4 font-semibold">Sesión 101</th>
                 </tr>
               </thead>
               <tbody>
@@ -229,7 +229,7 @@ export function AdminStudentsPage({
 
         <div className="flex flex-col gap-3 border-t border-[var(--color-border)] p-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-[var(--color-text-secondary)]">
-            Pagina {result.page} de {result.totalPages}
+            Página {result.page} de {result.totalPages}
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link

@@ -120,7 +120,7 @@ export async function POST(request: Request) {
       return jsonResponse(
         {
           message:
-            "Si el email puede registrarse, recibiras un mensaje para continuar.",
+            "Si el email puede registrarse, recibirás un mensaje para continuar.",
           status: "confirmation_required",
         },
         200,

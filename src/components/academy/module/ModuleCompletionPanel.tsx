@@ -43,14 +43,14 @@ export function ModuleCompletionPanel({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
-              Progreso del modulo
+              Progreso del módulo
             </p>
             <StudentStatusBadge tone={completed ? "complete" : "neutral"}>
               {completed ? "Completado" : "Pendiente"}
             </StudentStatusBadge>
           </div>
           <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-            Marca este modulo como completado cuando hayas revisado su contenido
+            Marca este módulo como completado cuando hayas revisado su contenido
             y estes listo para avanzar.
           </p>
           {error ? (

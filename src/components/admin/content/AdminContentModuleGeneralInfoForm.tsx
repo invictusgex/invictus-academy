@@ -111,7 +111,7 @@ export function AdminContentModuleGeneralInfoForm({
             Información general
           </p>
           <h2 className="mt-3 text-2xl font-semibold text-white">
-            Editar modulo
+            Editar módulo
           </h2>
         </div>
         <AdminContentSaveStatus status={saveStatus} />
@@ -140,7 +140,7 @@ export function AdminContentModuleGeneralInfoForm({
         </label>
 
         <label className="grid gap-2 text-sm font-medium text-white">
-          Descripcion
+          Descripción
           <input
             className="min-h-11 rounded-lg border border-[var(--color-border)] bg-[var(--color-card-bg)] px-3 text-sm text-white outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-cyan)]"
             disabled={isSaving}
@@ -196,7 +196,7 @@ export function AdminContentModuleGeneralInfoForm({
 
         <div className="grid gap-5 lg:grid-cols-3">
           <label className="grid gap-2 text-sm font-medium text-white">
-            Duracion estimada
+            Duración estimada
             <input
               className="min-h-11 rounded-lg border border-[var(--color-border)] bg-[var(--color-card-bg)] px-3 text-sm text-white outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-cyan)]"
               disabled={isSaving}

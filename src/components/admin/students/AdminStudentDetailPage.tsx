@@ -106,7 +106,7 @@ function MentorshipPreparationSection({
             Programa
           </dt>
           <dd className="mt-2 break-words text-sm font-semibold text-white">
-            {detail.enrollment.course?.title ?? "Producto sin titulo"}
+            {detail.enrollment.course?.title ?? "Producto sin título"}
           </dd>
         </div>
         <div className="rounded-lg bg-black/20 p-3">
@@ -129,7 +129,7 @@ function MentorshipPreparationSection({
         </div>
         <div className="rounded-lg bg-black/20 p-3">
           <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-            Practica
+            Práctica
           </dt>
           <dd className="mt-2 text-sm font-semibold text-white">
             {preparation.tradingDays}/{preparation.requiredTradingDays} días
@@ -146,13 +146,13 @@ function MentorshipPreparationSection({
             <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div className="min-w-0">
                 <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-                  Modulo {moduleItem.order}
+                  Módulo {moduleItem.order}
                 </p>
                 <h5 className="mt-2 break-words text-sm font-semibold text-white">
                   {moduleItem.title}
                 </h5>
                 <p className="mt-2 text-xs text-[var(--color-text-secondary)]">
-                  Ultima actualizacion:{" "}
+                  Última actualización:{" "}
                   {formatAdminDateTime(moduleItem.reflectionUpdatedAt)}
                 </p>
               </div>
@@ -213,7 +213,7 @@ function MentorshipPreparationSection({
                 </div>
                 {moduleItem.attachments.length === 0 ? (
                   <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
-                    No hay imágenes adjuntas en este modulo.
+                    No hay imágenes adjuntas en este módulo.
                   </p>
                 ) : null}
               </div>
@@ -265,7 +265,7 @@ function EnrollmentDetailCard({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h3 className="break-words text-lg font-semibold text-white">
-            {detail.enrollment.course?.title ?? "Producto sin titulo"}
+            {detail.enrollment.course?.title ?? "Producto sin título"}
           </h3>
           <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
             Enrollment: {formatAdminDateTime(detail.enrollment.createdAt)}
@@ -286,7 +286,7 @@ function EnrollmentDetailCard({
       <dl className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-xl border border-[var(--color-border)] p-4">
           <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-            Modulos
+            Módulos
           </dt>
           <dd className="mt-2 text-2xl font-semibold text-white">
             {moduleProgress}
@@ -468,7 +468,7 @@ export function AdminStudentDetailPage({
         eyebrow="Alumno"
         title={getDisplayName(student.fullName)}
       >
-        Vista server-side de perfil, enrollments, progreso academico, workflow,
+        Vista server-side de perfil, enrollments, progreso académico, workflow,
         formularios, trading days y purchases.
       </AdminPageHeader>
 
@@ -504,7 +504,7 @@ export function AdminStudentDetailPage({
 
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
         <h2 className="text-xl font-semibold text-white">
-          Estado academico y comercial
+          Estado académico y comercial
         </h2>
         <div className="mt-5 grid gap-5">
           {detail.enrollmentDetails.map((enrollmentDetail) => (

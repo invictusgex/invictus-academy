@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "check:spanish-copy": "node scripts/check-spanish-copy.mjs",
     "supabase:version": "supabase --version",
     "supabase:status": "supabase status",
     "supabase:start": "supabase start",

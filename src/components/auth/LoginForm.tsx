@@ -75,7 +75,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
 
       <div className="mt-5">
         <label className="text-sm font-medium text-white" htmlFor="password">
-          Contrasena
+          Contraseña
         </label>
         <input
           autoComplete="current-password"
@@ -106,7 +106,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
 
       <div className="mt-5 flex flex-col gap-3 text-center text-sm text-[var(--color-text-secondary)]">
         <p>
-          No tienes cuenta?{" "}
+          ¿No tienes cuenta?{" "}
           <Link
             className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
             href={`/registro?next=${encodeURIComponent(nextPath)}`}

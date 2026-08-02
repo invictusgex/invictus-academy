@@ -265,7 +265,7 @@ export function validateAdminContentModuleInput(
   ) {
     errors.push({
       field: "estimatedDurationMinutes",
-      message: "La duracion estimada debe ser un entero no negativo.",
+      message: "La duración estimada debe ser un entero no negativo.",
     });
   }
 
@@ -452,7 +452,7 @@ function validateAdminContentVideoInput(
   ) {
     errors.push({
       field: "durationSeconds",
-      message: "La duracion debe ser un entero no negativo.",
+      message: "La duración debe ser un entero no negativo.",
     });
   }
 
@@ -1105,7 +1105,7 @@ export const AdminContentService = {
             {
               field: "general",
               message:
-                "No se puede eliminar el ?nico video de un módulo publicado.",
+                "No se puede eliminar el único video de un módulo publicado.",
             },
           ],
           ok: false,

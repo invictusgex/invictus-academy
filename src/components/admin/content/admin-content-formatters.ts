@@ -21,7 +21,7 @@ export function formatAvailability(availability: ModuleAvailability) {
     return "Disponible";
   }
 
-  return "Proximamente";
+  return "Próximamente";
 }
 
 export function formatResourceType(resourceType: AcademyResourceType) {
@@ -38,7 +38,7 @@ export function formatResourceType(resourceType: AcademyResourceType) {
 
 export function formatDurationMinutes(value: number | null) {
   if (value === null) {
-    return "Sin duracion";
+    return "Sin duración";
   }
 
   if (value === 1) {
@@ -50,7 +50,7 @@ export function formatDurationMinutes(value: number | null) {
 
 export function formatDurationSeconds(value: number | null) {
   if (value === null) {
-    return "Sin duracion";
+    return "Sin duración";
   }
 
   const minutes = Math.floor(value / 60);

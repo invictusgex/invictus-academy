@@ -146,7 +146,7 @@ function MentorshipPreparation({
       </div>
       <div className="border-t border-[var(--color-border)] pt-5">
         <h3 className="text-lg font-semibold text-white">
-          Practica registrada
+          Práctica registrada
         </h3>
         <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
           La práctica convierte el estudio en evidencia concreta para revisar
@@ -224,12 +224,12 @@ export function StudentDashboard({
     <div className="space-y-8">
       <section className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8 lg:p-12">
         <p className="text-sm font-semibold tracking-[0.2em] text-[var(--color-cyan)] uppercase">
-          Programa de Formacion Profesional
+          Programa de Formación Profesional
         </p>
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_18rem] lg:items-end">
           <div>
             <h1 className="max-w-3xl text-4xl leading-tight font-semibold text-white sm:text-5xl">
-              Centro de Formacion
+              Centro de Formación
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
               Continua tu recorrido dentro de Invictus GEX con orden, evidencia

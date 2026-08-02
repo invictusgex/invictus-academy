@@ -162,7 +162,7 @@ function PublicModulesSection() {
             <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
               <div>
                 <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-                  Modulo {academyModule.number}
+                  Módulo {academyModule.number}
                 </p>
                 <h3 className="mt-3 text-2xl font-semibold text-white">
                   {academyModule.title}
@@ -368,7 +368,7 @@ function Footer() {
   return (
     <footer className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-[var(--color-text-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
       <p>Invictus GEX</p>
-      <p>Formacion profesional en lectura de mercado basada en datos.</p>
+      <p>Formación profesional en lectura de mercado basada en datos.</p>
     </footer>
   );
 }

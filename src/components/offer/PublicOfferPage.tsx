@@ -196,7 +196,7 @@ function MentorshipSection() {
       <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Preparacion personalizada
+            Preparación personalizada
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
             La mentoría se construye con información real de tu proceso.
@@ -260,7 +260,7 @@ function ComparisonSection() {
           </article>
           <article className="rounded-xl border border-[var(--color-cyan)] bg-[var(--color-card-bg)] p-6">
             <h2 className="text-2xl font-semibold text-white">
-              Formacion Invictus GEX
+              Formación Invictus GEX
             </h2>
             <ul className="mt-6 space-y-3">
               {invictusApproach.map((item) => (
@@ -330,7 +330,7 @@ function Footer() {
   return (
     <footer className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-[var(--color-text-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
       <p>Invictus GEX</p>
-      <p>Formacion profesional en lectura de mercado basada en datos.</p>
+      <p>Formación profesional en lectura de mercado basada en datos.</p>
     </footer>
   );
 }

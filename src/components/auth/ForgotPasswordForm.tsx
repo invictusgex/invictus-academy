@@ -44,7 +44,7 @@ export function ForgotPasswordForm({ nextPath }: ForgotPasswordFormProps) {
 
       setSuccessMessage(
         payload.message ??
-          "Si el email corresponde a una cuenta, recibiras instrucciones para continuar.",
+          "Si el email corresponde a una cuenta, recibirás instrucciones para continuar.",
       );
     } catch {
       setErrorMessage(

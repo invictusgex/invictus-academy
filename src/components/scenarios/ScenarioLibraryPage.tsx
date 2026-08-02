@@ -186,7 +186,7 @@ export function ScenarioLibraryPage() {
           Lecturas operativas del mercado
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Analisis, ejemplos y estructuras de mercado publicados para alumnos
+          Análisis, ejemplos y estructuras de mercado publicados para alumnos
           con acceso activo al programa.
         </p>
       </section>
@@ -250,7 +250,7 @@ export function ScenarioLibraryPage() {
 
       {!state.loading && !state.error && state.scenarios.length === 0 ? (
         <p className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 text-sm text-[var(--color-text-secondary)]">
-          Aun no hay escenarios publicados para mostrar.
+          Aún no hay escenarios publicados para mostrar.
         </p>
       ) : null}
 

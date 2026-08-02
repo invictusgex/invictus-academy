@@ -148,7 +148,7 @@ export function AdminContentResourceForm({
         </label>
 
         <label className="grid gap-2 text-sm font-medium text-white">
-          Descripcion
+          Descripción
           <textarea
             className="min-h-28 rounded-lg border border-[var(--color-border)] bg-[var(--color-card-bg)] px-3 py-3 text-sm text-white outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-cyan)]"
             disabled={isSaving}

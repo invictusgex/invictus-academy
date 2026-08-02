@@ -77,7 +77,7 @@ export function AdminContentModuleDetailPage({
     return (
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
         <p className="text-sm text-[var(--color-text-secondary)]">
-          Cargando modulo...
+          Cargando módulo...
         </p>
       </section>
     );
@@ -93,7 +93,7 @@ export function AdminContentModuleDetailPage({
           No disponible
         </h1>
         <p className="mt-4 text-base leading-7 text-[var(--color-text-secondary)]">
-          No fue posible cargar el modulo solicitado.
+          No fue posible cargar el módulo solicitado.
         </p>
         <Link
           className="mt-6 inline-flex min-h-11 items-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
@@ -112,10 +112,10 @@ export function AdminContentModuleDetailPage({
           Contenido
         </p>
         <h1 className="mt-3 text-3xl font-semibold text-white">
-          Modulo no encontrado
+          Módulo no encontrado
         </h1>
         <p className="mt-4 text-base leading-7 text-[var(--color-text-secondary)]">
-          El modulo solicitado no existe en el contenido academico.
+          El módulo solicitado no existe en el contenido académico.
         </p>
         <Link
           className="mt-6 inline-flex min-h-11 items-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
@@ -137,14 +137,14 @@ export function AdminContentModuleDetailPage({
           Volver a contenido
         </Link>
         <p className="mt-6 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Modulo {academyModule.position}
+          Módulo {academyModule.position}
         </p>
         <h1 className="mt-3 break-words text-3xl font-semibold text-white">
           {academyModule.title}
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
           Vista administrativa de lectura para información general, videos y
-          recursos del modulo.
+          recursos del módulo.
         </p>
         <Link
           className="mt-6 inline-flex min-h-11 items-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
@@ -185,7 +185,7 @@ export function AdminContentModuleDetailPage({
           </article>
           <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5">
             <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-              Duracion estimada
+              Duración estimada
             </p>
             <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
               {formatDurationMinutes(academyModule.estimatedDurationMinutes)}
@@ -204,7 +204,7 @@ export function AdminContentModuleDetailPage({
         <div className="mt-5 grid gap-4">
           <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5">
             <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-              Descripcion
+              Descripción
             </p>
             <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
               {academyModule.description || "Sin descripción"}
@@ -255,7 +255,7 @@ export function AdminContentModuleDetailPage({
                   <th className="px-5 py-4 font-semibold">Posicion</th>
                   <th className="px-5 py-4 font-semibold">Titulo</th>
                   <th className="px-5 py-4 font-semibold">Proveedor</th>
-                  <th className="px-5 py-4 font-semibold">Duracion</th>
+                  <th className="px-5 py-4 font-semibold">Duración</th>
                   <th className="px-5 py-4 font-semibold">Estado</th>
                   <th className="px-5 py-4 font-semibold">Miniatura</th>
                   <th className="px-5 py-4 font-semibold">Orden</th>
@@ -354,7 +354,7 @@ export function AdminContentModuleDetailPage({
                   <th className="px-5 py-4 font-semibold">Posicion</th>
                   <th className="px-5 py-4 font-semibold">Titulo</th>
                   <th className="px-5 py-4 font-semibold">Tipo</th>
-                  <th className="px-5 py-4 font-semibold">Descripcion</th>
+                  <th className="px-5 py-4 font-semibold">Descripción</th>
                   <th className="px-5 py-4 font-semibold">Estado</th>
                   <th className="px-5 py-4 font-semibold">Enlace</th>
                   <th className="px-5 py-4 font-semibold">Orden</th>

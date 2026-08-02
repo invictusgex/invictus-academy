@@ -137,7 +137,7 @@ export function AdminScenariosPage() {
                   <th className="px-5 py-4 font-semibold">Estado</th>
                   <th className="px-5 py-4 font-semibold">Fecha mercado</th>
                   <th className="px-5 py-4 font-semibold">Actualizado</th>
-                  <th className="px-5 py-4 font-semibold">Accion</th>
+                  <th className="px-5 py-4 font-semibold">Acción</th>
                 </tr>
               </thead>
               <tbody>

@@ -84,7 +84,7 @@ async function getPurchasablePrice(stripe: Stripe, priceId: string) {
   if (!price.active || price.type !== "one_time" || price.recurring) {
     throw new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.PRICE_NOT_PURCHASABLE,
-      "El precio configurado no está habilitado para pago ?nico.",
+      "El precio configurado no está habilitado para pago único.",
       {
         status: 500,
       },

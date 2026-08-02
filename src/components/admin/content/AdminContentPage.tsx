@@ -88,7 +88,7 @@ export function AdminContentPage() {
     <div className="space-y-6">
       <AdminPageHeader eyebrow="Contenido" title="Contenido académico">
         Vista administrativa de módulos, videos y recursos existentes en el CMS
-        academico.
+        académico.
       </AdminPageHeader>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
@@ -99,7 +99,7 @@ export function AdminContentPage() {
 
       <section className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
         <div className="flex flex-col gap-2 border-b border-[var(--color-border)] p-5 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold text-white">Modulos</h2>
+          <h2 className="text-lg font-semibold text-white">Módulos</h2>
           <p className="text-sm text-[var(--color-text-secondary)]">
             {loading ? "Cargando contenido..." : `${modules.length} módulos`}
           </p>
@@ -123,11 +123,11 @@ export function AdminContentPage() {
                   <th className="px-5 py-4 font-semibold">Orden</th>
                   <th className="px-5 py-4 font-semibold">Titulo</th>
                   <th className="px-5 py-4 font-semibold">Estado</th>
-                  <th className="px-5 py-4 font-semibold">Duracion</th>
+                  <th className="px-5 py-4 font-semibold">Duración</th>
                   <th className="px-5 py-4 font-semibold">Videos</th>
                   <th className="px-5 py-4 font-semibold">Recursos</th>
                   <th className="px-5 py-4 font-semibold">Disponibilidad</th>
-                  <th className="px-5 py-4 font-semibold">Accion</th>
+                  <th className="px-5 py-4 font-semibold">Acción</th>
                 </tr>
               </thead>
               <tbody>
@@ -166,7 +166,7 @@ export function AdminContentPage() {
                         className="font-semibold text-[var(--color-cyan)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
                         href={`/admin/content/modules/${academyModule.id}`}
                       >
-                        Ver modulo
+                        Ver módulo
                       </Link>
                     </td>
                   </tr>

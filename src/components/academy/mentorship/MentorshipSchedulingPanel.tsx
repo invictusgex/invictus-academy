@@ -202,7 +202,7 @@ export function MentorshipSchedulingPanel({
     }
 
     const shouldCancel = window.confirm(
-      "¿Quieres cancelar está reserva de mentoría?",
+      "¿Quieres cancelar esta reserva de mentoría?",
     );
 
     if (!shouldCancel) {
@@ -322,7 +322,7 @@ export function MentorshipSchedulingPanel({
           ) : (
             <div>
               <h2 className="text-2xl font-semibold text-white">
-                Mentoria completada
+                Mentoría completada
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
                 Tu sesión ha sido registrada. El mentor está preparando el
