@@ -84,6 +84,10 @@ function getModuleVideoStatus(status: ModuleProgressStatus) {
       };
 }
 
+function getVideoObjective(video: ModuleVideo) {
+  return video.objective?.trim() || "Objetivo académico pendiente de definición.";
+}
+
 function ModuleVideoPlayer({ video }: { video: ModuleVideo }) {
   const embedConfig = getVideoEmbedConfig(video);
 
@@ -107,7 +111,7 @@ function ModuleVideoPlayer({ video }: { video: ModuleVideo }) {
     <div className="mt-5 flex aspect-video w-full items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4 text-center sm:p-6">
       <p className="max-w-xl break-words text-base font-semibold leading-7 text-white sm:text-lg">
         {video.placeholder.trim() ||
-          "El video de formación aún no está disponible."}
+          "El contenido de formación aún no está disponible."}
       </p>
     </div>
   );
@@ -123,7 +127,7 @@ export function ModuleVideosSection({
   return (
     <StudentSection
       description="Contenido principal del módulo presentado dentro de la academia."
-      title="Sesión de formación"
+      title="Etapa de formación"
     >
       {videos.length > 0 ? (
         <div
@@ -134,6 +138,7 @@ export function ModuleVideosSection({
         >
           {videos.map((video, index) => {
             const duration = formatDuration(video.durationSeconds);
+            const legalDescription = video.description?.trim();
 
             return (
               <StudentCard
@@ -144,8 +149,8 @@ export function ModuleVideosSection({
                   <div className="min-w-0">
                     <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
                       {hasMultipleVideos
-                        ? `Video ${index + 1}`
-                        : "Video principal"}
+                        ? `Contenido ${index + 1}`
+                        : "Contenido principal"}
                     </p>
                     <h3 className="mt-3 text-balance text-xl font-semibold text-white">
                       {video.title}
@@ -159,11 +164,14 @@ export function ModuleVideosSection({
                 <div className="mt-5 grid gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
                   <div className="min-w-0">
                     <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-cyan)] uppercase">
-                      Objetivo de la lección
+                      Objetivo de esta etapa
                     </p>
                     <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-                      {video.description ||
-                        "Revisar el contenido central de está etapa del módulo."}
+                      {getVideoObjective(video)}
+                    </p>
+                    <p className="mt-2 text-xs leading-5 text-[var(--color-text-muted)]">
+                      Este objetivo define la capacidad que desarrollarás
+                      durante esta etapa.
                     </p>
                   </div>
                   {duration ? (
@@ -174,12 +182,18 @@ export function ModuleVideosSection({
                 </div>
 
                 <ModuleVideoPlayer video={video} />
+
+                {legalDescription ? (
+                  <p className="mt-4 rounded-xl border border-[var(--color-border)] bg-black/10 p-3 text-xs leading-5 text-[var(--color-text-muted)]">
+                    {legalDescription}
+                  </p>
+                ) : null}
               </StudentCard>
             );
           })}
         </div>
       ) : (
-        <StudentEmptyState title="Este módulo aún no tiene videos disponibles.">
+        <StudentEmptyState title="Este módulo aún no tiene contenido disponible.">
           El contenido aparecerá aquí cuando sea publicado.
         </StudentEmptyState>
       )}

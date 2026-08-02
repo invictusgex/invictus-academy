@@ -18,6 +18,8 @@ export const module07: Module = {
     {
       id: "modulo-7-video",
       title: "Profesionalización y Gestión del Riesgo",
+      objective:
+        "Consolidar la metodología mediante gestión del riesgo, disciplina, preparación y evaluación del proceso para desarrollar una operativa profesional y sostenible.",
       description:
         "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
       placeholder: "",

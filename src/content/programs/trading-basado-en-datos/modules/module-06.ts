@@ -18,6 +18,8 @@ export const module06: Module = {
     {
       id: "modulo-6-video",
       title: "Construcción de Escenarios de Alta Probabilidad",
+      objective:
+        "Aprender a combinar contexto, liquidez, exposición gamma, volumen y flujo de órdenes para construir escenarios estructurados antes de tomar una decisión.",
       description:
         "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
       placeholder: "",

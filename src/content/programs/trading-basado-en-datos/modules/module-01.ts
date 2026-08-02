@@ -18,6 +18,8 @@ export const module01: Module = {
     {
       id: "modulo-1-video",
       title: "Fundamentos del Mercado Basado en Datos",
+      objective:
+        "Comprender por qué el precio debe interpretarse como el resultado de múltiples fuerzas del mercado y establecer las bases de una metodología centrada en datos, contexto y evidencia.",
       description:
         "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
       placeholder: "",

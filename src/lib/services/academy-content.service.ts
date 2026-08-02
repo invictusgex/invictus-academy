@@ -18,11 +18,26 @@ function getLearningObjectives(value: unknown) {
   return value.filter((item): item is string => typeof item === "string");
 }
 
+function getFallbackVideoObjective(videoKey: string) {
+  for (const academyModule of fallbackAcademyProgram.modules) {
+    const fallbackVideo = academyModule.videos.find(
+      (video) => video.id === videoKey,
+    );
+
+    if (fallbackVideo?.objective) {
+      return fallbackVideo.objective;
+    }
+  }
+
+  return undefined;
+}
+
 function mapVideo(row: AcademyModuleVideoRow): ModuleVideo {
   return {
     description: row.description,
     durationSeconds: row.duration_seconds,
     id: row.video_key,
+    objective: getFallbackVideoObjective(row.video_key),
     placeholder: row.placeholder,
     provider: row.provider,
     providerVideoId: row.provider_video_id,

@@ -18,6 +18,8 @@ export const module02: Module = {
     {
       id: "modulo-2-video",
       title: "Mecánicas Reales del Mercado",
+      objective:
+        "Comprender cómo interactúan liquidez, participantes, ejecución y estructura de mercado para explicar el movimiento del precio más allá de una lectura superficial del gráfico.",
       description:
         "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
       placeholder: "",

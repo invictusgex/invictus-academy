@@ -18,6 +18,8 @@ export const module05: Module = {
     {
       id: "modulo-5-video",
       title: "Order Flow, Perfil de Volumen",
+      objective:
+        "Aprender a integrar Order Flow y Perfil de Volumen para analizar participación, agresión, aceptación, rechazo y ubicación del precio dentro de la estructura del mercado.",
       description:
         "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
       placeholder: "",

@@ -18,6 +18,8 @@ export const module03: Module = {
     {
       id: "modulo-3-video",
       title: "Opciones, Gamma y Posicionamiento Institucional",
+      objective:
+        "Comprender cómo el posicionamiento en opciones y la exposición gamma pueden influir en la estabilidad, expansión y comportamiento del precio.",
       description:
         "Contenido exclusivo para alumnos de Invictus GEX Academy.\n\nQueda prohibida su distribución, reproducción o comercialización sin autorización expresa.\n\n© Invictus GEX. Todos los derechos reservados.",
       placeholder: "",

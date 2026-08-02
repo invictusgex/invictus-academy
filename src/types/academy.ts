@@ -7,6 +7,7 @@ export type ModuleVideo = {
   description?: string;
   durationSeconds?: number | null;
   id: string;
+  objective?: string;
   placeholder: string;
   provider?: string | null;
   providerVideoId?: string | null;
