@@ -7,7 +7,7 @@ import { getSupportMailtoHref } from "@/config/site";
 
 const SUPPORT_PANEL_ID = "academy-support-panel";
 const SUPPORT_TITLE_ID = "academy-support-title";
-const SUPPORT_SUBJECT = "Soporte Invictus Trading Academy";
+const SUPPORT_SUBJECT = "Soporte Invictus GEX";
 
 export function AcademySupport() {
   const [isOpen, setIsOpen] = useState(false);

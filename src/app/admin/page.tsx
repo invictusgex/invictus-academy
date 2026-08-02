@@ -28,7 +28,7 @@ export default function AdminPage() {
           Panel administrativo
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Gestión de alumnos, accesos y productos de Invictus Trading Academy.
+          Gestión de alumnos, accesos y productos de Invictus GEX.
         </p>
       </section>
 

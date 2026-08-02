@@ -47,7 +47,7 @@ export function DashboardHero({ userName }: DashboardHeroProps) {
           <span className="text-[var(--color-cyan)]">{userName}</span>.
         </h1>
         <p className="mt-5 text-lg leading-8 text-[var(--color-text-secondary)]">
-          Bienvenido a Invictus Trading Academy.
+          Bienvenido a Invictus GEX.
         </p>
         <p className="mt-6 max-w-2xl text-base leading-7 text-[var(--color-text-primary)]">
           La disciplina construye consistencia.

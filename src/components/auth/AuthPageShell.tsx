@@ -20,7 +20,7 @@ export function AuthPageShell({
           className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase transition hover:text-[var(--color-cyan-hover)]"
           href="/"
         >
-          Invictus Trading Academy
+          Invictus GEX
         </Link>
         <p className="mt-8 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           {eyebrow}

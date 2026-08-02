@@ -1,10 +1,10 @@
 const fallbackSiteUrl = "http://localhost:3000";
 const fallbackSupportEmail = "invictusgex@gmail.com";
 
-export const siteName = "Invictus Trading Academy";
+export const siteName = "Invictus GEX";
 
 export const siteDescription =
-  "Plataforma educativa de trading basada en datos, Order Flow, Heatmap, Perfil de Volumen y Exposición de Gamma.";
+  "Programa de Formación Profesional basado en datos, Order Flow, Heatmap, Perfil de Volumen y Exposición de Gamma.";
 
 export function getSiteUrl() {
   const appUrl = process.env.APP_URL?.trim();

@@ -30,7 +30,7 @@ export function AcademySidebar({ navigation }: AcademySidebarProps) {
           href="/"
           className="block text-sm font-semibold tracking-[0.12em] text-white uppercase focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
         >
-          Invictus Trading Academy
+          Invictus GEX
         </Link>
       </div>
 

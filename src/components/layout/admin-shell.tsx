@@ -25,7 +25,7 @@ export function AdminShell({ children }: AdminShellProps) {
           href="/academy"
           className="block text-sm font-semibold tracking-[0.12em] text-white uppercase"
         >
-          Invictus Trading Academy
+          Invictus GEX
         </Link>
         <p className="mt-2 text-xs font-medium tracking-[0.16em] text-[var(--color-cyan)] uppercase">
           Administración
@@ -66,7 +66,7 @@ export function AdminShell({ children }: AdminShellProps) {
             Panel administrativo
           </p>
           <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-            Gestión interna de Invictus Trading Academy.
+            Gestión interna de Invictus GEX.
           </p>
         </header>
 
