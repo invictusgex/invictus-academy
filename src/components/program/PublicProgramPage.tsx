@@ -66,7 +66,7 @@ function ProgramHero({ course }: PublicProgramPageProps) {
     `${course.modules.length} módulos`,
     "Proceso guiado",
     "Práctica con evidencia",
-    "Mentoría individual preparada",
+    "Integración metodológica",
   ];
 
   return (
@@ -80,9 +80,9 @@ function ProgramHero({ course }: PublicProgramPageProps) {
         </h1>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
           Una formación privada para desarrollar criterio profesional en
-          lectura de mercado basada en datos. El recorrido integra estudio,
-          práctica, documentación del proceso y una mentoría preparada con tu
-          avance.
+          lectura de mercado basada en datos. El recorrido construye
+          fundamentos y culmina en una segunda etapa donde la metodología se
+          integra con tu avance.
         </p>
       </div>
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -130,7 +130,7 @@ function JourneyIntro() {
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
             Cada etapa cumple una función: comprender, practicar, documentar y
-            preparar una conversación individual con información concreta de tu
+            preparar una integración individual con información concreta de tu
             recorrido.
           </p>
         </div>
@@ -237,7 +237,7 @@ function MethodologyBlock() {
     <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-semibold text-white">
-          La metodología ordena cinco preguntas profesionales.
+          La metodología integra cinco criterios profesionales.
         </h2>
         <div className="mt-8 grid gap-4 md:grid-cols-5">
           {publicMethodologySteps.map((step, index) => (
@@ -270,16 +270,17 @@ function MentorshipPreparationBlock() {
     <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-6 lg:grid-cols-[0.86fr_1.14fr] lg:px-8">
       <div>
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          La mentoría se prepara durante todo el programa
+          Segunda etapa del Método Invictus
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
-          Tu avance permite una conversación individual más precisa.
+          Tu avance permite una integración individual más profunda.
         </h2>
       </div>
       <p className="text-base leading-7 text-[var(--color-text-secondary)]">
-        A medida que avanzas, documentas dudas, ejemplos y puntos de revisión.
-        Esa evidencia permite que la etapa individual no sea genérica, sino
-        conectada con tu manera real de interpretar y aplicar la metodología.
+        A medida que avanzas, documentas lecturas, ejemplos y puntos de
+        integración. Esa evidencia permite trabajar cómo se relacionan
+        Exposición Gamma, Mapa de Liquidez, Order Flow, Big Trades, CVD, Delta,
+        Speed of Tape, VWAP y desviaciones dentro de una sola metodología.
       </p>
     </section>
   );
@@ -356,7 +357,7 @@ function FinalCta() {
         </h2>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
           Invictus GEX está diseñado para quienes quieren desarrollar criterio
-          con estructura, práctica y preparación individual.
+          con estructura, práctica e integración metodológica.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
           <Link

@@ -25,12 +25,12 @@ const offerIncludes = [
   {
     title: "Preparación individual",
     description:
-      "El proceso orienta al participante a ordenar dudas, ejemplos y observaciones relevantes.",
+      "El proceso orienta al participante a documentar lecturas, ejemplos y observaciones relevantes.",
   },
   {
-    title: "Mentoría personalizada",
+    title: "Segunda etapa del Método Invictus",
     description:
-      "La etapa individual se prepara con evidencia del recorrido para revisar criterio y aplicación.",
+      "La etapa individual integra y profundiza la metodología con evidencia del recorrido.",
   },
 ];
 
@@ -38,14 +38,14 @@ const traditionalApproach = [
   "Consume información sin una secuencia clara.",
   "Busca indicaciones antes de diagnosticar contexto.",
   "Evalúa decisiones solo por el resultado inmediato.",
-  "Trata la mentoría como un complemento separado.",
+  "Trata cada etapa como piezas desconectadas.",
 ];
 
 const invictusApproach = [
   "Ordena el aprendizaje como proceso profesional.",
   "Diagnostica contexto antes de evaluar participación.",
   "Integra práctica, reflexión y revisión del criterio.",
-  "Prepara la mentoría desde el primer módulo.",
+  "Prepara la integración metodológica desde el primer módulo.",
 ];
 
 const faqs = [
@@ -62,7 +62,7 @@ const faqs = [
   {
     question: "¿La mentoría es independiente del programa?",
     answer:
-      "No. La mentoría es la culminación del recorrido. La formación previa prepara la conversación individual con dudas, ejemplos y observaciones del participante.",
+      "No. La mentoría es la segunda etapa del Método Invictus. La formación desarrolla fundamentos y la etapa individual integra la metodología con el recorrido documentado del participante.",
   },
   {
     question: "¿Necesito experiencia previa?",
@@ -117,7 +117,7 @@ function OfferHero() {
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
           El ingreso a Invictus GEX abre un proceso: comprendes el programa,
           comienzas tu formación, practicas, documentas tu avance y llegas a
-          una mentoría preparada con tu recorrido.
+          una segunda etapa de integración preparada con tu recorrido.
         </p>
         <Link
           href={formationCtaHref}
@@ -199,13 +199,14 @@ function MentorshipSection() {
             Preparación personalizada
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            La mentoría se construye con información real de tu proceso.
+          La segunda etapa se construye con información real de tu proceso.
           </h2>
         </div>
         <p className="text-base leading-7 text-[var(--color-text-secondary)]">
-          Desde el inicio, el participante ordena dudas, ejemplos y
-          observaciones. Esa preparación permite que la mentoría individual se
-          enfoque en su criterio y en su manera de aplicar la metodología.
+          Desde el inicio, el participante documenta lecturas, ejemplos y
+          observaciones. Esa preparación permite profundizar cómo se relacionan
+          contexto, liquidez, flujo, exposición gamma y riesgo dentro de una
+          única metodología.
         </p>
       </div>
     </section>
@@ -312,7 +313,7 @@ function FinalCta() {
           Ingreso al programa
         </p>
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white">
-          Si buscas formación, criterio y preparación individual, Invictus GEX
+          Si buscas formación, criterio e integración metodológica, Invictus GEX
           está diseñado para ese recorrido.
         </h2>
         <Link

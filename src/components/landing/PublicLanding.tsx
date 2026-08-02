@@ -31,10 +31,50 @@ const principles = [
 ];
 
 const mentorshipEvidence = [
-  "Dudas relevantes que surgen durante la formación.",
-  "Ejemplos reales que ayudan a entender tu lectura.",
-  "Observaciones sobre contexto, decisión y riesgo.",
-  "Práctica documentada para preparar una conversación individual.",
+  "Lecturas documentadas que revelan cómo construyes contexto.",
+  "Ejemplos reales donde liquidez, flujo y exposición gamma empiezan a relacionarse.",
+  "Observaciones sobre decisión, riesgo y condiciones previas a la ejecución.",
+  "Evidencia de práctica para integrar la metodología a tu proceso.",
+];
+
+const interpretationShifts = [
+  {
+    before: "Observabas movimientos.",
+    after: "Ahora comprenderás procesos.",
+  },
+  {
+    before: "Veías herramientas independientes.",
+    after: "Ahora interpretarás cómo trabajan juntas.",
+  },
+  {
+    before: "Buscabas entradas.",
+    after: "Ahora construirás contexto.",
+  },
+  {
+    before: "Dependías de confirmaciones.",
+    after: "Ahora desarrollarás criterio profesional.",
+  },
+];
+
+const learningPaths = [
+  {
+    title: "Aprender herramientas",
+    steps: [
+      "Más información",
+      "Más indicadores",
+      "Más complejidad",
+      "Las decisiones siguen dependiendo de la interpretación del momento.",
+    ],
+  },
+  {
+    title: "Desarrollar criterio",
+    steps: [
+      "Comprender relaciones",
+      "Construir contexto",
+      "Interpretar el mercado como un sistema",
+      "Tomar decisiones con una metodología consistente.",
+    ],
+  },
 ];
 
 const academicMap = [
@@ -51,12 +91,12 @@ const academicMap = [
   {
     title: "Documentas tu proceso",
     description:
-      "Registra dudas, observaciones y ejemplos reales que servirán para preparar una mentoría adaptada a tu recorrido.",
+      "Registra observaciones, lecturas y ejemplos reales que servirán para preparar la integración metodológica.",
   },
   {
     title: "Recibes tu mentoría personalizada",
     description:
-      "La sesión se prepara utilizando el recorrido que construiste durante todo el programa para consolidar la metodología.",
+      "La segunda etapa del Método Invictus utiliza tu recorrido para profundizar e integrar la metodología.",
   },
 ];
 
@@ -110,15 +150,16 @@ function Hero() {
     <section className="mx-auto grid w-full max-w-6xl items-center gap-10 px-5 pt-10 pb-14 sm:px-6 sm:pt-14 sm:pb-16 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14 lg:px-8 lg:pt-16 lg:pb-18">
       <div className="max-w-[45rem]">
         <p className="mb-6 text-sm font-semibold tracking-[0.2em] text-[var(--color-cyan)] uppercase">
-          Admisión al programa profesional
+          El problema no es aprender más
         </p>
         <h1 className="max-w-[44rem] text-4xl leading-tight font-semibold text-balance text-white sm:text-5xl lg:text-[3.65rem] lg:leading-[1.05]">
-          Invictus GEX es una formación privada para desarrollar criterio de mercado.
+          Tienes información, pero todavía no sabes cómo conectarla.
         </h1>
         <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--color-text-secondary)]">
-          No compras videos ni una mentoría aislada. Ingresas a un proceso
-          profesional donde estudias, practicas, documentas tu recorrido y
-          llegas a una mentoría preparada para ti.
+          Has estudiado estrategias, indicadores y herramientas. Pero cuando
+          llega el momento de tomar una decisión, cada pieza parece funcionar
+          por separado. El problema no es aprender más, sino integrar lo que ya
+          aprendiste.
         </p>
         <div className="mt-10 flex flex-col gap-4 sm:flex-row">
           <Link
@@ -178,16 +219,17 @@ function PositioningSection() {
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Lo que estás solicitando
+            Aquí comienza Invictus GEX
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            Un lugar serio para ordenar cómo interpretas, practicas y revisas
-            el mercado.
+            Una metodología para interpretar el mercado como un único sistema.
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
-            Invictus GEX no está diseñado como consumo de contenido. Su valor
-            está en una secuencia que transforma información dispersa en
-            criterio, evidencia y preparación individual.
+            Invictus GEX aparece después de ese problema: cuando entiendes que
+            acumular información no basta. Su valor está en transformar piezas
+            dispersas en criterio profesional para interpretar contexto,
+            comprender posicionamiento, leer profundidad, analizar flujo,
+            construir escenarios y decidir con método.
           </p>
         </div>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
@@ -210,6 +252,113 @@ function PositioningSection() {
   );
 }
 
+function LearningCostSection() {
+  return (
+    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+      <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+            Dos formas de avanzar
+          </p>
+          <h2 className="mt-3 text-3xl font-semibold text-white">
+            El mercado no cambia porque aprendas una herramienta más.
+          </h2>
+          <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
+            Muchos operadores continúan acumulando información durante años.
+            Aprenden nuevos indicadores, nuevas estrategias y nuevas técnicas.
+            Sin embargo, el problema permanece: todavía no logran construir una
+            interpretación coherente antes de tomar una decisión.
+          </p>
+        </div>
+        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          {learningPaths.map((path) => (
+            <article
+              className="border-t border-[var(--color-border)] pt-6"
+              key={path.title}
+            >
+              <h3 className="text-xl font-semibold text-white">
+                {path.title}
+              </h3>
+              <div className="mt-6 space-y-4">
+                {path.steps.map((step) => (
+                  <p
+                    className="text-sm leading-6 text-[var(--color-text-secondary)]"
+                    key={step}
+                  >
+                    {step}
+                  </p>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+        <p className="mt-10 max-w-3xl text-lg font-semibold text-white">
+          El objetivo no es saber más. El objetivo es comprender mejor.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function TransformationSection() {
+  return (
+    <section className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
+      <div className="max-w-3xl">
+        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+          Cambio de perspectiva
+        </p>
+        <h2 className="mt-3 text-3xl font-semibold text-white">
+          Lo que cambiará en tu forma de interpretar el mercado
+        </h2>
+      </div>
+      <div className="mt-10 grid gap-5 md:grid-cols-2">
+        {interpretationShifts.map((shift) => (
+          <article
+            className="border-t border-[var(--color-border)] pt-6"
+            key={shift.before}
+          >
+            <p className="text-sm leading-6 text-[var(--color-text-muted)]">
+              Antes
+            </p>
+            <p className="mt-2 text-lg font-semibold text-white">
+              {shift.before}
+            </p>
+            <p className="mt-5 text-sm leading-6 text-[var(--color-text-muted)]">
+              Ahora
+            </p>
+            <p className="mt-2 text-lg font-semibold text-[var(--color-cyan)]">
+              {shift.after}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function IntegrationSection() {
+  return (
+    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+      <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+            Metodología integrada
+          </p>
+          <h2 className="mt-3 text-3xl font-semibold text-white">
+            No aprenderás herramientas por separado.
+          </h2>
+          <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
+            La mayoría de las formaciones enseña herramientas de forma
+            independiente. En Invictus GEX aprenderás a integrarlas dentro de
+            una metodología diseñada para interpretar el mercado antes de tomar
+            una decisión.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function JourneySection() {
   return (
     <section id="recorrido" className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
@@ -219,7 +368,7 @@ function JourneySection() {
             Cómo avanza tu decisión
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            Del primer contacto a una mentoría preparada con tu propio proceso.
+            Del primer contacto a la integración profunda del Método Invictus.
           </h2>
         </div>
         <Link
@@ -260,15 +409,18 @@ function MentorshipSection() {
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            La mentoría comienza antes de reservar
+            Segunda etapa del Método Invictus
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            El mentor estudia tu recorrido antes de sentarse contigo.
+            La mentoría integra lo que el programa desarrolla.
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
-            Durante la formación documentas dudas, ejemplos y observaciones.
-            Esa información permite que la conversación individual responda a
-            tu proceso real, no a un guion generico.
+            La mayoría de operadores aprende herramientas por separado. En
+            Invictus GEX aprenderás a relacionarlas dentro de una única
+            metodología diseñada para construir contexto antes de ejecutar una
+            decisión: Exposición Gamma, Mapa de Liquidez, Order Flow, Big
+            Trades, CVD, Delta, Speed of Tape, VWAP y desviaciones cobran valor
+            cuando se interpretan como partes de un mismo sistema.
           </p>
         </div>
         <div className="grid gap-3">
@@ -292,7 +444,7 @@ function ProgramPreview({ course }: PublicLandingProps) {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Dentro del programa
+            Capacidades que desarrollarás
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
             {course.title}
@@ -312,7 +464,7 @@ function ProgramPreview({ course }: PublicLandingProps) {
             key={academyModule.id}
           >
             <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
-              Módulo {academyModule.number}
+              Etapa {academyModule.number}
             </p>
             <h3 className="mt-3 text-xl font-semibold text-white">
               {academyModule.title}
@@ -324,7 +476,7 @@ function ProgramPreview({ course }: PublicLandingProps) {
               href={`/programa#${academyModule.id}`}
               className="mt-5 inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
             >
-              Revisar etapa
+              Explorar capacidad
             </Link>
           </article>
         ))}
@@ -386,8 +538,9 @@ function FinalCta() {
           Si reconoces este proceso como tu siguiente etapa, comienza tu formación.
         </h2>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          El ingreso marca el inicio de un recorrido privado: formación,
-          práctica, reflexión y una mentoría preparada con tu evidencia.
+          El ingreso marca el inicio de una transformación intelectual:
+          interpretar el mercado con contexto, profundidad y criterio
+          profesional.
         </p>
         <Link
           href={formationCtaHref}
@@ -417,7 +570,10 @@ export function PublicLanding({ course }: PublicLandingProps) {
       <Header />
       <main id="inicio">
         <Hero />
+        <LearningCostSection />
         <PositioningSection />
+        <TransformationSection />
+        <IntegrationSection />
         <JourneySection />
         <MentorshipSection />
         <ProgramPreview course={course} />
