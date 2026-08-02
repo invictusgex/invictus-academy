@@ -1,402 +1,303 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
 
 import {
-  ContinueModuleCard,
-} from "@/components/academy/dashboard/ContinueModuleCard";
-import { StudentModuleCard } from "@/components/academy/dashboard/StudentModuleCard";
-import { StudentProgressSummary } from "@/components/academy/dashboard/StudentProgressSummary";
-import { StudentProgramsOverview } from "@/components/academy/dashboard/StudentProgramsOverview";
-import { StudentScenarioCard } from "@/components/academy/dashboard/StudentScenarioCard";
-import { TradingDaysPanel } from "@/components/academy/dashboard/TradingDaysPanel";
-import {
-  getStudentGreeting,
-  getStudentNameFromEmail,
-} from "@/components/academy/dashboard/student-dashboard-utils";
-import { useModuleThumbnailUrls } from "@/components/academy/dashboard/useModuleThumbnailUrls";
-import { useRecentPublishedScenarios } from "@/components/academy/dashboard/useRecentPublishedScenarios";
-import {
-  academyWorkflowConfig,
-} from "@/config/academy-workflow";
-import {
-  StudentActionCard,
-  StudentContentGrid,
-  StudentEmptyState,
   StudentLoadingSkeleton,
   StudentSection,
-  StudentStatCard,
-  StudentWelcomeHero,
+  StudentStatusBadge,
 } from "@/components/student";
 import { useProgressContext } from "@/contexts/ProgressContext";
-import { useAuth } from "@/hooks/useAuth";
 import type { ActiveEnrollmentProduct } from "@/lib/types/enrollment.types";
 import type { ProgramModuleProgress } from "@/utils/module-progress";
-
-function getHeroCta({
-  continueModule,
-  programStatus,
-}: {
-  continueModule: ProgramModuleProgress | null;
-  programStatus: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
-}) {
-  if (programStatus === "COMPLETED") {
-    return {
-      href: "/academy/programa",
-      label: "Revisar programa",
-    };
-  }
-
-  if (continueModule) {
-    if (continueModule.status === "not-started") {
-      return {
-        href: "/academy/programa",
-        label: "Ver programa",
-      };
-    }
-
-    return {
-      href: `/academy/programa/${continueModule.academyModule.id}`,
-      label: "Continuar formación",
-    };
-  }
-
-  return {
-    href: "/academy/programa",
-    label: "Ver programa",
-  };
-}
-
-function getVisibleModules({
-  continueModule,
-  modules,
-}: {
-  continueModule: ProgramModuleProgress | null;
-  modules: ProgramModuleProgress[];
-}) {
-  if (!continueModule) {
-    return modules.slice(0, 4);
-  }
-
-  const startIndex = Math.max(
-    modules.findIndex(
-      (moduleSummary) =>
-        moduleSummary.academyModule.id === continueModule.academyModule.id,
-    ),
-    0,
-  );
-
-  return modules.slice(startIndex, startIndex + 4);
-}
 
 type StudentDashboardProps = {
   activeProducts: ActiveEnrollmentProduct[];
   session101Unlocked: boolean;
 };
 
+type PrimaryAction = {
+  href: string;
+  label: string;
+  note: string;
+};
+
+function getStageLabel(moduleProgress: ProgramModuleProgress | null) {
+  if (!moduleProgress) {
+    return "Recorrido completo";
+  }
+
+  return `Etapa ${moduleProgress.academyModule.number}: ${moduleProgress.academyModule.title}`;
+}
+
+function getPrimaryAction({
+  currentModule,
+  programStatus,
+  session101Unlocked,
+}: {
+  currentModule: ProgramModuleProgress | null;
+  programStatus: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+  session101Unlocked: boolean;
+}): PrimaryAction {
+  if (session101Unlocked) {
+    return {
+      href: "/academy/mentoria",
+      label: "Reservar mentoria",
+      note: "Tu recorrido ya permite avanzar hacia la etapa individual.",
+    };
+  }
+
+  if (programStatus === "COMPLETED") {
+    return {
+      href: "/academy/mentoria",
+      label: "Ver preparacion de mentoria",
+      note: "Revisa como tu recorrido esta preparando la conversacion individual.",
+    };
+  }
+
+  if (currentModule) {
+    return {
+      href: currentModule.href,
+      label: "Continuar formacion",
+      note: "Retoma la etapa que corresponde dentro de tu recorrido.",
+    };
+  }
+
+  return {
+    href: "/academy/programa",
+    label: "Comenzar formacion",
+    note: "Ingresa al programa y avanza desde la primera etapa disponible.",
+  };
+}
+
+function FormationStatus({
+  completedModules,
+  currentModule,
+  nextModule,
+  totalModules,
+}: {
+  completedModules: number;
+  currentModule: ProgramModuleProgress | null;
+  nextModule: ProgramModuleProgress | null;
+  totalModules: number;
+}) {
+  return (
+    <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="min-w-0">
+        <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+          Etapa actual
+        </p>
+        <h3 className="mt-4 text-3xl leading-tight font-semibold text-white">
+          {getStageLabel(currentModule)}
+        </h3>
+        <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
+          Este es el punto exacto desde el que continua tu formacion. La
+          secuencia mantiene el orden para que cada avance tenga contexto.
+        </p>
+      </div>
+
+      <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        <div className="border-t border-[var(--color-border)] pt-4">
+          <dt className="text-sm text-[var(--color-text-secondary)]">
+            Etapas completadas
+          </dt>
+          <dd className="mt-2 text-2xl font-semibold text-white">
+            {completedModules} de {totalModules}
+          </dd>
+        </div>
+        <div className="border-t border-[var(--color-border)] pt-4">
+          <dt className="text-sm text-[var(--color-text-secondary)]">
+            Siguiente etapa
+          </dt>
+          <dd className="mt-2 text-lg font-semibold text-white">
+            {nextModule
+              ? `Etapa ${nextModule.academyModule.number}`
+              : "Mentoria individual"}
+          </dd>
+          <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+            {nextModule?.academyModule.title ??
+              "La preparacion se concentra en tu recorrido documentado."}
+          </p>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
+function MentorshipPreparation({
+  session101Unlocked,
+}: {
+  session101Unlocked: boolean;
+}) {
+  const requirementsLabel = session101Unlocked
+    ? "Requisitos completados"
+    : "Requisitos en preparacion";
+
+  return (
+    <div className="grid gap-4 md:grid-cols-3">
+      <div className="border-t border-[var(--color-border)] pt-5">
+        <h3 className="text-lg font-semibold text-white">
+          Reflexiones documentadas
+        </h3>
+        <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
+          Tus observaciones ayudan a identificar dudas, patrones y puntos de
+          revision para la etapa individual.
+        </p>
+      </div>
+      <div className="border-t border-[var(--color-border)] pt-5">
+        <h3 className="text-lg font-semibold text-white">
+          Practica registrada
+        </h3>
+        <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
+          La practica convierte el estudio en evidencia concreta para revisar
+          como aplicas la metodologia.
+        </p>
+      </div>
+      <div className="border-t border-[var(--color-border)] pt-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:flex-col md:items-start">
+          <h3 className="text-lg font-semibold text-white">
+            Requisitos completados
+          </h3>
+          <StudentStatusBadge tone={session101Unlocked ? "complete" : "warning"}>
+            {requirementsLabel}
+          </StudentStatusBadge>
+        </div>
+        <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
+          La plataforma consolida tu avance para que la mentoria no empiece en
+          blanco.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function FormationRecord() {
+  const items = [
+    {
+      label: "Reflexiones",
+      text: "Dudas y observaciones que dan contexto a tu aprendizaje.",
+    },
+    {
+      label: "Ejemplos compartidos",
+      text: "Capturas y casos reales que permiten revisar tu lectura.",
+    },
+    {
+      label: "Practica",
+      text: "Dias aplicando la metodologia antes de la etapa individual.",
+    },
+    {
+      label: "Mentoria",
+      text: "Preparacion, reserva y cierre personalizado del proceso.",
+    },
+  ];
+
+  return (
+    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      {items.map((item) => (
+        <div className="border-t border-[var(--color-border)] pt-5" key={item.label}>
+          <h3 className="text-lg font-semibold text-white">{item.label}</h3>
+          <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
+            {item.text}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function StudentDashboard({
   activeProducts,
   session101Unlocked,
 }: StudentDashboardProps) {
-  const { user } = useAuth();
   const {
     loading: progressLoading,
     progress,
   } = useProgressContext();
-  const [greeting, setGreeting] = useState("Bienvenido");
-  const {
-    error: scenarioError,
-    loading: scenariosLoading,
-    scenarios: recentScenarios,
-  } = useRecentPublishedScenarios(3);
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setGreeting(getStudentGreeting());
-    }, 0);
-
-    return () => window.clearTimeout(timeoutId);
-  }, []);
-
-  const completedModules = progress.completedModules;
-  const totalModules = progress.totalModules;
-  const continueModule = progress.currentModule;
-  const visibleModules = useMemo(
-    () =>
-      getVisibleModules({
-        continueModule,
-        modules: progress.modules,
-      }),
-    [continueModule, progress.modules],
-  );
-  const visibleModuleThumbnailInputs = useMemo(
-    () =>
-      visibleModules
-        .map((moduleSummary) => ({
-          id: moduleSummary.academyModule.id,
-          thumbnailUrl: moduleSummary.academyModule.thumbnailUrl ?? null,
-        }))
-        .filter(({ thumbnailUrl }) => thumbnailUrl),
-    [visibleModules],
-  );
-
-  const moduleThumbnailUrls = useModuleThumbnailUrls(
-    visibleModuleThumbnailInputs,
-  );
-  const displayVisibleModules = useMemo(
-    () =>
-      visibleModules.map((moduleSummary) => ({
-        ...moduleSummary,
-        academyModule: {
-          ...moduleSummary.academyModule,
-          thumbnailUrl: moduleThumbnailUrls[moduleSummary.academyModule.id] ?? null,
-        },
-      })),
-    [moduleThumbnailUrls, visibleModules],
-  );
-  const displayContinueModule =
-    displayVisibleModules.find(
-      (moduleSummary) =>
-        moduleSummary.academyModule.id === continueModule?.academyModule.id,
-    ) ?? null;
-  const heroCta = getHeroCta({
-    continueModule,
+  const primaryProduct = activeProducts[0];
+  const primaryAction = getPrimaryAction({
+    currentModule: progress.currentModule,
     programStatus: progress.status,
+    session101Unlocked,
   });
-  const studentName = getStudentNameFromEmail(user?.email);
 
   return (
-    <div className="space-y-6">
-      <StudentWelcomeHero
-        badge={progress.statusLabel}
-        ctaHref={heroCta.href}
-        ctaLabel={heroCta.label}
-        description="La disciplina construye consistencia. La consistencia construye resultados."
-        greeting={greeting}
-        name={studentName}
-      />
-
-      <StudentProgramsOverview
-        academyProgress={
-          progressLoading
-            ? undefined
-            : {
-                completedModules,
-                percentage: progress.percentage,
-                statusLabel: progress.statusLabel,
-                totalModules,
-              }
-        }
-        activeProducts={activeProducts}
-      />
-
-      <StudentSection
-        description="Retoma el módulo que corresponde según tu progreso actual."
-        title="Continuar formación"
-      >
-        {progressLoading ? (
-          <StudentLoadingSkeleton columns={2} rows={1} />
-        ) : displayContinueModule ? (
-          <ContinueModuleCard
-            academyModule={displayContinueModule.academyModule}
-            ctaLabel={
-              displayContinueModule.status === "not-started"
-                ? "Comenzar módulo"
-                : "Continuar módulo"
-            }
-            status={displayContinueModule.status}
-            statusLabel={displayContinueModule.statusLabel}
-          />
-        ) : totalModules > 0 ? (
-          <StudentEmptyState
-            actionHref="/academy/programa"
-            actionLabel="Revisar programa"
-            title="Programa completado"
-          >
-            Completaste los módulos disponibles. Puedes volver al programa para
-            repasar tu proceso cuando lo necesites.
-          </StudentEmptyState>
-        ) : (
-          <StudentEmptyState title="Tu formación aún no tiene módulos disponibles">
-            Los módulos publicados aparecerán aquí cuando estén listos.
-          </StudentEmptyState>
-        )}
-      </StudentSection>
-
-      <StudentSection
-        description="Una lectura clara de tu posición actual dentro del programa."
-        title="Resumen del programa"
-      >
-        {progressLoading ? (
-          <StudentLoadingSkeleton columns={3} rows={3} />
-        ) : (
-          <div className="space-y-4">
-            <StudentProgressSummary
-              completedModules={completedModules}
-              percentage={progress.percentage}
-              statusLabel={progress.statusLabel}
-              totalModules={totalModules}
-            />
-            <StudentContentGrid columns={3}>
-              <StudentStatCard
-                caption={`${totalModules} módulos disponibles`}
-                label="Módulos completados"
-                value={`${completedModules}/${totalModules}`}
-              />
-              {!scenarioError ? (
-                <StudentStatCard
-                  caption="Escenarios publicados visibles para tu cuenta"
-                  label="Escenarios recientes"
-                  value={
-                    scenariosLoading ? "..." : String(recentScenarios.length)
-                  }
-                />
-              ) : null}
-            </StudentContentGrid>
+    <div className="space-y-8">
+      <section className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8 lg:p-12">
+        <p className="text-sm font-semibold tracking-[0.2em] text-[var(--color-cyan)] uppercase">
+          Programa de Formacion Profesional
+        </p>
+        <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_18rem] lg:items-end">
+          <div>
+            <h1 className="max-w-3xl text-4xl leading-tight font-semibold text-white sm:text-5xl">
+              Centro de Formacion
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
+              Continua tu recorrido dentro de Invictus GEX con orden, evidencia
+              y preparacion para la etapa individual.
+            </p>
           </div>
-        )}
-      </StudentSection>
+          <div className="border-t border-[var(--color-border)] pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              Programa activo
+            </p>
+            <p className="mt-2 text-lg font-semibold text-white">
+              {primaryProduct?.productTitle ?? "Invictus GEX"}
+            </p>
+          </div>
+        </div>
+      </section>
 
       <StudentSection
-        description="Registra fechas reales de practica para avanzar hacia la siguiente etapa academica."
-        title="Dias de trading"
-      >
-        <TradingDaysPanel />
-      </StudentSection>
-
-      <StudentSection
-        description="La siguiente etapa se habilita automaticamente cuando el workflow academico queda completo."
-        title="Sesion 101"
-      >
-        <StudentActionCard
-          badge={
-            session101Unlocked
-              ? academyWorkflowConfig.session101.unlocked.statusLabel
-              : academyWorkflowConfig.session101.blocked.statusLabel
-          }
-          ctaHref="/academy/sesion-101"
-          ctaLabel={
-            session101Unlocked
-              ? academyWorkflowConfig.session101.unlocked.ctaLabel
-              : academyWorkflowConfig.session101.blocked.ctaLabel
-          }
-          title={
-            session101Unlocked
-              ? academyWorkflowConfig.session101.unlocked.dashboardTitle
-              : academyWorkflowConfig.session101.blocked.dashboardTitle
-          }
-        >
-          {session101Unlocked
-            ? academyWorkflowConfig.session101.unlocked.dashboardDescription
-            : academyWorkflowConfig.session101.blocked.dashboardDescription}
-        </StudentActionCard>
-      </StudentSection>
-
-      <StudentSection
-        description="Consulta como tu avance se convierte en contexto para la etapa individual."
-        title="Preparación de mentoría"
-      >
-        <StudentActionCard
-          badge="En proceso"
-          ctaHref="/academy/mentoria"
-          ctaLabel="Ver mi preparación"
-          title="Preparación de mentoría"
-        >
-          Consulta cómo tu progreso, reflexiones y práctica están preparando tu
-          sesión individual.
-        </StudentActionCard>
-      </StudentSection>
-
-      <StudentSection
-        actions={
-          <Link
-            className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-            href="/academy/programa"
-          >
-            Ver programa completo
-          </Link>
-        }
-        description="Vista compacta de los módulos disponibles en orden académico."
-        title="Programa"
+        description="Una lectura simple de tu posicion actual dentro del recorrido."
+        title="Estado de Formacion"
       >
         {progressLoading ? (
-          <StudentLoadingSkeleton columns={4} rows={4} />
-        ) : displayVisibleModules.length > 0 ? (
-          <StudentContentGrid columns={4}>
-            {displayVisibleModules.map((moduleSummary) => (
-              <StudentModuleCard
-                academyModule={moduleSummary.academyModule}
-                key={moduleSummary.academyModule.id}
-                status={moduleSummary.status}
-                statusLabel={moduleSummary.statusLabel}
-              />
-            ))}
-          </StudentContentGrid>
+          <StudentLoadingSkeleton columns={2} rows={2} />
         ) : (
-          <StudentEmptyState title="No hay módulos disponibles">
-            Tu formación está lista para comenzar cuando existan módulos
-            publicados para tu acceso.
-          </StudentEmptyState>
+          <FormationStatus
+            completedModules={progress.completedModules}
+            currentModule={progress.currentModule}
+            nextModule={progress.nextModule}
+            totalModules={progress.totalModules}
+          />
         )}
       </StudentSection>
 
       <StudentSection
-        actions={
+        description="Cada evidencia que documentas ayuda a preparar una conversacion individual mas precisa."
+        title="Preparacion de Mentoria"
+      >
+        <MentorshipPreparation session101Unlocked={session101Unlocked} />
+      </StudentSection>
+
+      <StudentSection
+        description="El expediente ordena las piezas que forman tu recorrido profesional."
+        title="Expediente de Formacion"
+      >
+        <FormationRecord />
+      </StudentSection>
+
+      <section className="rounded-2xl border border-[var(--color-cyan)] bg-[var(--color-panel-bg)] p-6 sm:p-8 lg:p-10">
+        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div>
+            <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+              Proxima accion
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold text-white">
+              {primaryAction.label}
+            </h2>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
+              {primaryAction.note}
+            </p>
+          </div>
           <Link
-            className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-            href="/academy/escenarios"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
+            href={primaryAction.href}
           >
-            Ver Biblioteca de Escenarios
+            {primaryAction.label}
           </Link>
-        }
-        description="Casos publicados para estudiar contexto, estructura y ejecución."
-        title="Escenarios recientes"
-      >
-        {scenariosLoading ? (
-          <StudentLoadingSkeleton columns={3} rows={3} />
-        ) : scenarioError ? (
-          <StudentEmptyState title="No se pudieron cargar los escenarios">
-            El resto del dashboard sigue disponible. Intenta volver a la
-            biblioteca más tarde.
-          </StudentEmptyState>
-        ) : recentScenarios.length > 0 ? (
-          <StudentContentGrid columns={3}>
-            {recentScenarios.map((scenario) => (
-              <StudentScenarioCard key={scenario.id} scenario={scenario} />
-            ))}
-          </StudentContentGrid>
-        ) : (
-          <StudentEmptyState title="Todavía no hay escenarios publicados">
-            Los nuevos casos de estudio aparecerán aquí cuando estén
-            disponibles.
-          </StudentEmptyState>
-        )}
-      </StudentSection>
-
-      <StudentSection
-        description="Accesos directos a las áreas activas del espacio privado."
-        title="Accesos rápidos"
-      >
-        <StudentContentGrid columns={2}>
-          <StudentActionCard
-            badge="Programa"
-            ctaHref="/academy/programa"
-            ctaLabel="Ir al programa"
-            title="Mi programa"
-          >
-            Revisa módulos, objetivos y recursos del programa principal.
-          </StudentActionCard>
-          <StudentActionCard
-            badge="Escenarios"
-            ctaHref="/academy/escenarios"
-            ctaLabel="Abrir biblioteca"
-            title="Biblioteca de Escenarios"
-          >
-            Consulta analisis y casos de estudio publicados para alumnos.
-          </StudentActionCard>
-        </StudentContentGrid>
-      </StudentSection>
+        </div>
+      </section>
     </div>
   );
 }
