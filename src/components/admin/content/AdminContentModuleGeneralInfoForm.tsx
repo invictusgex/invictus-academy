@@ -108,7 +108,7 @@ export function AdminContentModuleGeneralInfoForm({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Informacion general
+            Información general
           </p>
           <h2 className="mt-3 text-2xl font-semibold text-white">
             Editar modulo
@@ -271,7 +271,7 @@ export function AdminContentModuleGeneralInfoForm({
           disabled={isSaving}
           helpText="JPG, PNG o WebP. La ruta interna se guardara al guardar el formulario."
           kind="module_thumbnail"
-          label="Miniatura del modulo"
+          label="Miniatura del módulo"
           onChange={(thumbnailUrl) =>
             setFormData((current) => ({
               ...current,

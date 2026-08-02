@@ -42,7 +42,7 @@ function getPrimaryAction({
   if (session101Unlocked) {
     return {
       href: "/academy/mentoria",
-      label: "Reservar mentoria",
+      label: "Reservar mentoría",
       note: "Tu recorrido ya permite avanzar hacia la etapa individual.",
     };
   }
@@ -50,22 +50,22 @@ function getPrimaryAction({
   if (programStatus === "COMPLETED") {
     return {
       href: "/academy/mentoria",
-      label: "Ver preparacion de mentoria",
-      note: "Revisa como tu recorrido esta preparando la conversacion individual.",
+      label: "Ver preparación de mentoría",
+      note: "Revisa cómo tu recorrido está preparando la conversación individual.",
     };
   }
 
   if (currentModule) {
     return {
       href: currentModule.href,
-      label: "Continuar formacion",
+      label: "Continuar formación",
       note: "Retoma la etapa que corresponde dentro de tu recorrido.",
     };
   }
 
   return {
     href: "/academy/programa",
-    label: "Comenzar formacion",
+    label: "Comenzar formación",
     note: "Ingresa al programa y avanza desde la primera etapa disponible.",
   };
 }
@@ -91,7 +91,7 @@ function FormationStatus({
           {getStageLabel(currentModule)}
         </h3>
         <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Este es el punto exacto desde el que continua tu formacion. La
+          Este es el punto exacto desde el que continúa tu formación. La
           secuencia mantiene el orden para que cada avance tenga contexto.
         </p>
       </div>
@@ -112,11 +112,11 @@ function FormationStatus({
           <dd className="mt-2 text-lg font-semibold text-white">
             {nextModule
               ? `Etapa ${nextModule.academyModule.number}`
-              : "Mentoria individual"}
+              : "Mentoría individual"}
           </dd>
           <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
             {nextModule?.academyModule.title ??
-              "La preparacion se concentra en tu recorrido documentado."}
+              "La preparación se concentra en tu recorrido documentado."}
           </p>
         </div>
       </dl>
@@ -131,17 +131,17 @@ function MentorshipPreparation({
 }) {
   const requirementsLabel = session101Unlocked
     ? "Requisitos completados"
-    : "Requisitos en preparacion";
+    : "Requisitos en preparación";
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
       <div className="border-t border-[var(--color-border)] pt-5">
         <h3 className="text-lg font-semibold text-white">
-          Reflexiones documentadas
+          Reflexiónes documentadas
         </h3>
         <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
           Tus observaciones ayudan a identificar dudas, patrones y puntos de
-          revision para la etapa individual.
+          revisión para la etapa individual.
         </p>
       </div>
       <div className="border-t border-[var(--color-border)] pt-5">
@@ -149,8 +149,8 @@ function MentorshipPreparation({
           Practica registrada
         </h3>
         <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-          La practica convierte el estudio en evidencia concreta para revisar
-          como aplicas la metodologia.
+          La práctica convierte el estudio en evidencia concreta para revisar
+          cómo aplicas la metodología.
         </p>
       </div>
       <div className="border-t border-[var(--color-border)] pt-5">
@@ -163,7 +163,7 @@ function MentorshipPreparation({
           </StudentStatusBadge>
         </div>
         <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-          La plataforma consolida tu avance para que la mentoria no empiece en
+          La plataforma consolida tu avance para que la mentoría no empiece en
           blanco.
         </p>
       </div>
@@ -174,7 +174,7 @@ function MentorshipPreparation({
 function FormationRecord() {
   const items = [
     {
-      label: "Reflexiones",
+      label: "Reflexiónes",
       text: "Dudas y observaciones que dan contexto a tu aprendizaje.",
     },
     {
@@ -182,12 +182,12 @@ function FormationRecord() {
       text: "Capturas y casos reales que permiten revisar tu lectura.",
     },
     {
-      label: "Practica",
-      text: "Dias aplicando la metodologia antes de la etapa individual.",
+      label: "Práctica",
+      text: "Días aplicando la metodología antes de la etapa individual.",
     },
     {
-      label: "Mentoria",
-      text: "Preparacion, reserva y cierre personalizado del proceso.",
+      label: "Mentoría",
+      text: "Preparación, reserva y cierre personalizado del proceso.",
     },
   ];
 
@@ -233,7 +233,7 @@ export function StudentDashboard({
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
               Continua tu recorrido dentro de Invictus GEX con orden, evidencia
-              y preparacion para la etapa individual.
+              y preparación para la etapa individual.
             </p>
           </div>
           <div className="border-t border-[var(--color-border)] pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
@@ -248,8 +248,8 @@ export function StudentDashboard({
       </section>
 
       <StudentSection
-        description="Una lectura simple de tu posicion actual dentro del recorrido."
-        title="Estado de Formacion"
+        description="Una lectura simple de tu posición actual dentro del recorrido."
+        title="Estado de Formación"
       >
         {progressLoading ? (
           <StudentLoadingSkeleton columns={2} rows={2} />
@@ -264,15 +264,15 @@ export function StudentDashboard({
       </StudentSection>
 
       <StudentSection
-        description="Cada evidencia que documentas ayuda a preparar una conversacion individual mas precisa."
-        title="Preparacion de Mentoria"
+        description="Cada evidencia que documentas ayuda a preparar una conversación individual más precisa."
+        title="Preparación de Mentoría"
       >
         <MentorshipPreparation session101Unlocked={session101Unlocked} />
       </StudentSection>
 
       <StudentSection
         description="El expediente ordena las piezas que forman tu recorrido profesional."
-        title="Expediente de Formacion"
+        title="Expediente de Formación"
       >
         <FormationRecord />
       </StudentSection>
@@ -281,7 +281,7 @@ export function StudentDashboard({
         <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-              Proxima accion
+              Próxima acción
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-white">
               {primaryAction.label}

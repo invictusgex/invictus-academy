@@ -42,13 +42,13 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
 
       if (!response.ok || payload.error) {
         setErrorMessage(
-          payload.error ?? "No pudimos actualizar tu contrasena.",
+          payload.error ?? "No pudimos actualizar tu contraseña.",
         );
         return;
       }
 
       setSuccessMessage(
-        payload.message ?? "Tu contrasena fue actualizada correctamente.",
+        payload.message ?? "Tu contraseña fue actualizada correctamente.",
       );
       setPassword("");
       setPasswordConfirmation("");
@@ -69,7 +69,7 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
     >
       <div>
         <label className="text-sm font-medium text-white" htmlFor="password">
-          Nueva contrasena
+          Nueva contraseña
         </label>
         <input
           autoComplete="new-password"
@@ -90,7 +90,7 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
           className="text-sm font-medium text-white"
           htmlFor="passwordConfirmation"
         >
-          Confirmar nueva contrasena
+          Confirmar nueva contraseña
         </label>
         <input
           autoComplete="new-password"
@@ -99,7 +99,7 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
           minLength={8}
           name="passwordConfirmation"
           onChange={(event) => setPasswordConfirmation(event.target.value)}
-          placeholder="Repite tu nueva contrasena"
+          placeholder="Repite tu nueva contraseña"
           required
           type="password"
           value={passwordConfirmation}
@@ -123,7 +123,7 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
         disabled={submitting}
         type="submit"
       >
-        {submitting ? "Actualizando..." : "Actualizar contrasena"}
+        {submitting ? "Actualizando..." : "Actualizar contraseña"}
       </button>
 
       <p className="mt-5 text-center text-sm text-[var(--color-text-secondary)]">
@@ -132,7 +132,7 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
           className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
           href={`/login?next=${encodeURIComponent(nextPath)}`}
         >
-          iniciar sesion
+          iniciar sesión
         </Link>
         .
       </p>

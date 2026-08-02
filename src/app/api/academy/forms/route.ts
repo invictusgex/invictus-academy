@@ -105,14 +105,14 @@ function mapAuthError(error: ServerAuthError) {
   if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
     return new FormServiceError(
       FORM_ERROR_CODES.ACTIVE_ENROLLMENT_REQUIRED,
-      "Debes iniciar sesion para responder formularios.",
+      "Debes iniciar sesión para responder formularios.",
       401,
     );
   }
 
   return new FormServiceError(
     FORM_ERROR_CODES.INVALID_FORM_PAYLOAD,
-    "No pudimos validar tu sesion para responder el formulario.",
+    "No pudimos validar tu sesión para responder el formulario.",
     500,
   );
 }

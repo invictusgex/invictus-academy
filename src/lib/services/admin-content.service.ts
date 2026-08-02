@@ -247,7 +247,7 @@ export function validateAdminContentModuleInput(
   if (normalized.description.length > descriptionMaxLength) {
     errors.push({
       field: "description",
-      message: `La descripcion no puede superar ${descriptionMaxLength} caracteres.`,
+      message: `La descripción no puede superar ${descriptionMaxLength} caracteres.`,
     });
   }
 
@@ -279,7 +279,7 @@ export function validateAdminContentModuleInput(
   if (!isValidStatus(normalized.status)) {
     errors.push({
       field: "status",
-      message: "El estado seleccionado no es valido.",
+      message: "El estado seleccionado no es válido.",
     });
   }
 
@@ -305,7 +305,7 @@ export function validateAdminContentModuleInput(
   if (normalized.learningObjectives.length > maxObjectiveCount) {
     errors.push({
       field: "learningObjectives",
-      message: `No se pueden registrar mas de ${maxObjectiveCount} objetivos.`,
+      message: `No se pueden registrar más de ${maxObjectiveCount} objetivos.`,
     });
   }
 
@@ -416,7 +416,7 @@ function validateAdminContentVideoInput(
   if (!isValidVideoProvider(normalized.provider)) {
     errors.push({
       field: "provider",
-      message: "El proveedor seleccionado no es valido.",
+      message: "El proveedor seleccionado no es válido.",
     });
   }
 
@@ -459,7 +459,7 @@ function validateAdminContentVideoInput(
   if (options.requirePosition && normalized.position === null) {
     errors.push({
       field: "position",
-      message: "La posicion es obligatoria.",
+      message: "La posición es obligatoria.",
     });
   }
 
@@ -469,14 +469,14 @@ function validateAdminContentVideoInput(
   ) {
     errors.push({
       field: "position",
-      message: "La posicion debe ser un entero mayor que cero.",
+      message: "La posición debe ser un entero mayor que cero.",
     });
   }
 
   if (!isValidStatus(normalized.status)) {
     errors.push({
       field: "status",
-      message: "El estado seleccionado no es valido.",
+      message: "El estado seleccionado no es válido.",
     });
   }
 
@@ -536,26 +536,26 @@ function validateAdminContentResourceInput(
   if (normalized.description.length > resourceDescriptionMaxLength) {
     errors.push({
       field: "description",
-      message: `La descripcion no puede superar ${resourceDescriptionMaxLength} caracteres.`,
+      message: `La descripción no puede superar ${resourceDescriptionMaxLength} caracteres.`,
     });
   } else if (hasUnsafeMarkupCharacters(normalized.description)) {
     errors.push({
       field: "description",
-      message: "La descripcion contiene caracteres no permitidos.",
+      message: "La descripción contiene caracteres no permitidos.",
     });
   }
 
   if (!isValidResourceType(normalized.resourceType)) {
     errors.push({
       field: "resourceType",
-      message: "El tipo de recurso seleccionado no es valido.",
+      message: "El tipo de recurso seleccionado no es válido.",
     });
   }
 
   if (options.requirePosition && normalized.position === null) {
     errors.push({
       field: "position",
-      message: "La posicion es obligatoria.",
+      message: "La posición es obligatoria.",
     });
   }
 
@@ -565,14 +565,14 @@ function validateAdminContentResourceInput(
   ) {
     errors.push({
       field: "position",
-      message: "La posicion debe ser un entero mayor que cero.",
+      message: "La posición debe ser un entero mayor que cero.",
     });
   }
 
   if (!isValidStatus(normalized.status)) {
     errors.push({
       field: "status",
-      message: "El estado seleccionado no es valido.",
+      message: "El estado seleccionado no es válido.",
     });
   }
 
@@ -803,7 +803,7 @@ export const AdminContentService = {
           errors: [
             {
               field: "general",
-              message: "No fue posible encontrar el modulo solicitado.",
+              message: "No fue posible encontrar el módulo solicitado.",
             },
           ],
           ok: false,
@@ -872,7 +872,7 @@ export const AdminContentService = {
           errors: [
             {
               field: "general",
-              message: "No fue posible encontrar el modulo solicitado.",
+              message: "No fue posible encontrar el módulo solicitado.",
             },
           ],
           ok: false,
@@ -1040,7 +1040,7 @@ export const AdminContentService = {
           errors: [
             {
               field: "general",
-              message: "No fue posible cambiar la posicion del video.",
+              message: "No fue posible cambiar la posición del video.",
             },
           ],
           ok: false,
@@ -1068,7 +1068,7 @@ export const AdminContentService = {
         errors: [
           {
             field: "general",
-            message: "No fue posible cambiar la posicion del video.",
+            message: "No fue posible cambiar la posición del video.",
           },
         ],
         ok: false,
@@ -1105,7 +1105,7 @@ export const AdminContentService = {
             {
               field: "general",
               message:
-                "No se puede eliminar el unico video de un modulo publicado.",
+                "No se puede eliminar el ?nico video de un módulo publicado.",
             },
           ],
           ok: false,
@@ -1169,7 +1169,7 @@ export const AdminContentService = {
           errors: [
             {
               field: "general",
-              message: "No fue posible encontrar el modulo solicitado.",
+              message: "No fue posible encontrar el módulo solicitado.",
             },
           ],
           ok: false,
@@ -1345,7 +1345,7 @@ export const AdminContentService = {
           errors: [
             {
               field: "general",
-              message: "No fue posible cambiar la posicion del recurso.",
+              message: "No fue posible cambiar la posición del recurso.",
             },
           ],
           ok: false,
@@ -1373,7 +1373,7 @@ export const AdminContentService = {
         errors: [
           {
             field: "general",
-            message: "No fue posible cambiar la posicion del recurso.",
+            message: "No fue posible cambiar la posición del recurso.",
           },
         ],
         ok: false,

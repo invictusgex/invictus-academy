@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     payload = await request.json();
   } catch {
     return NextResponse.json(
-      { error: "La solicitud no contiene JSON valido." },
+      { error: "La solicitud no contiene JSON válido." },
       { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
   if (!isValidEmail(email)) {
     return NextResponse.json(
-      { error: "Ingresa un email valido." },
+      { error: "Ingresa un email válido." },
       { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }

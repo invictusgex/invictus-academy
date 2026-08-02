@@ -21,7 +21,7 @@ export function getStudentGreeting(date = new Date()) {
   const hour = date.getHours();
 
   if (hour >= 5 && hour < 12) {
-    return "Buenos dias";
+    return "Buenos días";
   }
 
   if (hour >= 12 && hour < 19) {

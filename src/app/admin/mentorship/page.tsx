@@ -395,7 +395,7 @@ function PrivateNotesForm({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <h4 className="text-base font-semibold text-white">
-            Preparacion y cierre de mentoria
+            Preparación y cierre de mentoría
           </h4>
           <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
             Estas notas son internas y no son visibles para el participante.
@@ -423,7 +423,7 @@ function PrivateNotesForm({
               Proximos pasos
             </p>
             <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
-              {note?.nextSteps ?? "Sin proximos pasos documentados."}
+              {note?.nextSteps ?? "Sin próximos pasos documentados."}
             </p>
           </div>
         </div>
@@ -432,7 +432,7 @@ function PrivateNotesForm({
       <form action={savePrivateNoteAction} className="mt-5 grid gap-4">
         <input name="bookingId" type="hidden" value={booking.id} />
         <label className="grid gap-2 text-sm font-semibold text-white">
-          Preparacion de la sesion
+          Preparación de la sesión
           <textarea
             className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
             defaultValue={note?.preparationNotes ?? ""}
@@ -495,8 +495,8 @@ function ParticipantOutcomeForm({
           Cierre visible para el participante
         </h4>
         <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-          Este contenido si sera visible para el participante cuando lo
-          compartas. No se copia automaticamente desde las notas privadas.
+          Este contenido sí será visible para el participante cuando lo
+          compartas. No se copia automáticamente desde las notas privadas.
         </p>
         {outcome?.sharedAt ? (
           <p className="mt-2 text-sm text-[var(--color-cyan)]">
@@ -508,7 +508,7 @@ function ParticipantOutcomeForm({
       <form action={shareParticipantOutcomeAction} className="mt-5 grid gap-4">
         <input name="bookingId" type="hidden" value={booking.id} />
         <label className="grid gap-2 text-sm font-semibold text-white">
-          Resumen de la sesion
+          Resumen de la sesión
           <textarea
             className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
             defaultValue={outcome?.summary ?? ""}

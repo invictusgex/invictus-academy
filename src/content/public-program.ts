@@ -14,195 +14,195 @@ export const publicProgramModules: PublicProgramModule[] = [
   {
     id: "modulo-1",
     number: 1,
-    title: "Criterio antes de interpretacion",
+    title: "Criterio antes de interpretación",
     subtitle:
       "Establece una forma profesional de observar el mercado antes de evaluar decisiones.",
     description:
-      "El primer modulo ordena la base mental del participante: contexto, evidencia, disciplina y diferencia entre opinion y analisis. La intencion es dejar de perseguir movimientos aislados y comenzar a diagnosticar condiciones.",
+      "El primer módulo ordena la base mental del participante: contexto, evidencia, disciplina y diferencia entre opinión y análisis. La intención es dejar de perseguir movimientos aislados y comenzar a diagnosticar condiciones.",
     competencies: [
-      "Distinguir analisis estructurado de interpretacion impulsiva.",
-      "Comprender por que el contexto precede a la decision.",
+      "Distinguir análisis estructurado de interpretación impulsiva.",
+      "Comprender por qué el contexto precede a la decisión.",
       "Reconocer los limites de una lectura aislada.",
       "Adoptar una mentalidad orientada al proceso.",
     ],
     result:
-      "Comenzaras a observar el mercado como un entorno que debe diagnosticarse con metodo.",
+      "Comenzarás a observar el mercado como un entorno que debe diagnosticarse con método.",
     transition:
       "Con esa base, el siguiente paso es comprender las fuerzas que condicionan el movimiento visible.",
   },
   {
     id: "modulo-2",
     number: 2,
-    title: "Mecanicas reales del mercado",
+    title: "Mecánicas reales del mercado",
     subtitle:
       "Comprende las relaciones entre instrumentos, liquidez y participantes institucionales.",
     description:
-      "Este modulo introduce la estructura que conecta indices, futuros, ETFs, opciones, liquidez y cobertura. El participante aprende a leer el mercado como un ecosistema interconectado, no como una serie de instrumentos separados.",
+      "Este módulo introduce la estructura que conecta índices, futuros, ETFs, opciones, liquidez y cobertura. El participante aprende a leer el mercado como un ecosistema interconectado, no como una serie de instrumentos separados.",
     competencies: [
-      "Comprender la relacion entre instrumentos principales.",
+      "Comprender la relación entre instrumentos principales.",
       "Interpretar el papel de los market makers.",
-      "Diferenciar intencion direccional de cobertura.",
-      "Reconocer como la liquidez condiciona el movimiento.",
+      "Diferenciar intención direccional de cobertura.",
+      "Reconocer cómo la liquidez condiciona el movimiento.",
     ],
     result:
-      "Podras ubicar cada dato dentro de una estructura mayor antes de construir una hipotesis.",
+      "Podrás ubicar cada dato dentro de una estructura mayor antes de construir una hipótesis.",
     transition:
-      "Una vez comprendidas las mecanicas, necesitas reconocer por que el comportamiento cambia segun el entorno.",
+      "Una vez comprendidas las mecánicas, necesitas reconocer por qué el comportamiento cambia según el entorno.",
   },
   {
     id: "modulo-3",
     number: 3,
-    title: "Gamma, convexidad y regimenes",
+    title: "Gamma, convexidad y regímenes",
     subtitle:
-      "Aprende a identificar condiciones de estabilizacion, expansion y transicion.",
+      "Aprende a identificar condiciones de estabilización, expansión y transición.",
     description:
-      "La exposicion gamma se estudia como informacion de contexto, no como indicacion automatica. El objetivo es entender como cambia la sensibilidad del mercado y como adaptar la lectura a distintos regimenes.",
+      "La exposición gamma se estudia como información de contexto, no como indicación automática. El objetivo es entender cómo cambia la sensibilidad del mercado y cómo adaptar la lectura a distintos regímenes.",
     competencies: [
       "Comprender gamma como sensibilidad del mercado.",
-      "Interpretar exposicion agregada.",
-      "Diferenciar regimenes positivos y negativos.",
-      "Reconocer zonas de transicion relevantes.",
+      "Interpretar exposición agregada.",
+      "Diferenciar regímenes positivos y negativos.",
+      "Reconocer zonas de transición relevantes.",
     ],
     result:
-      "Seras capaz de diagnosticar el regimen antes de seleccionar una hipotesis.",
+      "Serás capaz de diagnosticar el régimen antes de seleccionar una hipótesis.",
     transition:
-      "Despues de reconocer el regimen, el programa convierte esa informacion en un mapa de preparacion.",
+      "Después de reconocer el régimen, el programa convierte esa información en un mapa de preparación.",
   },
   {
     id: "modulo-4",
     number: 4,
     title: "Lectura GEX aplicada",
     subtitle:
-      "Convierte informacion de opciones en escenarios claros para preparar la jornada.",
-    indicator: "Doble profundidad tecnica",
+      "Convierte información de opciones en escenarios claros para preparar la jornada.",
+    indicator: "Doble profundidad técnica",
     description:
-      "El participante aprende a organizar niveles, exposicion y regimen dentro de una jerarquia practica. GEXBot Classic, State y Orderflow se integran como herramientas de lectura para construir hipotesis condicionales.",
+      "El participante aprende a organizar niveles, exposición y régimen dentro de una jerarquía práctica. GEXBot Classic, State y Orderflow se integran como herramientas de lectura para construir hipótesis condicionales.",
     competencies: [
-      "Identificar niveles relevantes de exposicion gamma.",
+      "Identificar niveles relevantes de exposición gamma.",
       "Interpretar Call Wall, Put Wall y Zero Gamma.",
       "Integrar lectura GEX con comportamiento observado.",
       "Construir escenarios antes de participar.",
     ],
     result:
-      "Podras transformar datos de opciones en un mapa organizado de zonas, condiciones y posibles respuestas.",
+      "Podrás transformar datos de opciones en un mapa organizado de zonas, condiciones y posibles respuestas.",
     transition:
-      "El mapa define donde mirar; el siguiente modulo entrena como interpretar la reaccion real del mercado.",
+      "El mapa define dónde mirar; el siguiente módulo entrena cómo interpretar la reacción real del mercado.",
   },
   {
     id: "modulo-5",
     number: 5,
     title: "Volume Profile y Order Flow",
     subtitle:
-      "Lee estructura, aceptacion y reaccion sin convertir cada dato en una orden.",
+      "Lee estructura, aceptación y reacción sin convertir cada dato en una orden.",
     description:
-      "Volume Profile y Order Flow se integran como herramientas de confirmacion contextual. Cada una responde una pregunta especifica dentro del proceso de lectura y ayuda a validar o invalidar hipotesis.",
+      "Volume Profile y Order Flow se integran como herramientas de confirmación contextual. Cada una responde una pregunta específica dentro del proceso de lectura y ayuda a validar o invalidar hipótesis.",
     competencies: [
-      "Interpretar valor, aceptacion y rechazo.",
+      "Interpretar valor, aceptación y rechazo.",
       "Utilizar Profile para organizar estructura.",
-      "Leer Order Flow como reaccion.",
+      "Leer Order Flow como reacción.",
       "Distinguir esfuerzo de resultado.",
     ],
     result:
-      "Podras contrastar una hipotesis observando como responde el mercado en zonas previamente definidas.",
+      "Podrás contrastar una hipótesis observando cómo responde el mercado en zonas previamente definidas.",
     transition:
-      "Cuando contexto, estructura y reaccion se alinean, llega el momento de convertir lectura en decision gestionada.",
+      "Cuando contexto, estructura y reacción se alinean, llega el momento de convertir lectura en decisión gestionada.",
   },
   {
     id: "modulo-6",
     number: 6,
-    title: "Estructuras de decision",
+    title: "Estructuras de decisión",
     subtitle:
-      "Transforma una hipotesis validada en un marco repetible de participacion.",
+      "Transforma una hipótesis validada en un marco repetible de participación.",
     description:
-      "Los setups se presentan como estructuras de decision, no como patrones mecanicos. El participante integra contexto, zona, comportamiento esperado, confirmacion, invalidacion, ejecucion y gestion.",
+      "Los setups se presentan como estructuras de decisión, no como patrones mecánicos. El participante integra contexto, zona, comportamiento esperado, confirmación, invalidación, ejecución y gestión.",
     competencies: [
-      "Seleccionar estructuras segun regimen.",
-      "Definir confirmacion e invalidacion.",
-      "Identificar condiciones de cancelacion.",
+      "Seleccionar estructuras según régimen.",
+      "Definir confirmación e invalidación.",
+      "Identificar condiciones de cancelación.",
       "Integrar riesgo antes de participar.",
     ],
     result:
-      "Podras evaluar oportunidades mediante una estructura donde la decision aparece al final del proceso.",
+      "Podrás evaluar oportunidades mediante una estructura donde la decisión aparece al final del proceso.",
     transition:
-      "Una metodologia solo adquiere valor cuando puede protegerse, repetirse y revisarse con disciplina.",
+      "Una metodología solo adquiere valor cuando puede protegerse, repetirse y revisarse con disciplina.",
   },
   {
     id: "modulo-7",
     number: 7,
-    title: "Gestion, rutina y consolidacion",
+    title: "Gestión, rutina y consolidación",
     subtitle:
-      "Convierte el conocimiento adquirido en una practica sostenible y revisable.",
+      "Convierte el conocimiento adquirido en una práctica sostenible y revisable.",
     description:
-      "El cierre del programa integra riesgo, tamano, preparacion diaria, revision y disciplina. El participante aprende a evaluar la calidad de su proceso mas alla del resultado aislado de una decision.",
+      "El cierre del programa integra riesgo, tamaño, preparación diaria, revisión y disciplina. El participante aprende a evaluar la calidad de su proceso más allá del resultado aislado de una decisión.",
     competencies: [
       "Definir riesgo antes de participar.",
-      "Adaptar tamano a la invalidacion.",
+      "Adaptar tamaño a la invalidación.",
       "Preparar escenarios diarios.",
       "Revisar decisiones con objetividad.",
     ],
     result:
-      "Terminaras con un protocolo para preparar, esperar, participar, gestionar y revisar con criterio.",
+      "Terminarás con un protocolo para preparar, esperar, participar, gestionar y revisar con criterio.",
     transition:
-      "El recorrido culmina en una conversacion individual preparada con evidencia real de tu proceso.",
+      "El recorrido culmina en una conversación individual preparada con evidencia real de tu proceso.",
   },
 ];
 
 export const publicFormationJourney = [
   "Descubres Invictus GEX",
   "Comprendes el programa",
-  "Comienzas tu formacion",
+  "Comienzas tu formación",
   "Estudias y practicas",
   "Documentas tu proceso",
-  "Reservas tu mentoria",
-  "Continuas tu desarrollo",
+  "Reservas tu mentoría",
+  "Continúas tu desarrollo",
 ];
 
 export const publicMethodologySteps = [
   {
     title: "Contexto",
-    question: "Que tipo de mercado estoy observando.",
+    question: "Qué tipo de mercado estoy observando.",
   },
   {
     title: "Zona",
-    question: "Donde merece atencion la lectura.",
+    question: "Dónde merece atención la lectura.",
   },
   {
-    title: "Hipotesis",
-    question: "Que comportamiento podria confirmar o invalidar el escenario.",
+    title: "Hipótesis",
+    question: "Qué comportamiento podría confirmar o invalidar el escenario.",
   },
   {
-    title: "Reaccion",
-    question: "Como responde el mercado ante las zonas preparadas.",
+    title: "Reacción",
+    question: "Cómo responde el mercado ante las zonas preparadas.",
   },
   {
     title: "Riesgo",
-    question: "Si la decision tiene estructura suficiente para participar.",
+    question: "Si la decisión tiene estructura suficiente para participar.",
   },
 ];
 
 export const publicGlobalCompetencies = [
-  "Diagnosticar regimenes de mercado.",
-  "Construir mapas de preparacion.",
-  "Formular hipotesis condicionales.",
-  "Interpretar estructura y reaccion.",
-  "Seleccionar decisiones segun contexto.",
-  "Definir invalidacion y riesgo.",
+  "Diagnosticar regímenes de mercado.",
+  "Construir mapas de preparación.",
+  "Formular hipótesis condicionales.",
+  "Interpretar estructura y reacción.",
+  "Seleccionar decisiones según contexto.",
+  "Definir invalidación y riesgo.",
   "Crear una rutina profesional.",
   "Revisar decisiones con objetividad.",
 ];
 
 export const publicProgramAudience = [
-  "Buscas una formacion seria para interpretar el mercado con metodo.",
+  "Buscas una formación seria para interpretar el mercado con método.",
   "Quieres ordenar liquidez, volumen, GEX, estructura y riesgo dentro de un mismo proceso.",
-  "Estas dispuesto a estudiar, practicar y documentar tu avance con honestidad.",
+  "Estás dispuesto a estudiar, practicar y documentar tu avance con honestidad.",
   "Prefieres desarrollar criterio antes que depender de indicaciones externas.",
-  "Valoras una mentoria individual preparada con evidencia de tu propio recorrido.",
+  "Valoras una mentoría individual preparada con evidencia de tu propio recorrido.",
 ];
 
 export const publicProgramNonAudience = [
   "Buscas indicaciones para copiar sin desarrollar criterio propio.",
   "Esperas promesas de rentabilidad o resultados financieros asegurados.",
   "Quieres participar en el mercado sin estudiar contexto, riesgo y proceso.",
-  "No estas dispuesto a revisar decisiones ni sostener una practica ordenada.",
-  "Prefieres atajos comerciales por encima de una formacion progresiva.",
+  "No estás dispuesto a revisar decisiones ni sostener una práctica ordenada.",
+  "Prefieres atajos comerciales por encima de una formación progresiva.",
 ];

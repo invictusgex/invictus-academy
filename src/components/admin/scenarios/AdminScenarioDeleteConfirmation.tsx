@@ -62,7 +62,7 @@ export function AdminScenarioDeleteConfirmation({
   return (
     <div className="rounded-xl border border-red-200/40 bg-[var(--color-card-bg)] p-4">
       <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
-        Esta accion es irreversible. El escenario sera eliminado de la
+        Esta acción es irreversible. El escenario será eliminado de la
         biblioteca administrativa.
       </p>
       {error ? <p className="mt-2 text-sm text-red-200">{error}</p> : null}

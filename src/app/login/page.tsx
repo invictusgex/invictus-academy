@@ -18,7 +18,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           Acceso de estudiantes
         </p>
         <h1 className="mt-4 text-3xl font-semibold text-white">
-          Iniciar sesion
+          Iniciar sesión
         </h1>
         <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
           Ingresa con las credenciales asociadas a tu acceso de Invictus Trading

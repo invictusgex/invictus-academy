@@ -56,7 +56,7 @@ export function AdminContentResourceDeleteConfirmation({
   return (
     <div className="rounded-xl border border-red-200/40 bg-[var(--color-card-bg)] p-4">
       <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
-        Confirma la eliminacion de {resourceTitle}. Esta accion no elimina el
+        Confirma la eliminación de {resourceTitle}. Esta acción no elimina el
         modulo ni modifica el progreso registrado.
       </p>
       {error ? <p className="mt-2 text-sm text-red-200">{error}</p> : null}

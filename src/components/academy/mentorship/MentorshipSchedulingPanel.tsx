@@ -202,7 +202,7 @@ export function MentorshipSchedulingPanel({
     }
 
     const shouldCancel = window.confirm(
-      "¿Quieres cancelar esta reserva de mentoría?",
+      "¿Quieres cancelar está reserva de mentoría?",
     );
 
     if (!shouldCancel) {
@@ -258,17 +258,17 @@ export function MentorshipSchedulingPanel({
 
   if (completedBooking) {
     return (
-      <StudentSection title="Mentoria completada">
+      <StudentSection title="Mentoría completada">
         <StudentCard elevated>
           {completedOutcome ? (
             <div className="grid gap-5">
               <div>
                 <h2 className="text-2xl font-semibold text-white">
-                  Cierre de tu mentoria
+                  Cierre de tu mentoría
                 </h2>
                 {completedBooking.slotStartsAt ? (
                   <p className="mt-4 text-sm leading-6 text-[var(--color-text-secondary)]">
-                    Fecha de la sesion:{" "}
+                    Fecha de la sesión:{" "}
                     {formatSlotDate(
                       completedBooking.slotStartsAt,
                       completedBooking.participantTimezone,
@@ -300,7 +300,7 @@ export function MentorshipSchedulingPanel({
                   </h3>
                   <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
                     {completedOutcome.nextSteps ??
-                      "Sin proximos pasos publicados."}
+                      "Sin próximos pasos publicados."}
                   </p>
                 </div>
                 <div className="rounded-xl border border-[var(--color-border)] p-4">
@@ -314,9 +314,9 @@ export function MentorshipSchedulingPanel({
                 </div>
               </div>
               <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
-                Has completado esta etapa de tu formacion. Los proximos pasos
-                te ayudaran a consolidar la metodologia mediante practica
-                consciente y revision continua.
+                Has completado esta etapa de tu formación. Los próximos pasos
+                te ayudarán a consolidar la metodología mediante práctica
+                consciente y revisión continua.
               </p>
             </div>
           ) : (
@@ -325,8 +325,8 @@ export function MentorshipSchedulingPanel({
                 Mentoria completada
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
-                Tu sesion ha sido registrada. El mentor esta preparando el
-                cierre y los proximos pasos de tu formacion.
+                Tu sesión ha sido registrada. El mentor está preparando el
+                cierre y los próximos pasos de tu formación.
               </p>
             </div>
           )}
@@ -466,7 +466,7 @@ export function MentorshipSchedulingPanel({
                 />
               </label>
               <label className="grid gap-2 text-sm font-semibold text-white">
-                Nota opcional
+                Nota opciónal
                 <textarea
                   className="min-h-28 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none transition focus:border-[var(--color-cyan)]"
                   onChange={(event) => setParticipantNote(event.target.value)}

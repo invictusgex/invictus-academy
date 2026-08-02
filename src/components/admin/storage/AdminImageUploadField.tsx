@@ -35,7 +35,7 @@ export function AdminImageUploadField({
       accept="image/jpeg,image/png,image/webp"
       allowedKinds={allowedKinds}
       disabled={disabled}
-      helpText={`${helpText} Tamano maximo: ${maxSize}.`}
+      helpText={`${helpText} Tamaño máximo: ${maxSize}.`}
       label={label}
       mode="image"
       onChange={onChange}

@@ -86,10 +86,10 @@ function MentorshipPreparationSection({
       <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <h4 className="text-base font-semibold text-white">
-            Preparacion de mentoria
+            Preparación de mentoría
           </h4>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)]">
-            Consulta el recorrido del participante antes de su sesion
+            Consulta el recorrido del participante antes de su sesión
             individual.
           </p>
         </div>
@@ -115,16 +115,16 @@ function MentorshipPreparationSection({
           </dt>
           <dd className="mt-2 text-sm font-semibold text-white">
             {preparation.completionPercent}% · {preparation.completedModules}/
-            {preparation.publishedModules} modulos
+            {preparation.publishedModules} módulos
           </dd>
         </div>
         <div className="rounded-lg bg-black/20 p-3">
           <dt className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-            Reflexiones
+            Reflexiónes
           </dt>
           <dd className="mt-2 text-sm font-semibold text-white">
-            {preparation.moduleReflectionCount} modulos ·{" "}
-            {preparation.totalAttachments} imagenes
+            {preparation.moduleReflectionCount} módulos ·{" "}
+            {preparation.totalAttachments} imágenes
           </dd>
         </div>
         <div className="rounded-lg bg-black/20 p-3">
@@ -132,7 +132,7 @@ function MentorshipPreparationSection({
             Practica
           </dt>
           <dd className="mt-2 text-sm font-semibold text-white">
-            {preparation.tradingDays}/{preparation.requiredTradingDays} dias
+            {preparation.tradingDays}/{preparation.requiredTradingDays} días
           </dd>
         </div>
       </dl>
@@ -166,8 +166,8 @@ function MentorshipPreparationSection({
                   tone={moduleItem.hasReflection ? "success" : "warning"}
                 >
                   {moduleItem.hasReflection
-                    ? "Con reflexion"
-                    : "Sin reflexion"}
+                    ? "Con reflexión"
+                    : "Sin reflexión"}
                 </AdminStatusBadge>
               </div>
             </div>
@@ -175,14 +175,14 @@ function MentorshipPreparationSection({
             <div className="mt-4 rounded-lg border border-[var(--color-border)] p-3">
               <p className="whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
                 {moduleItem.reflectionContent ??
-                  "El participante todavia no documento una reflexion en este modulo."}
+                  "El participante todavía no documento una reflexión en este módulo."}
               </p>
             </div>
 
             <div className="mt-4 flex min-w-0 flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
               <div className="min-w-0">
                 <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-                  Imagenes adjuntas
+                  Imágenes adjuntas
                 </p>
                 <div className="mt-3 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                   {moduleItem.attachments.map((attachment) => (
@@ -213,7 +213,7 @@ function MentorshipPreparationSection({
                 </div>
                 {moduleItem.attachments.length === 0 ? (
                   <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
-                    No hay imagenes adjuntas en este modulo.
+                    No hay imágenes adjuntas en este modulo.
                   </p>
                 ) : null}
               </div>
@@ -231,7 +231,7 @@ function MentorshipPreparationSection({
 
       <div className="mt-5 rounded-lg border border-[var(--color-border)] p-4">
         <h5 className="text-sm font-semibold text-white">
-          Puntos pendientes antes de la mentoria
+          Puntos pendientes antes de la mentoría
         </h5>
         {preparation.pendingItems.length > 0 ? (
           <ul className="mt-3 grid gap-2 text-sm text-[var(--color-text-secondary)]">
@@ -278,7 +278,7 @@ function EnrollmentDetailCard({
           <AdminStatusBadge
             tone={detail.session101.unlocked ? "success" : "warning"}
           >
-            {`Sesion 101 ${detail.session101.label}`}
+            {`Sesión 101 ${detail.session101.label}`}
           </AdminStatusBadge>
         </div>
       </div>
@@ -408,7 +408,7 @@ function EnrollmentDetailCard({
             ))}
             {detail.tradingDays.length === 0 ? (
               <p className="text-sm text-[var(--color-text-secondary)]">
-                No hay dias de trading registrados.
+                No hay días de trading registrados.
               </p>
             ) : null}
           </div>
@@ -515,7 +515,7 @@ export function AdminStudentDetailPage({
           ))}
           {detail.enrollmentDetails.length === 0 ? (
             <AdminEmptyState
-              description="Este alumno todavia no tiene enrollments asociados."
+              description="Este alumno todavía no tiene enrollments asociados."
               title="Sin enrollments"
             />
           ) : null}

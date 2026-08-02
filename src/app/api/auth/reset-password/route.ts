@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     payload = await request.json();
   } catch {
     return NextResponse.json(
-      { error: "La solicitud no contiene JSON valido." },
+      { error: "La solicitud no contiene JSON válido." },
       { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
@@ -28,14 +28,14 @@ export async function POST(request: Request) {
 
   if (password.length < 8) {
     return NextResponse.json(
-      { error: "La nueva contrasena debe tener al menos 8 caracteres." },
+      { error: "La nueva contraseña debe tener al menos 8 caracteres." },
       { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
 
   if (password !== passwordConfirmation) {
     return NextResponse.json(
-      { error: "Las contrasenas no coinciden." },
+      { error: "Las contraseñas no coinciden." },
       { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
@@ -49,14 +49,14 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "No pudimos actualizar la contrasena. Solicita un nuevo enlace e intenta nuevamente.",
+          "No pudimos actualizar la contraseña. Solicita un nuevo enlace e intenta nuevamente.",
       },
       { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
 
   return NextResponse.json(
-    { message: "Tu contrasena fue actualizada correctamente." },
+    { message: "Tu contraseña fue actualizada correctamente." },
     { status: 200, headers: { "Cache-Control": "no-store" } },
   );
 }

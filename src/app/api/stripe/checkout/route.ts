@@ -87,7 +87,7 @@ async function readCheckoutPayload(request: Request) {
   } catch {
     throw createCheckoutError(
       "INVALID_CHECKOUT_REQUEST",
-      "El cuerpo de la solicitud no contiene JSON valido.",
+      "El cuerpo de la solicitud no contiene JSON válido.",
       400,
     );
   }
@@ -115,7 +115,7 @@ async function readCheckoutPayload(request: Request) {
   if (typeof body.productSlug !== "string") {
     throw createCheckoutError(
       "INVALID_CHECKOUT_REQUEST",
-      "productSlug debe ser un texto valido.",
+      "productSlug debe ser un texto válido.",
       400,
     );
   }
@@ -123,7 +123,7 @@ async function readCheckoutPayload(request: Request) {
   if (!isCheckoutProductSlug(body.productSlug)) {
     throw createCheckoutError(
       "INVALID_CHECKOUT_REQUEST",
-      "El producto solicitado no esta habilitado para Checkout.",
+      "El producto solicitado no está habilitado para Checkout.",
       400,
     );
   }
@@ -137,7 +137,7 @@ function mapAuthError(error: ServerAuthError) {
   if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
     return new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.UNAUTHENTICATED,
-      "Debes iniciar sesion para continuar con la compra.",
+      "Debes iniciar sesión para continuar con la compra.",
       {
         status: 401,
         cause: error,
@@ -158,7 +158,7 @@ function mapAuthError(error: ServerAuthError) {
 
   return new StripeCheckoutError(
     STRIPE_CHECKOUT_ERROR_CODES.CHECKOUT_CREATION_FAILED,
-    "No pudimos validar tu sesion para iniciar Checkout.",
+    "No pudimos validar tu sesión para iniciar Checkout.",
     {
       cause: error,
     },
@@ -176,7 +176,7 @@ function mapCheckoutError(error: unknown) {
 
   return new StripeCheckoutError(
     STRIPE_CHECKOUT_ERROR_CODES.CHECKOUT_CREATION_FAILED,
-    "No pudimos crear la sesion de Checkout.",
+    "No pudimos crear la sesión de Checkout.",
     {
       cause: error,
     },
@@ -209,7 +209,7 @@ export async function POST(request: Request) {
     ) {
       throw new StripeCheckoutError(
         STRIPE_CHECKOUT_ERROR_CODES.PRODUCT_NOT_PURCHASABLE,
-        "Este producto no esta habilitado para compra.",
+        "Este producto no está habilitado para compra.",
         {
           status: 500,
         },
@@ -219,7 +219,7 @@ export async function POST(request: Request) {
     if (product.status !== "active") {
       throw new StripeCheckoutError(
         STRIPE_CHECKOUT_ERROR_CODES.PRODUCT_NOT_PURCHASABLE,
-        "Este producto no esta disponible para compra.",
+        "Este producto no está disponible para compra.",
         {
           status: 500,
         },

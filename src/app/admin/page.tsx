@@ -13,7 +13,7 @@ const adminCards = [
   },
   {
     title: "Progreso",
-    description: "Vista futura para supervisar avance academico.",
+    description: "Vista futura para supervisar avance académico.",
   },
 ];
 

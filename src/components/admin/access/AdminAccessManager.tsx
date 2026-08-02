@@ -372,7 +372,7 @@ export function AdminAccessManager({
 
                     <div className="grid gap-3 lg:min-w-72">
                       <label className="grid gap-2 text-sm font-medium text-white">
-                        Vencimiento opcional
+                        Vencimiento opciónal
                         <input
                           className="min-h-11 rounded-lg border border-[var(--color-border)] bg-[var(--color-panel-bg)] px-3 text-sm text-white outline-none transition focus:border-[var(--color-cyan)]"
                           min={minExpirationDate}

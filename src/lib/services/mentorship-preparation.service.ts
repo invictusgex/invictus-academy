@@ -222,10 +222,10 @@ export const MentorshipPreparationService = {
     const pendingItems = [
       ...modules
         .filter((moduleItem) => !moduleItem.completed)
-        .map((moduleItem) => `Modulo pendiente: ${moduleItem.title}`),
+        .map((moduleItem) => `Módulo pendiente: ${moduleItem.title}`),
       ...modules
         .filter((moduleItem) => !moduleItem.hasReflection)
-        .map((moduleItem) => `Reflexion pendiente: ${moduleItem.title}`),
+        .map((moduleItem) => `Reflexión pendiente: ${moduleItem.title}`),
       ...workflow.rules
         .filter((rule) => !rule.satisfied)
         .map((rule) => `Requisito pendiente: ${rule.label}`),
@@ -236,7 +236,7 @@ export const MentorshipPreparationService = {
     );
 
     if (missingTradingDays > 0) {
-      pendingItems.push(`Dias de practica faltantes: ${missingTradingDays}`);
+      pendingItems.push(`Días de práctica faltantes: ${missingTradingDays}`);
     }
 
     return {

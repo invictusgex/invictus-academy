@@ -59,7 +59,7 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
 
       setSuccessMessage(
         payload.message ??
-          "Revisa tu email para confirmar tu cuenta antes de iniciar sesion.",
+          "Revisa tu email para confirmar tu cuenta antes de iniciar sesión.",
       );
       setPassword("");
       setPasswordConfirmation("");
@@ -134,7 +134,7 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
           className="text-sm font-medium text-white"
           htmlFor="passwordConfirmation"
         >
-          Confirmar contrasena
+          Confirmar contraseña
         </label>
         <input
           autoComplete="new-password"
@@ -143,7 +143,7 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
           minLength={8}
           name="passwordConfirmation"
           onChange={(event) => setPasswordConfirmation(event.target.value)}
-          placeholder="Repite tu contrasena"
+          placeholder="Repite tu contraseña"
           required
           type="password"
           value={passwordConfirmation}
@@ -190,7 +190,7 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
           className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
           href={`/login?next=${encodeURIComponent(nextPath)}`}
         >
-          Inicia sesion
+          Inicia sesión
         </Link>
       </p>
     </form>

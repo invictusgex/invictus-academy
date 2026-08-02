@@ -143,20 +143,20 @@ export function AdminContentModuleDetailPage({
           {academyModule.title}
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Vista administrativa de lectura para informacion general, videos y
+          Vista administrativa de lectura para información general, videos y
           recursos del modulo.
         </p>
         <Link
           className="mt-6 inline-flex min-h-11 items-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
           href={`/admin/content/modules/${academyModule.id}/edit`}
         >
-          Editar informacion
+          Editar información
         </Link>
       </section>
 
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
         <h2 className="text-xl font-semibold text-white">
-          Informacion general
+          Información general
         </h2>
         <div className="mt-5 grid gap-4 lg:grid-cols-2">
           <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5">
@@ -193,7 +193,7 @@ export function AdminContentModuleDetailPage({
           </article>
           <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5">
             <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-              Fecha de publicacion
+              Fecha de publicación
             </p>
             <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
               {formatDateTime(academyModule.publishedAt)}
@@ -207,7 +207,7 @@ export function AdminContentModuleDetailPage({
               Descripcion
             </p>
             <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-              {academyModule.description || "Sin descripcion"}
+              {academyModule.description || "Sin descripción"}
             </p>
           </article>
           <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5">
@@ -331,7 +331,7 @@ export function AdminContentModuleDetailPage({
           </div>
         ) : (
           <div className="p-5">
-            <EmptyState message="No hay videos registrados para este modulo." />
+            <EmptyState message="No hay videos registrados para este módulo." />
           </div>
         )}
       </section>
@@ -377,7 +377,7 @@ export function AdminContentModuleDetailPage({
                       {formatResourceType(resource.resourceType)}
                     </td>
                     <td className="px-5 py-4 text-[var(--color-text-secondary)]">
-                      {resource.description || "Sin descripcion"}
+                      {resource.description || "Sin descripción"}
                     </td>
                     <td className="px-5 py-4 text-[var(--color-cyan)]">
                       {formatContentStatus(resource.status)}
@@ -432,7 +432,7 @@ export function AdminContentModuleDetailPage({
           </div>
         ) : (
           <div className="p-5">
-            <EmptyState message="No hay recursos registrados para este modulo." />
+            <EmptyState message="No hay recursos registrados para este módulo." />
           </div>
         )}
       </section>

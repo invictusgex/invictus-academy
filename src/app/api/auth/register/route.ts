@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   try {
     payload = await request.json();
   } catch {
-    return jsonResponse({ error: "La solicitud no contiene JSON valido." }, 400);
+    return jsonResponse({ error: "La solicitud no contiene JSON válido." }, 400);
   }
 
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
@@ -72,18 +72,18 @@ export async function POST(request: Request) {
   }
 
   if (!isValidEmail(email)) {
-    return jsonResponse({ error: "Ingresa un email valido." }, 400);
+    return jsonResponse({ error: "Ingresa un email válido." }, 400);
   }
 
   if (!validatePassword(password)) {
     return jsonResponse(
-      { error: "La contrasena debe tener al menos 8 caracteres." },
+      { error: "La contraseña debe tener al menos 8 caracteres." },
       400,
     );
   }
 
   if (password !== passwordConfirmation) {
-    return jsonResponse({ error: "Las contrasenas no coinciden." }, 400);
+    return jsonResponse({ error: "Las contraseñas no coinciden." }, 400);
   }
 
   if (!acceptedTerms) {
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
   return jsonResponse(
     {
       message:
-        "Revisa tu email para confirmar tu cuenta antes de iniciar sesion.",
+        "Revisa tu email para confirmar tu cuenta antes de iniciar sesión.",
       status: data.session ? "registered" : "confirmation_required",
     },
     200,

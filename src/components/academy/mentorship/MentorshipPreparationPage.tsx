@@ -24,7 +24,7 @@ type MentorshipPreparationPageProps = {
 
 const journeySteps = [
   "Formación estructurada",
-  "Reflexiones documentadas",
+  "Reflexiónes documentadas",
   "Práctica registrada",
   "Requisitos completados",
   "Mentoría individual",
@@ -87,7 +87,7 @@ export function MentorshipPreparationPage({
       </StudentSection>
 
       <StudentSection
-        description="Resumen real construido con tu progreso, reflexiones, imágenes y práctica registrada."
+        description="Resumen real construido con tu progreso, reflexiónes, imágenes y práctica registrada."
         title="Estado actual"
       >
         <StudentContentGrid columns={4}>
@@ -98,7 +98,7 @@ export function MentorshipPreparationPage({
           />
           <StudentStatCard
             caption="Módulos con evidencia escrita"
-            label="Reflexiones"
+            label="Reflexiónes"
             value={String(preparation.moduleReflectionCount)}
           />
           <StudentStatCard
@@ -232,7 +232,7 @@ export function MentorshipPreparationPage({
                 Tu mentoría sigue en preparación.
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
-                Continúa completando el programa, documentando reflexiones y
+                Continúa completando el programa, documentando reflexiónes y
                 registrando práctica. Todo ese contexto permitirá preparar mejor
                 tu sesión individual.
               </p>

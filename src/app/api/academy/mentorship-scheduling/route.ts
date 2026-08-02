@@ -118,7 +118,7 @@ function mapError(error: unknown) {
     if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
       return {
         code: "UNAUTHENTICATED",
-        message: "Debes iniciar sesion para gestionar tu mentoria.",
+        message: "Debes iniciar sesión para gestionar tu mentoría.",
         status: 401,
       };
     }
@@ -133,7 +133,7 @@ function mapError(error: unknown) {
     return {
       code: "SLOT_NOT_AVAILABLE",
       message:
-        "Ese horario ya no esta disponible. Actualizamos la lista para que puedas elegir otra opcion.",
+        "Ese horario ya no está disponible. Actualizamos la lista para que puedas elegir otra opción.",
       status: 409,
     };
   }
@@ -142,7 +142,7 @@ function mapError(error: unknown) {
     return {
       code: "MENTORSHIP_REQUIREMENTS_NOT_MET",
       message:
-        "Tu proceso todavia no cumple los requisitos para reservar la mentoria.",
+        "Tu proceso todavía no cumple los requisitos para reservar la mentoría.",
       status: 403,
     };
   }
@@ -162,14 +162,14 @@ function mapError(error: unknown) {
   ) {
     return {
       code: "MENTORSHIP_INVALID_PAYLOAD",
-      message: "No pudimos procesar la solicitud de mentoria.",
+      message: "No pudimos procesar la solicitud de mentoría.",
       status: 400,
     };
   }
 
   return {
     code: "MENTORSHIP_SCHEDULING_ERROR",
-    message: "No pudimos gestionar la mentoria en este momento.",
+    message: "No pudimos gestionar la mentoría en este momento.",
     status: 500,
   };
 }

@@ -141,7 +141,7 @@ export async function GET(request: Request) {
       return jsonResponse(
         {
           error: {
-            message: "Debes iniciar sesion para consultar tu progreso.",
+            message: "Debes iniciar sesión para consultar tu progreso.",
           },
         },
         mapAuthStatus(error),
@@ -177,7 +177,7 @@ export async function POST(request: Request) {
       return jsonResponse(
         {
           error: {
-            message: "Debes iniciar sesion para actualizar tu progreso.",
+            message: "Debes iniciar sesión para actualizar tu progreso.",
           },
         },
         mapAuthStatus(error),
@@ -187,7 +187,7 @@ export async function POST(request: Request) {
     return jsonResponse(
       {
         error: {
-          message: "No se pudo actualizar el progreso del modulo.",
+          message: "No se pudo actualizar el progreso del módulo.",
         },
       },
       error instanceof Error && error.message === "INVALID_PROGRESS_REQUEST"

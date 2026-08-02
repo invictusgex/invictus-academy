@@ -16,7 +16,7 @@ function CheckoutRecoveryState() {
         Estamos terminando de preparar tu acceso.
       </h1>
       <p className="mt-4 text-sm leading-6 text-[var(--color-text-secondary)]">
-        En unos segundos deberias ver tu programa activo. Puedes actualizar
+        En unos segundos deberías ver tu programa activo. Puedes actualizar
         esta pantalla para volver a comprobarlo.
       </p>
       <form action="/checkout/success" className="mt-8">

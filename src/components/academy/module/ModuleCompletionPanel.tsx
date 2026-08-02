@@ -67,10 +67,10 @@ export function ModuleCompletionPanel({
           type="button"
         >
           {completed
-            ? "Modulo completado"
+            ? "Módulo completado"
             : saving
               ? "Guardando..."
-              : "Marcar modulo completado"}
+              : "Marcar módulo completado"}
         </button>
       </div>
     </StudentCard>

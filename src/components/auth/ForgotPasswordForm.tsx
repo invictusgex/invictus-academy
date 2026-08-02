@@ -98,12 +98,12 @@ export function ForgotPasswordForm({ nextPath }: ForgotPasswordFormProps) {
       </button>
 
       <p className="mt-5 text-center text-sm text-[var(--color-text-secondary)]">
-        Recordaste tu contrasena?{" "}
+        ¿Recordaste tu contraseña?{" "}
         <Link
           className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
           href={`/login?next=${encodeURIComponent(nextPath)}`}
         >
-          Inicia sesion
+          Inicia sesión
         </Link>
       </p>
     </form>

@@ -5,7 +5,7 @@ export const adminStudentsConfig = {
     unlockedLabel: "Desbloqueada",
   },
   workflowLabels: {
-    modules_completed: "Modulos",
+    modules_completed: "Módulos",
     required_forms: "Formularios",
     trading_days: "Trading days",
   },

@@ -25,14 +25,14 @@ import {
 } from "@/lib/types/scenario-library.types";
 
 const scenarioTypeLabels: Record<ScenarioType, string> = {
-  execution_example: "Ejemplo de ejecucion",
+  execution_example: "Ejemplo de ejecución",
   gamma_structure: "Estructura de gamma",
   heatmap: "Heatmap",
   macro_event: "Evento macro",
-  market_analysis: "Analisis de mercado",
+  market_analysis: "Análisis de mercado",
   order_flow: "Order flow",
   other: "Otro",
-  trade_review: "Revision de trade",
+  trade_review: "Revisión de trade",
   volume_profile: "Perfil de volumen",
 };
 

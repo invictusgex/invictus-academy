@@ -81,7 +81,7 @@ function LockedSession101({ workflow }: { workflow: LearningWorkflowEvaluation |
       <StudentPageHeader
         actions={<StudentStatusBadge tone="warning">Bloqueada</StudentStatusBadge>}
         eyebrow="Session 101"
-        title="Sesion 101 bloqueada"
+        title="Sesión 101 bloqueada"
       >
         Completa los requisitos academicos del programa antes de acceder a las
         instrucciones de la Sesion 101.
@@ -133,11 +133,11 @@ function UnlockedSession101({ workflow }: { workflow: LearningWorkflowEvaluation
         {content.description}
       </StudentPageHeader>
 
-      <StudentSection title="Preparacion">
+      <StudentSection title="Preparación">
         <StudentContentGrid columns={3}>
           <StudentStatCard
-            caption="Modulos publicados completados"
-            label="Modulos"
+            caption="Módulos publicados completados"
+            label="Módulos"
             value={`${workflow.completedModules}/${workflow.publishedModules}`}
           />
           <StudentStatCard
@@ -154,7 +154,7 @@ function UnlockedSession101({ workflow }: { workflow: LearningWorkflowEvaluation
       </StudentSection>
 
       <StudentSection
-        description="Usa estas notas como checklist antes de coordinar la llamada."
+        description="Usa estás notas como checklist antes de coordinar la llamada."
         title="Instrucciones"
       >
         <StudentCard>

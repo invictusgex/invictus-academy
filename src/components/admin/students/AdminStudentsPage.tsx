@@ -61,7 +61,7 @@ export function AdminStudentsPage({
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader eyebrow="Alumnos" title="Gestion de alumnos">
+      <AdminPageHeader eyebrow="Alumnos" title="Gestión de alumnos">
         Consulta alumnos, enrollment activo, producto, avance academico y estado
         de Sesion 101 desde datos server-side.
       </AdminPageHeader>
@@ -146,7 +146,7 @@ export function AdminStudentsPage({
                     <dt className="text-[var(--color-text-muted)]">Progreso</dt>
                     <dd className="text-white">
                       {student.progress
-                        ? `${student.progress.completedModules}/${student.progress.totalModules} modulos - ${student.progress.percentage}%`
+                        ? `${student.progress.completedModules}/${student.progress.totalModules} módulos - ${student.progress.percentage}%`
                         : "Sin progreso"}
                     </dd>
                   </div>

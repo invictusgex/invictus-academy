@@ -82,7 +82,7 @@ function normalizeReflectionContent(value: string) {
   if (normalized.length > 12000) {
     throw new ModuleReflectionServiceError(
       MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
-      "La reflexion no puede superar 12000 caracteres.",
+      "La reflexión no puede superar 12000 caracteres.",
       400,
     );
   }
@@ -167,7 +167,7 @@ async function resolveReflectionScope(
   if (!product || product.status !== "active") {
     throw new ModuleReflectionServiceError(
       MODULE_REFLECTION_ERROR_CODES.PRODUCT_NOT_FOUND,
-      "No encontramos el producto asociado al modulo.",
+      "No encontramos el producto asociado al módulo.",
       404,
     );
   }
@@ -183,7 +183,7 @@ async function resolveReflectionScope(
   if (!moduleRow) {
     throw new ModuleReflectionServiceError(
       MODULE_REFLECTION_ERROR_CODES.MODULE_NOT_FOUND,
-      "No encontramos un modulo disponible con ese identificador.",
+      "No encontramos un módulo disponible con ese identificador.",
       404,
     );
   }
@@ -200,7 +200,7 @@ async function resolveReflectionScope(
   if (!access.hasAccess) {
     throw new ModuleReflectionServiceError(
       MODULE_REFLECTION_ERROR_CODES.ACTIVE_ENROLLMENT_REQUIRED,
-      "Necesitas un enrollment activo para documentar esta reflexion.",
+      "Necesitas un enrollment activo para documentar está reflexión.",
       403,
     );
   }
@@ -323,7 +323,7 @@ export const ModuleReflectionService = {
     if (attachmentCount >= maxReflectionAttachments) {
       throw new ModuleReflectionServiceError(
         MODULE_REFLECTION_ERROR_CODES.ATTACHMENT_LIMIT_REACHED,
-        "Solo puedes adjuntar hasta 5 imagenes por reflexion.",
+        "Solo puedes adjuntar hasta 5 imágenes por reflexión.",
         400,
       );
     }
@@ -402,7 +402,7 @@ export const ModuleReflectionService = {
     if (!reflection) {
       throw new ModuleReflectionServiceError(
         MODULE_REFLECTION_ERROR_CODES.ATTACHMENT_NOT_FOUND,
-        "No encontramos la reflexion asociada al adjunto.",
+        "No encontramos la reflexión asociada al adjunto.",
         404,
       );
     }

@@ -16,12 +16,12 @@ const principles = [
   {
     title: "Criterio",
     description:
-      "Una manera ordenada de leer condiciones antes de evaluar cualquier decision.",
+      "Una manera ordenada de leer condiciones antes de evaluar cualquier decisión.",
   },
   {
     title: "Evidencia",
     description:
-      "Contexto, liquidez, volumen, exposicion gamma y riesgo dentro de una misma lectura.",
+      "Contexto, liquidez, volumen, exposición gamma y riesgo dentro de una misma lectura.",
   },
   {
     title: "Proceso",
@@ -31,10 +31,10 @@ const principles = [
 ];
 
 const mentorshipEvidence = [
-  "Dudas relevantes que surgen durante la formacion.",
+  "Dudas relevantes que surgen durante la formación.",
   "Ejemplos reales que ayudan a entender tu lectura.",
-  "Observaciones sobre contexto, decision y riesgo.",
-  "Practica documentada para preparar una conversacion individual.",
+  "Observaciones sobre contexto, decisión y riesgo.",
+  "Práctica documentada para preparar una conversación individual.",
 ];
 
 function Header() {
@@ -54,7 +54,7 @@ function Header() {
           Recorrido
         </a>
         <a className="transition hover:text-white" href="#mentoria">
-          Mentoria
+          Mentoría
         </a>
         <a className="transition hover:text-white" href="#perfil">
           Perfil
@@ -78,19 +78,19 @@ function Hero() {
           Admision al programa profesional
         </p>
         <h1 className="max-w-[44rem] text-4xl leading-tight font-semibold text-balance text-white sm:text-5xl lg:text-[3.65rem] lg:leading-[1.05]">
-          Invictus GEX es una formacion privada para desarrollar criterio de mercado.
+          Invictus GEX es una formación privada para desarrollar criterio de mercado.
         </h1>
         <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--color-text-secondary)]">
-          No compras videos ni una mentoria aislada. Ingresas a un proceso
+          No compras videos ni una mentoría aislada. Ingresas a un proceso
           profesional donde estudias, practicas, documentas tu recorrido y
-          llegas a una mentoria preparada para ti.
+          llegas a una mentoría preparada para ti.
         </p>
         <div className="mt-10 flex flex-col gap-4 sm:flex-row">
           <Link
             href="/programa"
             className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
           >
-            Comenzar mi formacion
+            Comenzar mi formación
           </Link>
           <a
             href="#recorrido"
@@ -123,7 +123,7 @@ function Hero() {
             ))}
           </div>
           <p className="mt-6 text-sm leading-6 text-[var(--color-text-secondary)]">
-            Cada etapa prepara la siguiente. La mentoria final se construye
+            Cada etapa prepara la siguiente. La mentoría final se construye
             con el recorrido que documentas desde el inicio.
           </p>
         </div>
@@ -138,16 +138,16 @@ function PositioningSection() {
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Lo que estas solicitando
+            Lo que estás solicitando
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            Un lugar serio para ordenar como interpretas, practicas y revisas
+            Un lugar serio para ordenar cómo interpretas, practicas y revisas
             el mercado.
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
-            Invictus GEX no esta disenado como consumo de contenido. Su valor
-            esta en una secuencia que transforma informacion dispersa en
-            criterio, evidencia y preparacion individual.
+            Invictus GEX no está diseñado como consumo de contenido. Su valor
+            está en una secuencia que transforma información dispersa en
+            criterio, evidencia y preparación individual.
           </p>
         </div>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
@@ -176,10 +176,10 @@ function JourneySection() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Como avanza tu decision
+            Cómo avanza tu decisión
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            Del primer contacto a una mentoria preparada con tu propio proceso.
+            Del primer contacto a una mentoría preparada con tu propio proceso.
           </h2>
         </div>
         <Link
@@ -217,14 +217,14 @@ function MentorshipSection() {
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            La mentoria comienza antes de reservar
+            La mentoría comienza antes de reservar
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
             El mentor estudia tu recorrido antes de sentarse contigo.
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
-            Durante la formacion documentas dudas, ejemplos y observaciones.
-            Esa informacion permite que la conversacion individual responda a
+            Durante la formación documentas dudas, ejemplos y observaciones.
+            Esa información permite que la conversación individual responda a
             tu proceso real, no a un guion generico.
           </p>
         </div>
@@ -340,17 +340,17 @@ function FinalCta() {
           Siguiente paso
         </p>
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white">
-          Si reconoces este proceso como tu siguiente etapa, comienza tu formacion.
+          Si reconoces este proceso como tu siguiente etapa, comienza tu formación.
         </h2>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          El ingreso marca el inicio de un recorrido privado: formacion,
-          practica, reflexion y una mentoria preparada con tu evidencia.
+          El ingreso marca el inicio de un recorrido privado: formación,
+          práctica, reflexión y una mentoría preparada con tu evidencia.
         </p>
         <Link
           href={formationCtaHref}
           className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
         >
-          Comenzar mi formacion
+          Comenzar mi formación
         </Link>
       </div>
     </section>

@@ -27,7 +27,7 @@ export function getCheckoutProductConfig(
 
   return {
     slug,
-    name: "Invictus Trading Academy - Mentoria Grabada",
+    name: "Invictus Trading Academy - Mentoría Grabada",
     priceId: checkoutConfig.mentorshipPriceId,
   };
 }

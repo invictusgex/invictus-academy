@@ -34,7 +34,7 @@ export function AdminDocumentUploadField({
       accept=".pdf,.doc,.docx,image/jpeg,image/png,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       allowedKinds={allowedKinds}
       disabled={disabled}
-      helpText={`${helpText} Tamano maximo: ${StorageService.formatFileSize(maxSize)}.`}
+      helpText={`${helpText} Tamaño máximo: ${StorageService.formatFileSize(maxSize)}.`}
       label={label}
       mode="document"
       onChange={onChange}

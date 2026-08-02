@@ -99,7 +99,7 @@ export function AdminScenariosPage() {
         eyebrow="Biblioteca de Escenarios"
         title="Escenarios de mercado"
       >
-        Gestion administrativa de analisis y ejemplos operativos publicados o
+        Gestión administrativa de análisis y ejemplos operativos publicados o
         preparados para alumnos.
       </AdminPageHeader>
 
@@ -184,7 +184,7 @@ export function AdminScenariosPage() {
                         actionHref="/admin/scenarios/new"
                         actionLabel="Nuevo escenario"
                         description="Crea el primer escenario para comenzar a construir la biblioteca operativa."
-                        title="No hay escenarios todavia"
+                        title="No hay escenarios todavía"
                       />
                     </td>
                   </tr>

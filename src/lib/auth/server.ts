@@ -37,7 +37,7 @@ function mapAuthError(error: AuthError): ServerAuthError {
   if (isMissingSessionError(error)) {
     return new ServerAuthError(
       SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED,
-      "No existe una sesion autenticada.",
+      "No existe una sesión autenticada.",
       {
         status: 401,
         cause: error,
@@ -47,7 +47,7 @@ function mapAuthError(error: AuthError): ServerAuthError {
 
   return new ServerAuthError(
     SERVER_AUTH_ERROR_CODES.AUTH_PROVIDER_ERROR,
-    "No se pudo validar la sesion con el proveedor de autenticacion.",
+    "No se pudo validar la sesión con el proveedor de autenticación.",
     {
       status: 502,
       cause: error,
@@ -76,7 +76,7 @@ export async function requireServerUser(): Promise<ServerAuthUser> {
   if (!user) {
     throw new ServerAuthError(
       SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED,
-      "No existe una sesion autenticada.",
+      "No existe una sesión autenticada.",
       {
         status: 401,
       },
@@ -97,7 +97,7 @@ export async function requireServerAuthContext(): Promise<ServerAuthContext> {
   if (!data.user) {
     throw new ServerAuthError(
       SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED,
-      "No existe una sesion autenticada.",
+      "No existe una sesión autenticada.",
       {
         status: 401,
       },

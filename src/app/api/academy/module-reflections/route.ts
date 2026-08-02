@@ -59,7 +59,7 @@ function getRequiredParam(request: Request, name: string) {
   if (!value) {
     throw new ModuleReflectionServiceError(
       MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
-      "No se pudo cargar la reflexion del modulo.",
+      "No se pudo cargar la reflexión del módulo.",
       400,
     );
   }
@@ -202,14 +202,14 @@ function mapAuthError(error: ServerAuthError) {
   if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
     return new ModuleReflectionServiceError(
       MODULE_REFLECTION_ERROR_CODES.ACTIVE_ENROLLMENT_REQUIRED,
-      "Debes iniciar sesion para documentar esta reflexion.",
+      "Debes iniciar sesión para documentar está reflexión.",
       401,
     );
   }
 
   return new ModuleReflectionServiceError(
     MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
-    "No pudimos validar tu sesion para documentar esta reflexion.",
+    "No pudimos validar tu sesión para documentar está reflexión.",
     500,
   );
 }
@@ -225,7 +225,7 @@ function mapReflectionError(error: unknown) {
 
   return new ModuleReflectionServiceError(
     MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
-    "No se pudo procesar la reflexion del modulo.",
+    "No se pudo procesar la reflexión del módulo.",
     500,
   );
 }

@@ -116,10 +116,10 @@ export function formatProgramProgressStatusLabel(
   }
 
   if (status === "IN_PROGRESS") {
-    return "Formacion en progreso";
+    return "Formación en progreso";
   }
 
-  return "Formacion no iniciada";
+  return "Formación no iniciada";
 }
 
 export function getProgramProgress(

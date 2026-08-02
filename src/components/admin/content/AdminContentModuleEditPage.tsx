@@ -73,7 +73,7 @@ export function AdminContentModuleEditPage({
           Modulo no disponible
         </h1>
         <p className="mt-4 text-base leading-7 text-[var(--color-text-secondary)]">
-          No fue posible cargar la informacion editable del modulo.
+          No fue posible cargar la información editable del módulo.
         </p>
         <Link
           className="mt-6 inline-flex min-h-11 items-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
@@ -101,7 +101,7 @@ export function AdminContentModuleEditPage({
           {academyModule.title}
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Edita solo la informacion general del modulo. Videos y recursos se
+          Edita solo la información general del módulo. Videos y recursos se
           mantienen en modo lectura.
         </p>
       </section>

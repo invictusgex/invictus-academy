@@ -163,7 +163,7 @@ export function ModuleVideosSection({
                     </p>
                     <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
                       {video.description ||
-                        "Revisar el contenido central de esta etapa del módulo."}
+                        "Revisar el contenido central de está etapa del módulo."}
                     </p>
                   </div>
                   {duration ? (

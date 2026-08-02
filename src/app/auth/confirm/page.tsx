@@ -30,8 +30,8 @@ export default async function AuthConfirmPage({
   if (!code) {
     return (
       <AuthPageShell
-        description="El enlace no incluye un codigo de confirmacion valido."
-        eyebrow="Confirmacion de cuenta"
+        description="El enlace no incluye un código de confirmación válido."
+        eyebrow="Confirmación de cuenta"
         title="No pudimos confirmar el acceso"
       >
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6">
@@ -42,7 +42,7 @@ export default async function AuthConfirmPage({
             className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
             href="/login"
           >
-            Volver a iniciar sesion
+            Volver a iniciar sesión
           </Link>
         </div>
       </AuthPageShell>
@@ -56,7 +56,7 @@ export default async function AuthConfirmPage({
     return (
       <AuthPageShell
         description="El enlace puede haber expirado o ya fue utilizado."
-        eyebrow="Confirmacion de cuenta"
+        eyebrow="Confirmación de cuenta"
         title="No pudimos confirmar el acceso"
       >
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6">

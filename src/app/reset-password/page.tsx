@@ -16,9 +16,9 @@ export default async function ResetPasswordPage({
 
   return (
     <AuthPageShell
-      description="Define una nueva contrasena para recuperar el acceso a tu cuenta."
-      eyebrow="Nueva contrasena"
-      title="Actualizar contrasena"
+      description="Define una nueva contraseña para recuperar el acceso a tu cuenta."
+      eyebrow="Nueva contraseña"
+      title="Actualizar contraseña"
     >
       <ResetPasswordForm nextPath={nextPath} />
     </AuthPageShell>

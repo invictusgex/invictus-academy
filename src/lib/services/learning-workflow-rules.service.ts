@@ -18,7 +18,7 @@ export const ModulesCompletedRule: CompletionRule = {
     return {
       currentValue: context.completedModules,
       key: ModulesCompletedRule.key,
-      label: "Completar todos los modulos publicados",
+      label: "Completar todos los módulos publicados",
       metadata: {
         enrollmentActive: context.enrollmentActive,
         publishedModules: context.publishedModules,
@@ -60,7 +60,7 @@ export const TradingDaysRule: CompletionRule = {
     return {
       currentValue: context.tradingDays,
       key: TradingDaysRule.key,
-      label: "Registrar dias de trading",
+      label: "Registrar días de trading",
       metadata: {
         enrollmentActive: context.enrollmentActive,
         requiredTradingDays: context.requiredTradingDays,

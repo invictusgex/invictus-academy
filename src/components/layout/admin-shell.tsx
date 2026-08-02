@@ -13,7 +13,7 @@ const adminNavigation = [
   { href: "/admin/access", label: "Accesos", enabled: true },
   { href: "/admin/content", label: "Contenido", enabled: true },
   { href: "/admin/scenarios", label: "Biblioteca de Escenarios", enabled: true },
-  { href: "/admin/mentorship", label: "Agenda de mentorias", enabled: true },
+  { href: "/admin/mentorship", label: "Agenda de mentorías", enabled: true },
   { href: "/admin/productos", label: "Productos", enabled: false },
 ];
 

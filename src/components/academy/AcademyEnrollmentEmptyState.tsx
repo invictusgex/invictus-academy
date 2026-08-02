@@ -11,7 +11,7 @@ export function AcademyEnrollmentEmptyState() {
         Aun no tienes un programa activo
       </h1>
       <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[var(--color-text-secondary)]">
-        Cuando adquieras una formacion, aparecera aqui junto con tu progreso y
+        Cuando adquieras una formación, aparecerá aquí junto con tu progreso y
         recursos.
       </p>
       <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">

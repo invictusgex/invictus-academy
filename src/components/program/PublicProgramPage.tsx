@@ -32,7 +32,7 @@ function PublicProgramHeader() {
           Recorrido
         </a>
         <a className="transition hover:text-white" href="#modulos">
-          Modulos
+          Módulos
         </a>
         <a className="transition hover:text-white" href="#perfil">
           Perfil
@@ -50,10 +50,10 @@ function PublicProgramHeader() {
 
 function ProgramHero({ course }: PublicProgramPageProps) {
   const stats = [
-    `${course.modules.length} modulos`,
+    `${course.modules.length} módulos`,
     "Proceso guiado",
-    "Practica con evidencia",
-    "Mentoria individual preparada",
+    "Práctica con evidencia",
+    "Mentoría individual preparada",
   ];
 
   return (
@@ -66,9 +66,9 @@ function ProgramHero({ course }: PublicProgramPageProps) {
           Invictus GEX
         </h1>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
-          Una formacion privada para desarrollar criterio profesional en
+          Una formación privada para desarrollar criterio profesional en
           lectura de mercado basada en datos. El recorrido integra estudio,
-          practica, documentacion del proceso y una mentoria preparada con tu
+          práctica, documentación del proceso y una mentoría preparada con tu
           avance.
         </p>
       </div>
@@ -87,7 +87,7 @@ function ProgramHero({ course }: PublicProgramPageProps) {
           href={formationCtaHref}
           className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
         >
-          Comenzar mi formacion
+          Comenzar mi formación
         </Link>
         <a
           href="#modulos"
@@ -109,15 +109,15 @@ function JourneyIntro() {
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <div className="max-w-4xl">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Como se desarrolla tu formacion
+            Cómo se desarrolla tu formación
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
             No revisas contenido aislado. Avanzas por una secuencia de
-            preparacion profesional.
+            preparación profesional.
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
-            Cada etapa cumple una funcion: comprender, practicar, documentar y
-            preparar una conversacion individual con informacion concreta de tu
+            Cada etapa cumple una función: comprender, practicar, documentar y
+            preparar una conversación individual con información concreta de tu
             recorrido.
           </p>
         </div>
@@ -146,10 +146,10 @@ function PublicModulesSection() {
     <section id="modulos" className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
       <div className="max-w-3xl">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Estructura academica
+          Estructura académica
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
-          Siete etapas para avanzar de interpretacion a consolidacion.
+          Siete etapas para avanzar de interpretación a consolidación.
         </h2>
       </div>
       <div className="mt-8 space-y-5">
@@ -224,7 +224,7 @@ function MethodologyBlock() {
     <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-semibold text-white">
-          La metodologia ordena cinco preguntas profesionales.
+          La metodología ordena cinco preguntas profesionales.
         </h2>
         <div className="mt-8 grid gap-4 md:grid-cols-5">
           {publicMethodologySteps.map((step, index) => (
@@ -245,7 +245,7 @@ function MethodologyBlock() {
           ))}
         </div>
         <p className="mt-8 rounded-xl border border-[var(--color-cyan)] bg-[var(--color-card-bg)] p-5 text-base font-semibold text-white">
-          La decision aparece al final de la lectura, no al comienzo.
+          La decisión aparece al final de la lectura, no al comienzo.
         </p>
       </div>
     </section>
@@ -257,16 +257,16 @@ function MentorshipPreparationBlock() {
     <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-6 lg:grid-cols-[0.86fr_1.14fr] lg:px-8">
       <div>
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          La mentoria se prepara durante todo el programa
+          La mentoría se prepara durante todo el programa
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
-          Tu avance permite una conversacion individual mas precisa.
+          Tu avance permite una conversación individual más precisa.
         </h2>
       </div>
       <p className="text-base leading-7 text-[var(--color-text-secondary)]">
-        A medida que avanzas, documentas dudas, ejemplos y puntos de revision.
-        Esa evidencia permite que la etapa individual no sea generica, sino
-        conectada con tu manera real de interpretar y aplicar la metodologia.
+        A medida que avanzas, documentas dudas, ejemplos y puntos de revisión.
+        Esa evidencia permite que la etapa individual no sea genérica, sino
+        conectada con tu manera real de interpretar y aplicar la metodología.
       </p>
     </section>
   );
@@ -339,18 +339,18 @@ function FinalCta() {
           Siguiente paso
         </p>
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white">
-          Si este recorrido responde a lo que buscas, comienza tu formacion.
+          Si este recorrido responde a lo que buscas, comienza tu formación.
         </h2>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--color-text-secondary)]">
-          Invictus GEX esta disenado para quienes quieren desarrollar criterio
-          con estructura, practica y preparacion individual.
+          Invictus GEX está diseñado para quienes quieren desarrollar criterio
+          con estructura, práctica y preparación individual.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
           <Link
             href={formationCtaHref}
             className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
           >
-            Comenzar mi formacion
+            Comenzar mi formación
           </Link>
           <Link
             href="/"

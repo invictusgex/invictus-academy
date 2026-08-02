@@ -17,8 +17,8 @@ export default async function ForgotPasswordPage({
   return (
     <AuthPageShell
       description="Solicita un enlace seguro para recuperar el acceso a tu cuenta."
-      eyebrow="Recuperacion de acceso"
-      title="Recuperar contrasena"
+      eyebrow="Recuperación de acceso"
+      title="Recuperar contraseña"
     >
       <ForgotPasswordForm nextPath={nextPath} />
     </AuthPageShell>

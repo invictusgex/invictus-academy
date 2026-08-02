@@ -10,64 +10,64 @@ const offerIncludes = [
   {
     title: "Ingreso a Invictus GEX",
     description:
-      "Acceso al recorrido profesional de formacion en lectura de mercado basada en datos.",
+      "Acceso al recorrido profesional de formación en lectura de mercado basada en datos.",
   },
   {
-    title: "7 modulos estructurados",
+    title: "7 módulos estructurados",
     description:
-      "Una progresion desde criterio, mecanicas y regimenes hasta gestion y consolidacion.",
+      "Una progresión desde criterio, mecánicas y regímenes hasta gestión y consolidación.",
   },
   {
     title: "Lectura profesional",
     description:
-      "Integracion de GEX, liquidez, volumen, estructura, reaccion y riesgo.",
+      "Integración de GEX, liquidez, volumen, estructura, reacción y riesgo.",
   },
   {
-    title: "Preparacion individual",
+    title: "Preparación individual",
     description:
       "El proceso orienta al participante a ordenar dudas, ejemplos y observaciones relevantes.",
   },
   {
-    title: "Mentoria personalizada",
+    title: "Mentoría personalizada",
     description:
-      "La etapa individual se prepara con evidencia del recorrido para revisar criterio y aplicacion.",
+      "La etapa individual se prepara con evidencia del recorrido para revisar criterio y aplicación.",
   },
 ];
 
 const traditionalApproach = [
-  "Consume informacion sin una secuencia clara.",
+  "Consume información sin una secuencia clara.",
   "Busca indicaciones antes de diagnosticar contexto.",
-  "Evalua decisiones solo por el resultado inmediato.",
-  "Trata la mentoria como un complemento separado.",
+  "Evalúa decisiones solo por el resultado inmediato.",
+  "Trata la mentoría como un complemento separado.",
 ];
 
 const invictusApproach = [
   "Ordena el aprendizaje como proceso profesional.",
-  "Diagnostica contexto antes de evaluar participacion.",
-  "Integra practica, reflexion y revision del criterio.",
-  "Prepara la mentoria desde el primer modulo.",
+  "Diagnostica contexto antes de evaluar participación.",
+  "Integra práctica, reflexión y revisión del criterio.",
+  "Prepara la mentoría desde el primer módulo.",
 ];
 
 const faqs = [
   {
-    question: "Que estoy incorporando al ingresar a Invictus GEX?",
+    question: "¿Qué estoy incorporando al ingresar a Invictus GEX?",
     answer:
-      "Ingresas a un programa de formacion profesional. No es una compra de videos ni una plataforma aislada; es un proceso disenado para formar criterio de lectura de mercado.",
+      "Ingresas a un programa de formación profesional. No es una compra de videos ni una plataforma aislada; es un proceso diseñado para formar criterio de lectura de mercado.",
   },
   {
-    question: "La propuesta promete resultados financieros?",
+    question: "¿La propuesta promete resultados financieros?",
     answer:
-      "No. Invictus GEX no promete rentabilidad, ingresos ni resultados asegurados. El objetivo es desarrollar estructura, metodo, practica y gestion del riesgo.",
+      "No. Invictus GEX no promete rentabilidad, ingresos ni resultados asegurados. El objetivo es desarrollar estructura, método, práctica y gestión del riesgo.",
   },
   {
-    question: "La mentoria es independiente del programa?",
+    question: "¿La mentoría es independiente del programa?",
     answer:
-      "No. La mentoria es la culminacion del recorrido. La formacion previa prepara la conversacion individual con dudas, ejemplos y observaciones del participante.",
+      "No. La mentoría es la culminación del recorrido. La formación previa prepara la conversación individual con dudas, ejemplos y observaciones del participante.",
   },
   {
-    question: "Necesito experiencia previa?",
+    question: "¿Necesito experiencia previa?",
     answer:
-      "El recorrido es progresivo, pero exige disposicion para estudiar, practicar, revisar decisiones y sostener una preparacion seria.",
+      "El recorrido es progresivo, pero exige disposición para estudiar, practicar, revisar decisiones y sostener una preparación seria.",
   },
 ];
 
@@ -112,18 +112,18 @@ function OfferHero() {
           Ingreso a Invictus GEX
         </p>
         <h1 className="mt-5 text-4xl leading-tight font-semibold text-white sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
-          Una invitacion a formarte con estructura, practica y criterio.
+          Una invitación a formarte con estructura, práctica y criterio.
         </h1>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
           El ingreso a Invictus GEX abre un proceso: comprendes el programa,
-          comienzas tu formacion, practicas, documentas tu avance y llegas a
-          una mentoria preparada con tu recorrido.
+          comienzas tu formación, practicas, documentas tu avance y llegas a
+          una mentoría preparada con tu recorrido.
         </p>
         <Link
           href={formationCtaHref}
           className="mt-10 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
         >
-          Comenzar mi formacion
+          Comenzar mi formación
         </Link>
       </div>
     </section>
@@ -165,7 +165,7 @@ function JourneySection() {
     <section id="recorrido" className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
       <div className="max-w-3xl">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Como se desarrolla tu formacion
+          Cómo se desarrolla tu formación
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
           El valor esta en avanzar con orden.
@@ -199,13 +199,13 @@ function MentorshipSection() {
             Preparacion personalizada
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            La mentoria se construye con informacion real de tu proceso.
+            La mentoría se construye con información real de tu proceso.
           </h2>
         </div>
         <p className="text-base leading-7 text-[var(--color-text-secondary)]">
           Desde el inicio, el participante ordena dudas, ejemplos y
-          observaciones. Esa preparacion permite que la mentoria individual se
-          enfoque en su criterio y en su manera de aplicar la metodologia.
+          observaciones. Esa preparación permite que la mentoría individual se
+          enfoque en su criterio y en su manera de aplicar la metodología.
         </p>
       </div>
     </section>
@@ -312,14 +312,14 @@ function FinalCta() {
           Ingreso al programa
         </p>
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white">
-          Si buscas formacion, criterio y preparacion individual, Invictus GEX
-          esta disenado para ese recorrido.
+          Si buscas formación, criterio y preparación individual, Invictus GEX
+          está diseñado para ese recorrido.
         </h2>
         <Link
           href={formationCtaHref}
           className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
         >
-          Comenzar mi formacion
+          Comenzar mi formación
         </Link>
       </div>
     </section>

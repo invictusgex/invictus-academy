@@ -7,10 +7,10 @@ import { useAuth } from "@/hooks/useAuth";
 
 function getFriendlyLogoutError(error: unknown) {
   if (error instanceof Error && error.message) {
-    return "No pudimos cerrar la sesion. Intenta nuevamente.";
+    return "No pudimos cerrar la sesión. Intenta nuevamente.";
   }
 
-  return "No pudimos cerrar la sesion. Intenta nuevamente.";
+  return "No pudimos cerrar la sesión. Intenta nuevamente.";
 }
 
 export function LogoutButton() {
@@ -41,7 +41,7 @@ export function LogoutButton() {
         onClick={handleLogout}
         type="button"
       >
-        {submitting ? "Cerrando sesion..." : "Cerrar sesion"}
+        {submitting ? "Cerrando sesión..." : "Cerrar sesión"}
       </button>
 
       {errorMessage ? (

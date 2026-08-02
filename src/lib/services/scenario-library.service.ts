@@ -44,14 +44,14 @@ const urlMaxLength = 500;
 const videoIdMaxLength = 300;
 
 const scenarioTypeLabels: Record<ScenarioType, string> = {
-  execution_example: "Ejemplo de ejecucion",
+  execution_example: "Ejemplo de ejecución",
   gamma_structure: "Estructura de gamma",
   heatmap: "Heatmap",
   macro_event: "Evento macro",
-  market_analysis: "Analisis de mercado",
+  market_analysis: "Análisis de mercado",
   order_flow: "Order flow",
   other: "Otro",
-  trade_review: "Revision de trade",
+  trade_review: "Revisión de trade",
   volume_profile: "Perfil de volumen",
 };
 
@@ -262,26 +262,26 @@ function validateAdminScenarioInput(input: AdminScenarioEditableData) {
   if (normalized.description.length > descriptionMaxLength) {
     errors.push({
       field: "description",
-      message: `La descripcion no puede superar ${descriptionMaxLength} caracteres.`,
+      message: `La descripción no puede superar ${descriptionMaxLength} caracteres.`,
     });
   } else if (hasUnsafeMarkupCharacters(normalized.description)) {
     errors.push({
       field: "description",
-      message: "La descripcion contiene caracteres no permitidos.",
+      message: "La descripción contiene caracteres no permitidos.",
     });
   }
 
   if (!scenarioTypeValues.includes(normalized.scenarioType)) {
     errors.push({
       field: "scenarioType",
-      message: "El tipo de escenario seleccionado no es valido.",
+      message: "El tipo de escenario seleccionado no es válido.",
     });
   }
 
   if (!scenarioMarketValues.includes(normalized.market)) {
     errors.push({
       field: "market",
-      message: "El mercado seleccionado no es valido.",
+      message: "El mercado seleccionado no es válido.",
     });
   }
 
@@ -358,7 +358,7 @@ function validateAdminScenarioInput(input: AdminScenarioEditableData) {
   ) {
     errors.push({
       field: "videoProvider",
-      message: "El proveedor de video seleccionado no es valido.",
+      message: "El proveedor de video seleccionado no es válido.",
     });
   }
 
@@ -410,7 +410,7 @@ function validateAdminScenarioInput(input: AdminScenarioEditableData) {
   if (!isValidStatus(normalized.status)) {
     errors.push({
       field: "status",
-      message: "El estado seleccionado no es valido.",
+      message: "El estado seleccionado no es válido.",
     });
   }
 

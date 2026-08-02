@@ -261,21 +261,21 @@ export const StorageService = {
 
     if (!rule.allowedExtensions.includes(extension)) {
       return {
-        message: "La extension del archivo no esta permitida.",
+        message: "La extension del archivo no está permitida.",
         ok: false,
       };
     }
 
     if (file.type && !rule.allowedMimeTypes.includes(file.type)) {
       return {
-        message: "El tipo MIME del archivo no esta permitido.",
+        message: "El tipo MIME del archivo no está permitido.",
         ok: false,
       };
     }
 
     if (file.size > rule.maxSizeBytes) {
       return {
-        message: "El archivo supera el tamano maximo permitido.",
+        message: "El archivo supera el tamaño máximo permitido.",
         ok: false,
       };
     }
@@ -322,7 +322,7 @@ export const StorageService = {
   async deleteFile(path: string): Promise<StorageMutationResult> {
     if (!isAllowedPath(path)) {
       return {
-        message: "La ruta de archivo no esta permitida.",
+        message: "La ruta de archivo no está permitida.",
         ok: false,
       };
     }
@@ -356,7 +356,7 @@ export const StorageService = {
   }): Promise<StorageMutationResult> {
     if (!isAllowedPath(path)) {
       return {
-        message: "La ruta de archivo no esta permitida.",
+        message: "La ruta de archivo no está permitida.",
         ok: false,
       };
     }

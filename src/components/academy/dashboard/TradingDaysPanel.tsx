@@ -36,7 +36,7 @@ function getTodayInputValue() {
 function getErrorMessage(payload: TradingDaysResponse) {
   return "error" in payload
     ? payload.error.message
-    : "No pudimos actualizar tus dias de trading.";
+    : "No pudimos actualizar tus días de trading.";
 }
 
 function formatTradingDate(value: string) {
@@ -63,7 +63,7 @@ export function TradingDaysPanel() {
   const progressLabel = `${Math.min(
     tradingDays.length,
     academyWorkflowConfig.requiredTradingDays,
-  )} de ${academyWorkflowConfig.requiredTradingDays} dias`;
+  )} de ${academyWorkflowConfig.requiredTradingDays} días`;
   const progressPercent = Math.min(
     100,
     Math.round(
@@ -112,7 +112,7 @@ export function TradingDaysPanel() {
       setError(
         loadError instanceof Error
           ? loadError.message
-          : "No pudimos cargar tus dias de trading.",
+          : "No pudimos cargar tus días de trading.",
       );
     } finally {
       setLoading(false);
@@ -244,7 +244,7 @@ export function TradingDaysPanel() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-sm font-semibold text-white">
-              Progreso de practica
+              Progreso de práctica
             </p>
             <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
               {progressLabel} registrados
@@ -290,7 +290,7 @@ export function TradingDaysPanel() {
           <textarea
             className="mt-2 min-h-11 w-full resize-y rounded-xl border border-[var(--color-border)] bg-black/30 px-3 py-2 text-sm text-white outline-none transition focus:border-[var(--color-cyan)] motion-reduce:transition-none"
             onChange={(event) => setNotes(event.target.value)}
-            placeholder="Contexto, ejecucion o aprendizaje del dia"
+            placeholder="Contexto, ejecución o aprendizaje del dia"
             rows={1}
             value={notes}
           />
@@ -300,7 +300,7 @@ export function TradingDaysPanel() {
           disabled={saving}
           type="submit"
         >
-          {saving ? "Guardando..." : "Anadir dia"}
+          {saving ? "Guardando..." : "Añadir dia"}
         </button>
       </form>
 
@@ -393,8 +393,8 @@ export function TradingDaysPanel() {
         </div>
       ) : (
         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white/[0.03] p-5 text-sm leading-6 text-[var(--color-text-secondary)]">
-          Aun no registraste dias de trading. Agrega tus primeras fechas cuando
-          hayas completado practica real de mercado.
+          Aun no registraste días de trading. Agrega tus primeras fechas cuando
+          hayas completado práctica real de mercado.
         </div>
       )}
     </div>

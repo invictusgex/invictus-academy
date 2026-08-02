@@ -84,7 +84,7 @@ async function getPurchasablePrice(stripe: Stripe, priceId: string) {
   if (!price.active || price.type !== "one_time" || price.recurring) {
     throw new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.PRICE_NOT_PURCHASABLE,
-      "El precio configurado no esta habilitado para pago unico.",
+      "El precio configurado no está habilitado para pago ?nico.",
       {
         status: 500,
       },
@@ -139,7 +139,7 @@ async function tryExpireCheckoutSession(
   } catch (error) {
     throw new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.CHECKOUT_SESSION_EXPIRATION_FAILED,
-      "No se pudo expirar una sesion de Checkout sin trazabilidad local.",
+      "No se pudo expirar una sesión de Checkout sin trazabilidad local.",
       {
         cause: error,
       },
@@ -378,7 +378,7 @@ export async function createCheckoutSession(
     ) {
       throw new StripeCheckoutError(
         STRIPE_CHECKOUT_ERROR_CODES.STRIPE_NOT_CONFIGURED,
-        "Stripe Checkout no esta configurado en este entorno.",
+        "Stripe Checkout no está configurado en este entorno.",
         {
           cause: error,
         },
@@ -387,7 +387,7 @@ export async function createCheckoutSession(
 
     throw new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.CHECKOUT_CREATION_FAILED,
-      "No se pudo crear la sesion de Checkout.",
+      "No se pudo crear la sesión de Checkout.",
       {
         cause: error,
       },

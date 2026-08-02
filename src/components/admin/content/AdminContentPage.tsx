@@ -75,7 +75,7 @@ export function AdminContentPage() {
     const summary = program?.summary;
 
     return [
-      { label: "Modulos", value: summary?.moduleCount ?? 0 },
+      { label: "Módulos", value: summary?.moduleCount ?? 0 },
       { label: "Videos", value: summary?.videoCount ?? 0 },
       { label: "Recursos", value: summary?.resourceCount ?? 0 },
       { label: "Publicados", value: summary?.publishedModules ?? 0 },
@@ -86,8 +86,8 @@ export function AdminContentPage() {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader eyebrow="Contenido" title="Contenido academico">
-        Vista administrativa de modulos, videos y recursos existentes en el CMS
+      <AdminPageHeader eyebrow="Contenido" title="Contenido académico">
+        Vista administrativa de módulos, videos y recursos existentes en el CMS
         academico.
       </AdminPageHeader>
 
@@ -101,7 +101,7 @@ export function AdminContentPage() {
         <div className="flex flex-col gap-2 border-b border-[var(--color-border)] p-5 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-semibold text-white">Modulos</h2>
           <p className="text-sm text-[var(--color-text-secondary)]">
-            {loading ? "Cargando contenido..." : `${modules.length} modulos`}
+            {loading ? "Cargando contenido..." : `${modules.length} módulos`}
           </p>
         </div>
 
@@ -175,8 +175,8 @@ export function AdminContentPage() {
                   <tr>
                     <td className="px-5 py-8" colSpan={8}>
                       <AdminEmptyState
-                        description="Cuando exista contenido academico sincronizado, los modulos apareceran aqui para su gestion."
-                        title="No hay modulos para mostrar"
+                        description="Cuando exista contenido académico sincronizado, los módulos apareceran aquí para su gestión."
+                        title="No hay módulos para mostrar"
                       />
                     </td>
                   </tr>

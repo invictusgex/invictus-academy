@@ -12,11 +12,11 @@ type EnrollmentAccessDeniedProps = {
 };
 
 const reasonMessages: Record<EnrollmentAccessReason, string> = {
-  expired: "El acceso asociado a esta cuenta ha expirado.",
-  inactive: "El acceso asociado a esta cuenta no esta activo.",
-  not_found: "No encontramos un acceso asociado a esta cuenta.",
-  not_started: "El acceso todavia no ha comenzado.",
-  revoked: "El acceso asociado a esta cuenta no esta activo.",
+  expired: "El acceso asociado a está cuenta ha expirado.",
+  inactive: "El acceso asociado a está cuenta no está activo.",
+  not_found: "No encontramos un acceso asociado a está cuenta.",
+  not_started: "El acceso todavía no ha comenzado.",
+  revoked: "El acceso asociado a está cuenta no está activo.",
 };
 
 export function EnrollmentAccessDenied({
@@ -39,8 +39,8 @@ export function EnrollmentAccessDenied({
             Acceso no habilitado
           </h1>
           <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
-            Tu cuenta inicio sesion correctamente, pero no tiene acceso activo a
-            esta formacion.
+            Tu cuenta inició sesión correctamente, pero no tiene acceso activo a
+            esta formación.
           </p>
           <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
             {message}
@@ -52,7 +52,7 @@ export function EnrollmentAccessDenied({
             className="inline-flex min-h-10 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-slate-950 transition hover:opacity-90"
             href="/oferta"
           >
-            Ver informacion de acceso
+            Ver información de acceso
           </Link>
 
           {technicalError ? (

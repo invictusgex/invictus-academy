@@ -6,7 +6,7 @@ export const module06: Module = {
   title: "Módulo 6",
   description: "Contenido pendiente de definición",
   overview:
-    "En este módulo desarrollarás los conceptos fundamentales correspondientes a esta etapa del programa.",
+    "En este módulo desarrollarás los conceptos fundamentales correspondientes a está etapa del programa.",
   learningObjectives: [
     "Objetivo de aprendizaje 1",
     "Objetivo de aprendizaje 2",

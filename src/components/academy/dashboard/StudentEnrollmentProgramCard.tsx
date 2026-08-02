@@ -41,7 +41,7 @@ export function StudentEnrollmentProgramCard({
 
         <p className="line-clamp-3 text-sm leading-6 text-[var(--color-text-secondary)]">
           {product.productDescription ??
-            "Formacion disponible en tu espacio privado."}
+            "Formación disponible en tu espacio privado."}
         </p>
 
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4">
@@ -62,7 +62,7 @@ export function StudentEnrollmentProgramCard({
                 />
               </div>
               <p className="mt-3 text-xs text-[var(--color-text-secondary)]">
-                {progress.completedModules}/{progress.totalModules} modulos
+                {progress.completedModules}/{progress.totalModules} módulos
                 completados
               </p>
             </>
@@ -78,7 +78,7 @@ export function StudentEnrollmentProgramCard({
           className="mt-auto inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
           href={ctaHref}
         >
-          Continuar formacion
+          Continuar formación
         </Link>
       </div>
     </StudentCard>

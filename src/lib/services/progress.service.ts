@@ -507,7 +507,7 @@ export async function markModuleCompleted({
   assertProgressResponse(payload);
 
   if (!response.ok) {
-    throw new Error("No se pudo actualizar el progreso del modulo.");
+    throw new Error("No se pudo actualizar el progreso del módulo.");
   }
 
   return payload.progress;

@@ -190,14 +190,14 @@ function mapAuthError(error: ServerAuthError) {
   if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
     return new TradingDayServiceError(
       TRADING_DAY_ERROR_CODES.ACTIVE_ENROLLMENT_REQUIRED,
-      "Debes iniciar sesion para registrar dias de trading.",
+      "Debes iniciar sesión para registrar días de trading.",
       401,
     );
   }
 
   return new TradingDayServiceError(
     TRADING_DAY_ERROR_CODES.INVALID_TRADING_DAY_PAYLOAD,
-    "No pudimos validar tu sesion para registrar dias de trading.",
+    "No pudimos validar tu sesión para registrar días de trading.",
     500,
   );
 }

@@ -13,19 +13,19 @@ type LoginFormProps = {
 function getFriendlyAuthError(error: unknown) {
   if (error instanceof Error) {
     if (error.message.includes("Invalid login credentials")) {
-      return "El email o la contrasena no son correctos.";
+      return "El email o la contraseña no son correctos.";
     }
 
     if (error.message.includes("Email not confirmed")) {
-      return "Debes confirmar tu email antes de iniciar sesion.";
+      return "Debes confirmar tu email antes de iniciar sesión.";
     }
 
     if (error.message.includes("Supabase Auth is not configured")) {
-      return "La autenticacion todavia no esta configurada en este entorno.";
+      return "La autenticación todavía no está configurada en este entorno.";
     }
   }
 
-  return "No pudimos iniciar sesion. Revisa tus datos e intenta nuevamente.";
+  return "No pudimos iniciar sesión. Revisa tus datos e intenta nuevamente.";
 }
 
 export function LoginForm({ nextPath }: LoginFormProps) {
@@ -83,7 +83,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
           id="password"
           name="password"
           onChange={(event) => setPassword(event.target.value)}
-          placeholder="Ingresa tu contrasena"
+          placeholder="Ingresa tu contraseña"
           required
           type="password"
           value={password}
@@ -101,7 +101,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
         disabled={submitting}
         type="submit"
       >
-        {submitting ? "Iniciando sesion..." : "Iniciar sesion"}
+        {submitting ? "Iniciando sesión..." : "Iniciar sesión"}
       </button>
 
       <div className="mt-5 flex flex-col gap-3 text-center text-sm text-[var(--color-text-secondary)]">
@@ -118,7 +118,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
           className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
           href={`/forgot-password?next=${encodeURIComponent(nextPath)}`}
         >
-          Olvide mi contrasena
+          Olvidé mi contraseña
         </Link>
       </div>
     </form>

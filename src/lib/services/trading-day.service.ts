@@ -89,7 +89,7 @@ function normalizeDate(value: string) {
   if (normalized > today) {
     throw new TradingDayServiceError(
       TRADING_DAY_ERROR_CODES.INVALID_TRADING_DAY_PAYLOAD,
-      "No puedes registrar dias de trading futuros.",
+      "No puedes registrar días de trading futuros.",
       400,
     );
   }
@@ -129,7 +129,7 @@ async function resolveActiveScope(
   if (!access.hasAccess) {
     throw new TradingDayServiceError(
       TRADING_DAY_ERROR_CODES.ACTIVE_ENROLLMENT_REQUIRED,
-      "Necesitas un enrollment activo para registrar dias de trading.",
+      "Necesitas un enrollment activo para registrar días de trading.",
       403,
     );
   }
