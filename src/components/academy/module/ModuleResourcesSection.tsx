@@ -1,7 +1,6 @@
 import {
   StudentCard,
   StudentContentGrid,
-  StudentEmptyState,
   StudentSection,
   StudentStatusBadge,
 } from "@/components/student";
@@ -9,7 +8,7 @@ import type { ModuleResource } from "@/types/academy";
 
 type ModuleResourcesSectionProps = {
   resourceUrls: Record<string, string>;
-  resources: ModuleResource[];
+  resources?: ModuleResource[] | null;
 };
 
 const resourceTypeLabels: Record<NonNullable<ModuleResource["resourceType"]>, string> = {
@@ -19,6 +18,13 @@ const resourceTypeLabels: Record<NonNullable<ModuleResource["resourceType"]>, st
   pdf: "PDF",
   template: "Plantilla",
 };
+
+const invalidResourceTitles = new Set([
+  "placeholder",
+  "recurso placeholder",
+  "recurso no disponible",
+  "sin recurso",
+]);
 
 function getResourceTypeLabel(resource: ModuleResource) {
   return resource.resourceType ? resourceTypeLabels[resource.resourceType] : "Recurso";
@@ -36,64 +42,80 @@ function getResourceActionLabel(resource: ModuleResource) {
   return "Ver recurso";
 }
 
+export function getValidModuleResources(
+  resources: ModuleResource[] | null | undefined,
+) {
+  return (resources ?? []).filter((resource) => {
+    const title = resource.title.trim();
+    const url = resource.url?.trim();
+    const storagePath = resource.storagePath?.trim();
+
+    if (!title || invalidResourceTitles.has(title.toLowerCase())) {
+      return false;
+    }
+
+    return Boolean(url || storagePath);
+  });
+}
+
 export function ModuleResourcesSection({
   resourceUrls,
   resources,
 }: ModuleResourcesSectionProps) {
+  const validResources = getValidModuleResources(resources);
+
+  if (validResources.length === 0) {
+    return null;
+  }
+
   return (
     <StudentSection
       description="Material complementario asociado directamente a este módulo."
       title="Recursos"
     >
-      {resources.length > 0 ? (
-        <StudentContentGrid columns={2}>
-          {resources.map((resource) => {
-            const resourceUrl = resourceUrls[resource.id];
+      <StudentContentGrid columns={2}>
+        {validResources.map((resource) => {
+          const resourceUrl = resourceUrls[resource.id];
 
-            return (
-              <StudentCard
-                className="flex min-h-full flex-col"
-                key={resource.id}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <StudentStatusBadge tone="info">
-                      {getResourceTypeLabel(resource)}
-                    </StudentStatusBadge>
-                    <h3 className="mt-4 text-balance text-lg font-semibold text-white">
-                      {resource.title}
-                    </h3>
-                  </div>
+          return (
+            <StudentCard
+              className="flex min-h-full flex-col"
+              key={resource.id}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <StudentStatusBadge tone="info">
+                    {getResourceTypeLabel(resource)}
+                  </StudentStatusBadge>
+                  <h3 className="mt-4 text-balance text-lg font-semibold text-white">
+                    {resource.title}
+                  </h3>
                 </div>
-                {resource.description ? (
-                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-                    {resource.description}
-                  </p>
-                ) : null}
-                {resourceUrl ? (
-                  <a
-                    aria-label={`${getResourceActionLabel(resource)}: ${resource.title}`}
-                    className="mt-auto inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                    href={resourceUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {getResourceActionLabel(resource)}
-                  </a>
-                ) : (
-                  <p className="mt-auto rounded-full border border-[var(--color-border)] px-3 py-2 text-center text-sm text-[var(--color-text-muted)] sm:w-fit">
-                    Recurso no disponible
-                  </p>
-                )}
-              </StudentCard>
-            );
-          })}
-        </StudentContentGrid>
-      ) : (
-        <StudentEmptyState title="Este módulo aún no tiene recursos disponibles.">
-          Los materiales complementarios aparecerán aquí cuando sean publicados.
-        </StudentEmptyState>
-      )}
+              </div>
+              {resource.description ? (
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-[var(--color-text-secondary)]">
+                  {resource.description}
+                </p>
+              ) : null}
+              {resourceUrl ? (
+                <a
+                  aria-label={`${getResourceActionLabel(resource)}: ${resource.title}`}
+                  className="mt-auto inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                  href={resourceUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {getResourceActionLabel(resource)}
+                </a>
+              ) : (
+                <p className="mt-auto rounded-full border border-[var(--color-border)] px-3 py-2 text-center text-sm text-[var(--color-text-muted)] sm:w-fit">
+                  Recurso no disponible
+                </p>
+              )}
+            </StudentCard>
+          );
+        })}
+      </StudentContentGrid>
     </StudentSection>
   );
 }

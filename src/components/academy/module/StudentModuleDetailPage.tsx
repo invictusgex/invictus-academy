@@ -3,9 +3,11 @@
 import { useMemo } from "react";
 
 import { ModuleCompletionPanel } from "@/components/academy/module/ModuleCompletionPanel";
-import { ModuleObjectivesSection } from "@/components/academy/module/ModuleObjectivesSection";
 import { ModuleReflectionPanel } from "@/components/academy/module/ModuleReflectionPanel";
-import { ModuleResourcesSection } from "@/components/academy/module/ModuleResourcesSection";
+import {
+  getValidModuleResources,
+  ModuleResourcesSection,
+} from "@/components/academy/module/ModuleResourcesSection";
 import { ModuleVideosSection } from "@/components/academy/module/ModuleVideosSection";
 import { StudentModuleHero } from "@/components/academy/module/StudentModuleHero";
 import { StudentModuleNavigation } from "@/components/academy/module/StudentModuleNavigation";
@@ -31,7 +33,11 @@ export function StudentModuleDetailPage({
   const status = moduleProgress?.status ?? "not-started";
   const statusLabel = formatModuleProgressStatusLabel(status);
   const thumbnailUrl = useModuleThumbnailUrl(academyModule.thumbnailUrl);
-  const resourceUrls = useModuleResourceUrls(academyModule.resources);
+  const validResources = useMemo(
+    () => getValidModuleResources(academyModule.resources),
+    [academyModule.resources],
+  );
+  const resourceUrls = useModuleResourceUrls(validResources);
   const orderedModules = useMemo(
     () => progress.modules.map((progressModule) => progressModule.academyModule),
     [progress.modules],
@@ -62,19 +68,17 @@ export function StudentModuleDetailPage({
         />
       </div>
 
-      <ModuleResourcesSection
-        resourceUrls={resourceUrls}
-        resources={academyModule.resources}
-      />
-
       <ModuleReflectionPanel
         moduleKey={academyModule.id}
         productSlug={productSlug}
       />
 
-      <ModuleCompletionPanel moduleId={academyModule.id} status={status} />
+      <ModuleResourcesSection
+        resourceUrls={resourceUrls}
+        resources={validResources}
+      />
 
-      <ModuleObjectivesSection objectives={academyModule.learningObjectives} />
+      <ModuleCompletionPanel moduleId={academyModule.id} status={status} />
 
       <StudentModuleNavigation
         nextModule={nextModule}

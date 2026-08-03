@@ -20,14 +20,6 @@ export default function AcademyModuleLoading() {
         <StudentLoadingSkeleton columns={2} rows={2} />
       </StudentSection>
 
-      <StudentSection title="Recursos">
-        <StudentLoadingSkeleton columns={2} rows={2} />
-      </StudentSection>
-
-      <StudentSection title="Objetivos del módulo">
-        <StudentLoadingSkeleton columns={2} rows={2} />
-      </StudentSection>
-
       <StudentSection title="Navegación">
         <StudentLoadingSkeleton columns={3} rows={3} />
       </StudentSection>
