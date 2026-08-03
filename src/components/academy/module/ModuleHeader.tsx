@@ -2,26 +2,26 @@ import type { ModuleAvailability } from "@/types/academy";
 import { formatModuleAvailabilityLabel } from "@/utils/module-availability";
 
 type ModuleHeaderProps = {
-  number: number;
-  title: string;
-  description: string;
   availability: ModuleAvailability;
   competenciesCount: number;
+  description: string;
+  number: number;
+  title: string;
 };
 
 export function ModuleHeader({
-  number,
-  title,
-  description,
   availability,
   competenciesCount,
+  description,
+  number,
+  title,
 }: ModuleHeaderProps) {
   const formattedModuleNumber = String(number).padStart(2, "0");
 
   return (
     <section className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8 lg:p-10">
       <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-        Módulo {formattedModuleNumber}
+        Etapa {formattedModuleNumber}
       </p>
       <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0 max-w-3xl">

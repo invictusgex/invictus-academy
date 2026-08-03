@@ -1,12 +1,11 @@
 import {
   StudentCard,
   StudentEmptyState,
-  StudentSection,
   StudentStatusBadge,
 } from "@/components/student";
 import type { ModuleVideo } from "@/types/academy";
-import type { ModuleProgressStatus } from "@/utils/module-progress";
 import { classNames } from "@/utils/class-names";
+import type { ModuleProgressStatus } from "@/utils/module-progress";
 
 type ModuleVideosSectionProps = {
   moduleStatus: ModuleProgressStatus;
@@ -72,10 +71,10 @@ function formatDuration(durationSeconds: number | null | undefined) {
   return seconds > 0 ? `${minutes} min ${seconds} s` : `${minutes} min`;
 }
 
-function getModuleVideoStatus(status: ModuleProgressStatus) {
+function getStageStatus(status: ModuleProgressStatus) {
   return status === "completed"
     ? {
-        label: "Completado",
+        label: "Completada",
         tone: "complete" as const,
       }
     : {
@@ -84,7 +83,7 @@ function getModuleVideoStatus(status: ModuleProgressStatus) {
       };
 }
 
-function getVideoObjective(video: ModuleVideo) {
+function getStageObjective(video: ModuleVideo) {
   return video.objective?.trim() || "Objetivo académico pendiente de definición.";
 }
 
@@ -111,7 +110,7 @@ function ModuleVideoPlayer({ video }: { video: ModuleVideo }) {
     <div className="mt-5 flex aspect-video w-full items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4 text-center sm:p-6">
       <p className="max-w-xl break-words text-base font-semibold leading-7 text-white sm:text-lg">
         {video.placeholder.trim() ||
-          "El contenido de formación aún no está disponible."}
+          "La formación de esta etapa aún no está disponible."}
       </p>
     </div>
   );
@@ -122,13 +121,10 @@ export function ModuleVideosSection({
   videos,
 }: ModuleVideosSectionProps) {
   const hasMultipleVideos = videos.length > 1;
-  const videoStatus = getModuleVideoStatus(moduleStatus);
+  const stageStatus = getStageStatus(moduleStatus);
 
   return (
-    <StudentSection
-      description="Contenido principal del módulo presentado dentro de la academia."
-      title="Etapa de formación"
-    >
+    <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-7 lg:p-8">
       {videos.length > 0 ? (
         <div
           className={classNames(
@@ -149,25 +145,25 @@ export function ModuleVideosSection({
                   <div className="min-w-0">
                     <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
                       {hasMultipleVideos
-                        ? `Contenido ${index + 1}`
-                        : "Contenido principal"}
+                        ? `Parte ${index + 1}`
+                        : `Etapa ${index + 1}`}
                     </p>
                     <h3 className="mt-3 text-balance text-xl font-semibold text-white">
                       {video.title}
                     </h3>
                   </div>
-                  <StudentStatusBadge tone={videoStatus.tone}>
-                    {videoStatus.label}
+                  <StudentStatusBadge tone={stageStatus.tone}>
+                    {stageStatus.label}
                   </StudentStatusBadge>
                 </div>
 
                 <div className="mt-5 grid gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
                   <div className="min-w-0">
                     <p className="text-xs font-semibold tracking-[0.14em] text-[var(--color-cyan)] uppercase">
-                      Objetivo de esta etapa
+                      Objetivo
                     </p>
                     <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-                      {getVideoObjective(video)}
+                      {getStageObjective(video)}
                     </p>
                     <p className="mt-2 text-xs leading-5 text-[var(--color-text-muted)]">
                       Este objetivo define la capacidad que desarrollarás
@@ -193,10 +189,10 @@ export function ModuleVideosSection({
           })}
         </div>
       ) : (
-        <StudentEmptyState title="Este módulo aún no tiene contenido disponible.">
-          El contenido aparecerá aquí cuando sea publicado.
+        <StudentEmptyState title="Esta etapa aún no tiene formación disponible.">
+          La formación aparecerá aquí cuando sea publicada.
         </StudentEmptyState>
       )}
-    </StudentSection>
+    </section>
   );
 }

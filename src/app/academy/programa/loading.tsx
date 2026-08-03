@@ -15,15 +15,15 @@ export default function AcademyProgramLoading() {
         <div className="h-10 w-full rounded-full bg-white/[0.06] sm:w-44" />
       </header>
 
-      <StudentSection title="Resumen del progreso">
+      <StudentSection title="Resumen del avance">
         <StudentLoadingSkeleton columns={3} rows={3} />
       </StudentSection>
 
-      <StudentSection title="Módulo actual">
+      <StudentSection title="Etapa actual">
         <StudentLoadingSkeleton columns={2} rows={1} />
       </StudentSection>
 
-      <StudentSection title="Módulos del programa">
+      <StudentSection title="Etapas del programa">
         <StudentLoadingSkeleton columns={2} rows={4} />
       </StudentSection>
     </div>

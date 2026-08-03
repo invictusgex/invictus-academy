@@ -43,15 +43,15 @@ export function ModuleCompletionPanel({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
-              Progreso del módulo
+              Estado de la etapa
             </p>
             <StudentStatusBadge tone={completed ? "complete" : "neutral"}>
-              {completed ? "Completado" : "Pendiente"}
+              {completed ? "Completada" : "Pendiente"}
             </StudentStatusBadge>
           </div>
           <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-            Marca este módulo como completado cuando hayas revisado su contenido
-            y estes listo para avanzar.
+            Completa esta etapa cuando hayas integrado su objetivo y estés
+            listo para avanzar en tu recorrido.
           </p>
           {error ? (
             <p className="mt-3 text-sm font-medium text-amber-100">
@@ -67,10 +67,10 @@ export function ModuleCompletionPanel({
           type="button"
         >
           {completed
-            ? "Módulo completado"
+            ? "Continuar a la siguiente etapa"
             : saving
               ? "Guardando..."
-              : "Marcar módulo completado"}
+              : "Completar esta etapa"}
         </button>
       </div>
     </StudentCard>

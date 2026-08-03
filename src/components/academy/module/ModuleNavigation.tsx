@@ -7,8 +7,8 @@ type NavigationModule = {
 };
 
 type ModuleNavigationProps = {
-  previousModule?: NavigationModule;
   nextModule?: NavigationModule;
+  previousModule?: NavigationModule;
 };
 
 export function ModuleNavigation({
@@ -17,7 +17,7 @@ export function ModuleNavigation({
 }: ModuleNavigationProps) {
   return (
     <nav
-      aria-label="Navegación entre módulos"
+      aria-label="Navegación entre etapas"
       className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8"
     >
       {nextModule ? (
@@ -26,7 +26,7 @@ export function ModuleNavigation({
             Próxima etapa
           </p>
           <h2 className="mt-3 break-words text-2xl font-semibold text-white">
-            Módulo {String(nextModule.number).padStart(2, "0")}
+            Etapa {String(nextModule.number).padStart(2, "0")}
           </h2>
           <p className="mt-3 break-words text-base leading-7 text-[var(--color-text-secondary)]">
             {nextModule.title}
@@ -38,7 +38,7 @@ export function ModuleNavigation({
             Etapa final
           </p>
           <h2 className="mt-3 break-words text-2xl font-semibold text-white">
-            Has llegado al último módulo disponible del programa.
+            Has llegado a la última etapa disponible del programa.
           </h2>
         </div>
       )}
@@ -50,7 +50,7 @@ export function ModuleNavigation({
               href={`/academy/programa/${previousModule.id}`}
               className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-5 text-center text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
             >
-              Módulo anterior: {previousModule.title}
+              Etapa anterior: {previousModule.title}
             </Link>
           ) : null}
         </div>
@@ -67,7 +67,7 @@ export function ModuleNavigation({
               href={`/academy/programa/${nextModule.id}`}
               className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-center text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
             >
-              Ingresar al siguiente módulo
+              Ingresar a la siguiente etapa
             </Link>
           ) : null}
         </div>

@@ -29,7 +29,7 @@ export function ModuleBreadcrumb({ moduleNumber }: ModuleBreadcrumbProps) {
         </li>
         <li aria-hidden="true">/</li>
         <li aria-current="page" className="break-words text-white">
-          Módulo {formattedModuleNumber}
+          Etapa {formattedModuleNumber}
         </li>
       </ol>
     </nav>

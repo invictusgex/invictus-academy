@@ -24,7 +24,7 @@ export function CurrentProgramModuleCard({
       <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
         {academyModule.thumbnailUrl ? (
           <Image
-            alt={`Miniatura de ${academyModule.title}`}
+            alt={`Imagen de ${academyModule.title}`}
             className="aspect-[16/10] w-full object-cover xl:h-full xl:min-h-64"
             height={320}
             src={academyModule.thumbnailUrl}
@@ -34,7 +34,7 @@ export function CurrentProgramModuleCard({
         ) : (
           <div className="flex aspect-[16/10] min-h-48 items-center justify-center bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] text-sm text-[var(--color-text-muted)] xl:h-full xl:min-h-64">
             <span className="rounded-full border border-[var(--color-border)] px-3 py-1">
-              Sin miniatura
+              Sin imagen
             </span>
           </div>
         )}
@@ -44,7 +44,7 @@ export function CurrentProgramModuleCard({
         <div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-              Módulo {academyModule.number}
+              Etapa {academyModule.number}
             </p>
             <StudentStatusBadge tone={getModuleStatusTone(status)}>
               {statusLabel}

@@ -24,7 +24,7 @@ export function StudentProgramModuleCard({
       <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
         {academyModule.thumbnailUrl ? (
           <Image
-            alt={`Miniatura de ${academyModule.title}`}
+            alt={`Imagen de ${academyModule.title}`}
             className="aspect-[16/10] w-full object-cover lg:aspect-square"
             height={220}
             src={academyModule.thumbnailUrl}
@@ -34,7 +34,7 @@ export function StudentProgramModuleCard({
         ) : (
           <div className="flex aspect-[16/10] items-center justify-center bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] text-sm text-[var(--color-text-muted)] lg:aspect-square">
             <span className="rounded-full border border-[var(--color-border)] px-3 py-1">
-              Sin miniatura
+              Sin imagen
             </span>
           </div>
         )}
@@ -43,7 +43,7 @@ export function StudentProgramModuleCard({
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
-            Módulo {academyModule.number}
+            Etapa {academyModule.number}
           </p>
           <StudentStatusBadge tone={getModuleStatusTone(status)}>
             {statusLabel}
@@ -56,10 +56,7 @@ export function StudentProgramModuleCard({
           {academyModule.overview || academyModule.description}
         </p>
         <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-          {academyModule.videos.length} video
-          {academyModule.videos.length === 1 ? "" : "s"} -{" "}
-          {academyModule.resources.length} recurso
-          {academyModule.resources.length === 1 ? "" : "s"}
+          Parte del recorrido académico con recursos asociados.
         </p>
       </div>
 

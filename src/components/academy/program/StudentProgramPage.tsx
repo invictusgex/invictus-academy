@@ -9,23 +9,23 @@ import { StudentProgramModuleCard } from "@/components/academy/program/StudentPr
 import { StudentProgramOverview } from "@/components/academy/program/StudentProgramOverview";
 import {
   StudentEmptyState,
+  StudentLoadingSkeleton,
   StudentPageHeader,
   StudentSection,
-  StudentLoadingSkeleton,
 } from "@/components/student";
 import { useProgressContext } from "@/contexts/ProgressContext";
 import type { ProgramModuleProgress } from "@/utils/module-progress";
 
 function getModuleCtaLabel(status: ProgramModuleProgress["status"]) {
   if (status === "completed") {
-    return "Revisar módulo";
+    return "Revisar etapa";
   }
 
   if (status === "in-progress") {
-    return "Continuar módulo";
+    return "Continuar etapa";
   }
 
-  return "Comenzar módulo";
+  return "Comenzar etapa";
 }
 
 export function StudentProgramPage() {
@@ -66,25 +66,25 @@ export function StudentProgramPage() {
             className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto motion-reduce:transition-none motion-reduce:hover:translate-y-0"
             href="/academy"
           >
-            Volver al dashboard
+            Volver al Centro de Formación
           </Link>
         }
         eyebrow="Programa de formación"
         title="Programa"
       >
-        Avanza por cada módulo y construye una metodología basada en datos,
+        Avanza por cada etapa y construye una metodología basada en datos,
         estructura y disciplina.
       </StudentPageHeader>
 
       {progressLoading ? (
-        <StudentSection title="Resumen del progreso">
+        <StudentSection title="Resumen del avance">
           <StudentLoadingSkeleton columns={3} rows={3} />
         </StudentSection>
       ) : progress.totalModules > 0 ? (
         <>
           <StudentSection
-            description="Tu avance se calcula por módulo completado, no por videos ni recursos."
-            title="Resumen del progreso"
+            description="Tu avance se calcula por etapa completada, no por material o recursos."
+            title="Resumen del avance"
           >
             <StudentProgramOverview
               completedModules={progress.completedModules}
@@ -96,7 +96,7 @@ export function StudentProgramPage() {
 
           <StudentSection
             description="La siguiente acción sugerida según tu progreso actual."
-            title="Módulo actual"
+            title="Etapa actual"
           >
             {displayCurrentModule ? (
               <CurrentProgramModuleCard
@@ -108,18 +108,18 @@ export function StudentProgramPage() {
             ) : (
               <StudentEmptyState
                 actionHref="/academy"
-                actionLabel="Volver al dashboard"
+                actionLabel="Volver al Centro de Formación"
                 title="Programa completado"
               >
-                Completaste los módulos disponibles. Puedes volver a revisar
-                cualquier módulo desde el listado.
+                Completaste las etapas disponibles. Puedes volver a revisar
+                cualquier etapa desde el listado.
               </StudentEmptyState>
             )}
           </StudentSection>
 
           <StudentSection
             description="Recorre la secuencia completa del programa en orden académico."
-            title="Módulos del programa"
+            title="Etapas del programa"
           >
             <div className="grid gap-4">
               {displayModuleSummaries.map((moduleSummary) => (
@@ -137,10 +137,10 @@ export function StudentProgramPage() {
       ) : (
         <StudentEmptyState
           actionHref="/academy"
-          actionLabel="Volver al dashboard"
-          title="Tu programa todavía no tiene módulos disponibles."
+          actionLabel="Volver al Centro de Formación"
+          title="Tu programa todavía no tiene etapas disponibles."
         >
-          El contenido aparecerá aquí cuando sea publicado.
+          La formación aparecerá aquí cuando sea publicada.
         </StudentEmptyState>
       )}
     </div>

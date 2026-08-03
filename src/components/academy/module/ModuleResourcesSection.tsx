@@ -70,7 +70,7 @@ export function ModuleResourcesSection({
 
   return (
     <StudentSection
-      description="Material complementario asociado directamente a este módulo."
+      description="Material complementario asociado directamente a esta etapa."
       title="Recursos"
     >
       <StudentContentGrid columns={2}>

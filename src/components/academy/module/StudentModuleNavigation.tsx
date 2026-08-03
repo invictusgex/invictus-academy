@@ -17,10 +17,10 @@ export function StudentModuleNavigation({
 }: StudentModuleNavigationProps) {
   return (
     <nav
-      aria-label="Navegación entre módulos"
+      aria-label="Navegación entre etapas"
       className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-7 lg:p-8"
     >
-      <h2 className="text-2xl font-semibold text-white">Navegación</h2>
+      <h2 className="text-2xl font-semibold text-white">Recorrido</h2>
       <div className="mt-5 grid gap-3 lg:grid-cols-3">
         {previousModule ? (
           <Link
@@ -28,7 +28,7 @@ export function StudentModuleNavigation({
             href={`/academy/programa/${previousModule.id}`}
           >
             <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
-              Módulo anterior
+              Etapa anterior
             </span>
             <span className="mt-2 break-words text-sm font-semibold text-white">
               {previousModule.title}
@@ -36,7 +36,7 @@ export function StudentModuleNavigation({
           </Link>
         ) : (
           <div className="flex min-h-24 min-w-0 flex-col justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm text-[var(--color-text-muted)]">
-            No hay módulo anterior.
+            No hay etapa anterior.
           </div>
         )}
 
@@ -58,7 +58,7 @@ export function StudentModuleNavigation({
             href={`/academy/programa/${nextModule.id}`}
           >
             <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
-              Siguiente módulo
+              Siguiente etapa
             </span>
             <span className="mt-2 break-words text-sm font-semibold text-white">
               {nextModule.title}
@@ -66,7 +66,7 @@ export function StudentModuleNavigation({
           </Link>
         ) : (
           <div className="flex min-h-24 min-w-0 flex-col justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm text-[var(--color-text-muted)]">
-            No hay siguiente módulo.
+            No hay siguiente etapa.
           </div>
         )}
       </div>

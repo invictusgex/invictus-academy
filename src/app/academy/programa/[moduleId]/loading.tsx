@@ -16,7 +16,7 @@ export default function AcademyModuleLoading() {
         <div className="aspect-[16/10] rounded-xl border border-[var(--color-border)] bg-white/[0.05] xl:aspect-[4/3]" />
       </section>
 
-      <StudentSection title="Videos">
+      <StudentSection title="Formación">
         <StudentLoadingSkeleton columns={2} rows={2} />
       </StudentSection>
 

@@ -102,7 +102,7 @@ export function ModuleReflectionPanel({
         assertReflectionResponse(payload);
 
         if (!response.ok) {
-          throw new Error("No se pudo cargar la reflexión del módulo.");
+          throw new Error("No se pudo cargar la reflexión de la etapa.");
         }
 
         if (!cancelled) {
@@ -112,7 +112,7 @@ export function ModuleReflectionPanel({
         }
       } catch {
         if (!cancelled) {
-          setErrorMessage("No se pudo cargar la reflexión del módulo.");
+          setErrorMessage("No se pudo cargar la reflexión de la etapa.");
         }
       } finally {
         if (!cancelled) {
@@ -152,7 +152,7 @@ export function ModuleReflectionPanel({
       assertReflectionResponse(payload);
 
       if (!response.ok || !payload.reflection) {
-        throw new Error("No se pudo guardar la reflexión del módulo.");
+        throw new Error("No se pudo guardar la reflexión de la etapa.");
       }
 
       setContent(payload.reflection.content);
@@ -160,7 +160,7 @@ export function ModuleReflectionPanel({
       setUpdatedAt(payload.reflection.updatedAt);
       setSaved(true);
     } catch {
-      setErrorMessage("No se pudo guardar la reflexión del módulo.");
+      setErrorMessage("No se pudo guardar la reflexión de la etapa.");
     } finally {
       setSaving(false);
     }
@@ -281,7 +281,7 @@ export function ModuleReflectionPanel({
           </p>
           <p className="mt-3 text-sm leading-6 text-[var(--color-text-muted)]">
             Cuanta más claridad aportes sobre tu proceso, más precisa podrá ser
-            la preparación de tu sesión.
+            la preparación de tu mentoría.
           </p>
         </div>
         {updatedAtLabel ? (
@@ -311,7 +311,7 @@ export function ModuleReflectionPanel({
             />
             {!content.trim() ? (
               <p className="mt-3 text-sm text-[var(--color-text-muted)]">
-                Aún no has documentado ninguna reflexión en este módulo.
+                Aún no has documentado ninguna reflexión en esta etapa.
               </p>
             ) : null}
             <p
@@ -319,7 +319,7 @@ export function ModuleReflectionPanel({
               id="module-reflection-privacy"
             >
               Esta información será revisada únicamente por tu mentor y
-              utilizada para preparar tu sesión personalizada.
+              utilizada para preparar tu mentoría personalizada.
             </p>
             <div className="mt-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4 sm:p-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
