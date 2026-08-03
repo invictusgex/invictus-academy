@@ -8,13 +8,12 @@ type AdminShellProps = {
 };
 
 const adminNavigation = [
-  { href: "/admin", label: "Resumen", enabled: true },
-  { href: "/admin/students", label: "Alumnos", enabled: true },
-  { href: "/admin/access", label: "Accesos", enabled: true },
-  { href: "/admin/content", label: "Contenido", enabled: true },
-  { href: "/admin/scenarios", label: "Biblioteca de Escenarios", enabled: true },
-  { href: "/admin/mentorship", label: "Agenda de mentorías", enabled: true },
-  { href: "/admin/productos", label: "Productos", enabled: false },
+  { href: "/admin", label: "Resumen" },
+  { href: "/admin/students", label: "Alumnos" },
+  { href: "/admin/access", label: "Accesos" },
+  { href: "/admin/content", label: "Contenido" },
+  { href: "/admin/scenarios", label: "Biblioteca de Escenarios" },
+  { href: "/admin/mentorship", label: "Agenda de mentorías" },
 ];
 
 export function AdminShell({ children }: AdminShellProps) {
@@ -35,24 +34,15 @@ export function AdminShell({ children }: AdminShellProps) {
           aria-label="Navegación administrativa"
           className="mt-6 grid gap-2"
         >
-          {adminNavigation.map((item) =>
-            item.enabled ? (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-hover-bg)] px-3 py-2.5 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <span
-                key={item.label}
-                className="rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium text-[var(--color-text-muted)]"
-              >
-                {item.label} · Próximamente
-              </span>
-            ),
-          )}
+          {adminNavigation.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-hover-bg)] px-3 py-2.5 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         <div className="mt-6 lg:mt-auto">

@@ -59,15 +59,6 @@ export function AcademySidebar({ navigation }: AcademySidebarProps) {
           );
         })}
       </nav>
-
-      <div className="mt-6 lg:mt-auto">
-        <button
-          type="button"
-          className="w-full rounded-lg border border-[var(--color-border)] px-3 py-2.5 text-left text-sm font-medium text-[var(--color-text-muted)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-        >
-          Cerrar sesión
-        </button>
-      </div>
     </aside>
   );
 }

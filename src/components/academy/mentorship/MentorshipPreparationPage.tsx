@@ -203,44 +203,6 @@ export function MentorshipPreparationPage({
         requirementsSatisfied={preparation.requirementsSatisfied}
         slots={slots}
       />
-
-      {false ? (
-      <StudentSection title="Siguiente etapa">
-        <StudentCard elevated>
-          {preparation.requirementsSatisfied ? (
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <h2 className="text-2xl font-semibold text-white">
-                  Tu proceso está listo para la siguiente etapa.
-                </h2>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
-                  La agenda se habilitará en una fase posterior. Tu preparación
-                  ya queda organizada para continuar.
-                </p>
-              </div>
-              <button
-                className="inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-[var(--color-text-muted)] sm:w-auto"
-                disabled
-                type="button"
-              >
-                Agenda disponible próximamente
-              </button>
-            </div>
-          ) : (
-            <div>
-              <h2 className="text-2xl font-semibold text-white">
-                Tu mentoría sigue en preparación.
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
-                Continúa completando el programa, documentando reflexiónes y
-                registrando práctica. Todo ese contexto permitirá preparar mejor
-                tu sesión individual.
-              </p>
-            </div>
-          )}
-        </StudentCard>
-      </StudentSection>
-      ) : null}
     </div>
   );
 }
