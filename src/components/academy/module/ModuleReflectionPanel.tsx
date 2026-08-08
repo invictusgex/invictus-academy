@@ -110,9 +110,13 @@ export function ModuleReflectionPanel({
           setAttachments(payload.reflection?.attachments ?? []);
           setUpdatedAt(payload.reflection?.updatedAt ?? null);
         }
-      } catch {
+      } catch (error) {
         if (!cancelled) {
-          setErrorMessage("No se pudo cargar la reflexión de la etapa.");
+          setErrorMessage(
+            error instanceof Error
+              ? error.message
+              : "No se pudo cargar la reflexión de la etapa.",
+          );
         }
       } finally {
         if (!cancelled) {
@@ -159,8 +163,12 @@ export function ModuleReflectionPanel({
       setAttachments(payload.reflection.attachments ?? []);
       setUpdatedAt(payload.reflection.updatedAt);
       setSaved(true);
-    } catch {
-      setErrorMessage("No se pudo guardar la reflexión de la etapa.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "No se pudo guardar la reflexión de la etapa.",
+      );
     } finally {
       setSaving(false);
     }

@@ -202,14 +202,14 @@ function mapAuthError(error: ServerAuthError) {
   if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
     return new ModuleReflectionServiceError(
       MODULE_REFLECTION_ERROR_CODES.ACTIVE_ENROLLMENT_REQUIRED,
-      "Debes iniciar sesión para documentar está reflexión.",
+      "Debes iniciar sesión para documentar esta reflexión.",
       401,
     );
   }
 
   return new ModuleReflectionServiceError(
     MODULE_REFLECTION_ERROR_CODES.INVALID_REFLECTION_PAYLOAD,
-    "No pudimos validar tu sesión para documentar está reflexión.",
+    "No pudimos validar tu sesión para documentar esta reflexión.",
     500,
   );
 }

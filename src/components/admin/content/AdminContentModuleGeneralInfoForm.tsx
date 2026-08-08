@@ -121,7 +121,7 @@ export function AdminContentModuleGeneralInfoForm({
 
       <div className="mt-6 grid gap-5">
         <label className="grid gap-2 text-sm font-medium text-white">
-          Titulo
+          Título
           <input
             className="min-h-11 rounded-lg border border-[var(--color-border)] bg-[var(--color-card-bg)] px-3 text-sm text-white outline-none transition placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-cyan)]"
             disabled={isSaving}

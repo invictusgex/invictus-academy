@@ -28,6 +28,7 @@ const moduleSelect = `
   estimated_duration_minutes,
   availability,
   status,
+  thumbnail_url,
   published_at,
   created_at,
   updated_at

@@ -24,6 +24,7 @@ const moduleSelect = `
   estimated_duration_minutes,
   availability,
   status,
+  thumbnail_url,
   published_at,
   created_at,
   updated_at
@@ -72,6 +73,7 @@ type AcademyModuleUpdateRow = {
   overview: string;
   published_at: string | null;
   status: AdminContentEditableModuleData["status"];
+  thumbnail_url: string | null;
   title: string;
 };
 

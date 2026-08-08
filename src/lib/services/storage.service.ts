@@ -10,7 +10,10 @@ import type {
   StorageValidationResult,
   StorageValidationRule,
 } from "@/lib/types/storage.types";
-import { academyAssetPathPrefixValues } from "@/lib/types/storage.types";
+import {
+  academyAssetPathPrefixValues,
+  academyAssetsBucket,
+} from "@/lib/types/storage.types";
 import { defaultSignedUrlDurationSeconds } from "@/lib/types/storage.types";
 
 const pathPrefixByKind: Record<AcademyAssetKind, AcademyAssetPathPrefix> = {
@@ -97,6 +100,15 @@ function getExtension(filename: string) {
 
 function isAllowedPath(path: string) {
   return StorageService.isInternalStoragePath(path);
+}
+
+function normalizeStoragePathValue(value: string) {
+  const normalized = value.trim().replace(/^\/+/, "");
+  const bucketPrefix = `${academyAssetsBucket}/`;
+
+  return normalized.startsWith(bucketPrefix)
+    ? normalized.slice(bucketPrefix.length)
+    : normalized;
 }
 
 function isSafeHttpUrl(value: string) {
@@ -220,26 +232,30 @@ export const StorageService = {
   },
 
   isInternalStoragePath(path: string) {
+    const normalizedPath = normalizeStoragePathValue(path);
+
     if (
-      !path ||
-      path.startsWith("/") ||
-      path.includes("\\") ||
-      path.includes("..") ||
-      path.includes("//") ||
-      isSafeHttpUrl(path)
+      !normalizedPath ||
+      normalizedPath.startsWith("/") ||
+      normalizedPath.includes("\\") ||
+      normalizedPath.includes("..") ||
+      normalizedPath.includes("//") ||
+      isSafeHttpUrl(normalizedPath)
     ) {
       return false;
     }
 
     return academyAssetPathPrefixValues.some((prefix) =>
-      path.startsWith(`${prefix}/`),
+      normalizedPath.startsWith(`${prefix}/`),
     );
   },
 
   validatePathForAssetKind(path: string, kind: AcademyAssetKind) {
+    const normalizedPath = normalizeStoragePathValue(path);
+
     return (
-      StorageService.isInternalStoragePath(path) &&
-      path.startsWith(`${pathPrefixByKind[kind]}/`)
+      StorageService.isInternalStoragePath(normalizedPath) &&
+      normalizedPath.startsWith(`${pathPrefixByKind[kind]}/`)
     );
   },
 
@@ -261,7 +277,7 @@ export const StorageService = {
 
     if (!rule.allowedExtensions.includes(extension)) {
       return {
-        message: "La extension del archivo no está permitida.",
+        message: "La extensión del archivo no está permitida.",
         ok: false,
       };
     }
@@ -391,11 +407,13 @@ export const StorageService = {
     path: string,
     expiresInSeconds = defaultSignedUrlDurationSeconds,
   ): Promise<StorageSignedUrlResult | null> {
-    if (!isAllowedPath(path)) {
+    const normalizedPath = normalizeStoragePathValue(path);
+
+    if (!isAllowedPath(normalizedPath)) {
       return null;
     }
 
-    const cacheKey = createSignedUrlCacheKey(path, expiresInSeconds);
+    const cacheKey = createSignedUrlCacheKey(normalizedPath, expiresInSeconds);
     const cached = getCachedSignedUrl(cacheKey);
 
     if (cached) {
@@ -410,7 +428,7 @@ export const StorageService = {
 
     const request = StorageRepository.createSignedUrl({
       expiresInSeconds,
-      path,
+      path: normalizedPath,
     })
       .then((result) => {
         signedUrlCache.set(cacheKey, {
@@ -420,7 +438,19 @@ export const StorageService = {
 
         return result;
       })
-      .catch(() => null)
+      .catch((error) => {
+        if (process.env.NODE_ENV === "development") {
+          console.error("No se pudo crear la URL firmada del asset privado.", {
+            error: error instanceof Error ? error.message : "Unknown error",
+            pathPrefix:
+              academyAssetPathPrefixValues.find((prefix) =>
+                normalizedPath.startsWith(`${prefix}/`),
+              ) ?? "unknown",
+          });
+        }
+
+        return null;
+      })
       .finally(() => {
         pendingSignedUrlRequests.delete(cacheKey);
       });
@@ -441,18 +471,20 @@ export const StorageService = {
       return null;
     }
 
-    if (StorageService.isExternalAssetUrl(value)) {
+    const normalizedValue = normalizeStoragePathValue(value);
+
+    if (StorageService.isExternalAssetUrl(normalizedValue)) {
       return {
         source: "external",
-        url: value,
+        url: normalizedValue,
       };
     }
 
-    if (!StorageService.validatePathForAssetKinds(value, allowedKinds)) {
+    if (!StorageService.validatePathForAssetKinds(normalizedValue, allowedKinds)) {
       return null;
     }
 
-    const signedUrl = await StorageService.createSignedUrl(value);
+    const signedUrl = await StorageService.createSignedUrl(normalizedValue);
 
     if (!signedUrl) {
       return null;

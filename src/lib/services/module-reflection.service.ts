@@ -200,7 +200,7 @@ async function resolveReflectionScope(
   if (!access.hasAccess) {
     throw new ModuleReflectionServiceError(
       MODULE_REFLECTION_ERROR_CODES.ACTIVE_ENROLLMENT_REQUIRED,
-      "Necesitas un enrollment activo para documentar está reflexión.",
+      "Necesitas un enrollment activo para documentar esta reflexión.",
       403,
     );
   }

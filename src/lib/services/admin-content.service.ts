@@ -108,7 +108,7 @@ function mapModule({
     resourceCount: moduleResources.length,
     resources: moduleResources,
     status: moduleRow.status,
-    thumbnailUrl: null,
+    thumbnailUrl: moduleRow.thumbnail_url,
     title: moduleRow.title,
     videoCount: moduleVideos.length,
     videos: moduleVideos,
@@ -272,7 +272,7 @@ export function validateAdminContentModuleInput(
   if (!isValidAvailability(normalized.availability)) {
     errors.push({
       field: "availability",
-      message: "La disponibilidad seleccionada no es valida.",
+      message: "La disponibilidad seleccionada no es válida.",
     });
   }
 
@@ -298,7 +298,7 @@ export function validateAdminContentModuleInput(
   ) {
     errors.push({
       field: "thumbnailUrl",
-      message: "La miniatura debe ser una URL heredada o una ruta interna valida.",
+      message: "La miniatura debe ser una URL heredada o una ruta interna válida.",
     });
   }
 
@@ -436,7 +436,7 @@ function validateAdminContentVideoInput(
   ) {
     errors.push({
       field: "providerVideoId",
-      message: "El proveedor external requiere una URL http o https valida.",
+      message: "El proveedor external requiere una URL http o https válida.",
     });
   } else if (/[<>]/.test(normalized.providerVideoId)) {
     errors.push({
@@ -491,7 +491,7 @@ function validateAdminContentVideoInput(
   ) {
     errors.push({
       field: "thumbnailUrl",
-      message: "La miniatura debe ser una URL http o https valida.",
+      message: "La miniatura debe ser una URL http o https válida.",
     });
   }
 
@@ -584,7 +584,7 @@ function validateAdminContentResourceInput(
   } else if (normalized.url.length > 0 && !isValidUrl(normalized.url)) {
     errors.push({
       field: "url",
-      message: "La URL debe ser http o https valida.",
+      message: "La URL debe ser http o https válida.",
     });
   } else if (hasUnsafeMarkupCharacters(normalized.url)) {
     errors.push({
@@ -824,6 +824,7 @@ export const AdminContentService = {
             nextStatus: validation.normalized.status,
           }),
           status: validation.normalized.status,
+          thumbnail_url: validation.normalized.thumbnailUrl || null,
           title: validation.normalized.title,
         });
 

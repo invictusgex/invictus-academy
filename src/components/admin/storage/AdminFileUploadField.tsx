@@ -169,7 +169,7 @@ export function AdminFileUploadField({
               <dd>{selectedFileDetails.type}</dd>
             </div>
             <div>
-              <dt className="font-semibold text-white">Tamano</dt>
+              <dt className="font-semibold text-white">Tamaño</dt>
               <dd>{selectedFileDetails.size}</dd>
             </div>
           </div>
