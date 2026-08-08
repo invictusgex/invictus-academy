@@ -30,13 +30,6 @@ const principles = [
   },
 ];
 
-const mentorshipEvidence = [
-  "Lecturas documentadas que revelan cómo construyes contexto.",
-  "Ejemplos reales donde liquidez, flujo y exposición gamma empiezan a relacionarse.",
-  "Observaciones sobre decisión, riesgo y condiciones previas a la ejecución.",
-  "Evidencia de práctica para integrar la metodología a tu proceso.",
-];
-
 const interpretationShifts = [
   {
     before: "Observabas movimientos.",
@@ -94,9 +87,9 @@ const academicMap = [
       "Registra observaciones, lecturas y ejemplos reales que servirán para preparar la integración metodológica.",
   },
   {
-    title: "Recibes tu mentoría personalizada",
+    title: "Integras la metodología en una mentoría privada en vivo",
     description:
-      "La segunda etapa del Método Invictus utiliza tu recorrido para profundizar e integrar la metodología.",
+      "Trabajas 1 a 1 con tu mentor para profundizar, conectar los elementos del análisis y consolidar la metodología.",
   },
 ];
 
@@ -160,6 +153,10 @@ function Hero() {
           llega el momento de tomar una decisión, cada pieza parece funcionar
           por separado. El problema no es aprender más, sino integrar lo que ya
           aprendiste.
+        </p>
+        <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
+          Formación estructurada que culmina en una mentoría privada en vivo 1
+          a 1, preparada a partir de tu recorrido.
         </p>
         <div className="mt-10 flex flex-col gap-4 sm:flex-row">
           <Link
@@ -409,28 +406,55 @@ function MentorshipSection() {
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Segunda etapa del Método Invictus
+            Mentoría privada en vivo · 1 a 1
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-            La mentoría integra lo que el programa desarrolla.
+            La etapa donde integras la metodología junto a tu mentor.
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
-            La mayoría de operadores aprende herramientas por separado. En
-            Invictus GEX aprenderás a relacionarlas dentro de una única
-            metodología diseñada para construir contexto antes de ejecutar una
-            decisión: Exposición Gamma, Mapa de Liquidez, Order Flow, Big
-            Trades, CVD, Delta, Speed of Tape, VWAP y desviaciones cobran valor
-            cuando se interpretan como partes de un mismo sistema.
+            Después de desarrollar la formación previa, tendrás una sesión
+            privada en vivo 1 a 1 con tu mentor. No es una llamada genérica para
+            responder preguntas: antes de la sesión, el mentor revisa tu
+            progreso, tus reflexiones, tus ejemplos y el recorrido que
+            documentaste dentro de la plataforma.
+          </p>
+          <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
+            Durante la mentoría profundizarás en la integración de exposición
+            gamma, mapa de liquidez, Order Flow, Big Trades, CVD, Delta, Speed
+            of Tape, VWAP y sus desviaciones dentro de una metodología completa
+            de interpretación del mercado.
           </p>
         </div>
         <div className="grid gap-3">
-          {mentorshipEvidence.map((item) => (
-            <p
+          {[
+            {
+              title: "Antes de la mentoría",
+              description:
+                "Tu recorrido queda documentado dentro de la plataforma.",
+            },
+            {
+              title: "Preparación",
+              description:
+                "El mentor revisa tu progreso, dudas y ejemplos antes de reunirse contigo.",
+            },
+            {
+              title: "Sesión privada en vivo",
+              description:
+                "Trabajas directamente 1 a 1 con el mentor para profundizar e integrar la metodología.",
+            },
+            {
+              title: "Después",
+              description:
+                "Recibes un cierre personalizado con conclusiones y próximos pasos.",
+            },
+          ].map((item) => (
+            <div
               className="border-t border-[var(--color-border)] pt-4 text-sm leading-6 text-[var(--color-text-secondary)]"
-              key={item}
+              key={item.title}
             >
-              {item}
-            </p>
+              <p className="font-semibold text-white">{item.title}</p>
+              <p className="mt-2">{item.description}</p>
+            </div>
           ))}
         </div>
       </div>

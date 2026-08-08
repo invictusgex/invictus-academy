@@ -28,9 +28,9 @@ const offerIncludes = [
       "El proceso orienta al participante a documentar lecturas, ejemplos y observaciones relevantes.",
   },
   {
-    title: "Segunda etapa del Método Invictus",
+    title: "Mentoría privada en vivo 1 a 1",
     description:
-      "La etapa individual integra y profundiza la metodología con evidencia del recorrido.",
+      "Una sesión individual con el mentor para integrar y profundizar la metodología con evidencia de tu recorrido.",
   },
 ];
 
@@ -62,7 +62,7 @@ const faqs = [
   {
     question: "¿La mentoría es independiente del programa?",
     answer:
-      "No. La mentoría es la segunda etapa del Método Invictus. La formación desarrolla fundamentos y la etapa individual integra la metodología con el recorrido documentado del participante.",
+      "No. La mentoría privada en vivo 1 a 1 con el mentor es la segunda etapa del Método Invictus. La formación desarrolla fundamentos y la sesión individual integra la metodología con el recorrido documentado del participante.",
   },
   {
     question: "¿Necesito experiencia previa?",
@@ -117,7 +117,7 @@ function OfferHero() {
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
           El ingreso a Invictus GEX abre un proceso: comprendes el programa,
           comienzas tu formación, practicas, documentas tu avance y llegas a
-          una segunda etapa de integración preparada con tu recorrido.
+          una mentoría privada en vivo 1 a 1 preparada con tu recorrido.
         </p>
         <Link
           href={formationCtaHref}
@@ -196,17 +196,17 @@ function MentorshipSection() {
       <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Preparación personalizada
+            Mentoría privada en vivo · 1 a 1
           </p>
           <h2 className="mt-3 text-3xl font-semibold text-white">
-          La segunda etapa se construye con información real de tu proceso.
+            La segunda etapa se construye con información real de tu proceso.
           </h2>
         </div>
         <p className="text-base leading-7 text-[var(--color-text-secondary)]">
           Desde el inicio, el participante documenta lecturas, ejemplos y
-          observaciones. Esa preparación permite profundizar cómo se relacionan
-          contexto, liquidez, flujo, exposición gamma y riesgo dentro de una
-          única metodología.
+          observaciones. Esa preparación permite que la sesión privada en vivo
+          con el mentor profundice cómo se relacionan contexto, liquidez, flujo,
+          exposición gamma y riesgo dentro de una única metodología.
         </p>
       </div>
     </section>

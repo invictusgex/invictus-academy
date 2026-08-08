@@ -143,7 +143,7 @@ export const publicProgramModules: PublicProgramModule[] = [
     result:
       "Terminarás con un protocolo para preparar, esperar, participar, gestionar y revisar con criterio.",
     transition:
-      "El recorrido abre la segunda etapa del Método Invictus: integrar la metodología con evidencia real de tu proceso.",
+      "El recorrido abre la segunda etapa del Método Invictus: una mentoría privada en vivo 1 a 1 para integrar la metodología con evidencia real de tu proceso.",
   },
 ];
 
@@ -153,7 +153,7 @@ export const publicFormationJourney = [
   "Comienzas tu formación",
   "Estudias y practicas",
   "Documentas tu proceso",
-  "Integras la metodología",
+  "Trabajas en vivo 1 a 1 con tu mentor",
   "Continúas tu desarrollo",
 ];
 
@@ -196,7 +196,7 @@ export const publicProgramAudience = [
   "Quieres ordenar liquidez, volumen, GEX, estructura y riesgo dentro de un mismo proceso.",
   "Estás dispuesto a estudiar, practicar y documentar tu avance con honestidad.",
   "Prefieres desarrollar criterio antes que depender de indicaciones externas.",
-  "Valoras una segunda etapa donde la metodología se integra con evidencia de tu propio recorrido.",
+  "Valoras una mentoría privada en vivo 1 a 1 donde la metodología se integra con evidencia de tu propio recorrido.",
 ];
 
 export const publicProgramNonAudience = [

@@ -66,7 +66,7 @@ function ProgramHero({ course }: PublicProgramPageProps) {
     `${course.modules.length} módulos`,
     "Proceso guiado",
     "Práctica con evidencia",
-    "Integración metodológica",
+    "Mentoría privada en vivo 1 a 1",
   ];
 
   return (
@@ -81,8 +81,8 @@ function ProgramHero({ course }: PublicProgramPageProps) {
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
           Una formación privada para desarrollar criterio profesional en
           lectura de mercado basada en datos. El recorrido construye
-          fundamentos y culmina en una segunda etapa donde la metodología se
-          integra con tu avance.
+          fundamentos y culmina en una mentoría privada en vivo 1 a 1 con el
+          mentor, preparada a partir de tu avance.
         </p>
       </div>
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -130,8 +130,8 @@ function JourneyIntro() {
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
             Cada etapa cumple una función: comprender, practicar, documentar y
-            preparar una integración individual con información concreta de tu
-            recorrido.
+            preparar una mentoría privada en vivo 1 a 1 con información
+            concreta de tu recorrido.
           </p>
         </div>
         <ol className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
