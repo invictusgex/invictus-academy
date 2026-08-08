@@ -9,6 +9,12 @@ import type {
 import type { Course, Module, ModuleResource, ModuleVideo } from "@/types/academy";
 
 const academyProductSlug = "trading-basado-en-datos";
+const placeholderDescriptionPatterns = [
+  "contenido pendiente de definicion",
+  "contenido pendiente de definición",
+  "pendiente de definicion",
+  "pendiente de definición",
+];
 
 function getLearningObjectives(value: unknown) {
   if (!Array.isArray(value)) {
@@ -30,6 +36,80 @@ function getFallbackVideoObjective(videoKey: string) {
   }
 
   return undefined;
+}
+
+function normalizeCopy(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function isPlaceholderDescription(value: string | null | undefined) {
+  if (!value) {
+    return true;
+  }
+
+  const normalizedValue = normalizeCopy(value);
+
+  return placeholderDescriptionPatterns.some(
+    (pattern) => normalizedValue === normalizeCopy(pattern),
+  );
+}
+
+function getFallbackModule(moduleKey: string) {
+  return fallbackAcademyProgram.modules.find(
+    (academyModule) => academyModule.id === moduleKey,
+  );
+}
+
+function getAcademicModuleDescription(moduleKey: string) {
+  const fallbackModule = getFallbackModule(moduleKey);
+
+  return (
+    fallbackModule?.videos
+      .map((video) => video.objective)
+      .filter((objective): objective is string => Boolean(objective?.trim()))
+      .join(" ") || fallbackModule?.overview
+  );
+}
+
+function resolveModuleDescription(
+  moduleKey: string,
+  description: string | null | undefined,
+) {
+  if (!isPlaceholderDescription(description)) {
+    return description ?? "";
+  }
+
+  return getAcademicModuleDescription(moduleKey) ?? description ?? "";
+}
+
+function resolveModuleOverview(moduleKey: string, overview: string) {
+  if (!isPlaceholderDescription(overview)) {
+    return overview;
+  }
+
+  return getAcademicModuleDescription(moduleKey) ?? overview;
+}
+
+function sanitizeModule(academyModule: Module): Module {
+  return {
+    ...academyModule,
+    description: resolveModuleDescription(
+      academyModule.id,
+      academyModule.description,
+    ),
+    overview: resolveModuleOverview(academyModule.id, academyModule.overview),
+  };
+}
+
+function sanitizeProgram(program: Course): Course {
+  return {
+    ...program,
+    modules: program.modules.map(sanitizeModule),
+  };
 }
 
 function mapVideo(row: AcademyModuleVideoRow): ModuleVideo {
@@ -71,12 +151,15 @@ function mapModule({
   return {
     availability: moduleRow.availability,
     createdAt: moduleRow.created_at,
-    description: moduleRow.description,
+    description: resolveModuleDescription(
+      moduleRow.module_key,
+      moduleRow.description,
+    ),
     estimatedDurationMinutes: moduleRow.estimated_duration_minutes,
     id: moduleRow.module_key,
     learningObjectives: getLearningObjectives(moduleRow.learning_objectives),
     number: moduleRow.module_order,
-    overview: moduleRow.overview,
+    overview: resolveModuleOverview(moduleRow.module_key, moduleRow.overview),
     resources: resources
       .filter((resource) => resource.module_id === moduleRow.id)
       .map(mapResource),
@@ -92,7 +175,7 @@ function mapModule({
 
 function mapProgram(rows: AcademyContentProgramRows): Course {
   return {
-    ...fallbackAcademyProgram,
+    ...sanitizeProgram(fallbackAcademyProgram),
     modules: rows.modules.map((moduleRow) =>
       mapModule({
         moduleRow,
@@ -113,12 +196,12 @@ export const AcademyContentService = {
       const rows = await AcademyContentRepository.listProgramContent(productSlug);
 
       if (!rows || shouldUseFallback(rows)) {
-        return fallbackAcademyProgram;
+        return sanitizeProgram(fallbackAcademyProgram);
       }
 
       return mapProgram(rows);
     } catch {
-      return fallbackAcademyProgram;
+      return sanitizeProgram(fallbackAcademyProgram);
     }
   },
 
@@ -139,7 +222,7 @@ export const AcademyContentService = {
       );
 
       if (!rows || rows.modules.length === 0) {
-        return fallbackAcademyProgram.modules.find(
+        return sanitizeProgram(fallbackAcademyProgram).modules.find(
           (academyModule) => academyModule.id === moduleKey,
         );
       }
@@ -150,7 +233,7 @@ export const AcademyContentService = {
         videos: rows.videos,
       });
     } catch {
-      return fallbackAcademyProgram.modules.find(
+      return sanitizeProgram(fallbackAcademyProgram).modules.find(
         (academyModule) => academyModule.id === moduleKey,
       );
     }

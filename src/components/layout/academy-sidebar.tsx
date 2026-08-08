@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -28,9 +29,17 @@ export function AcademySidebar({ navigation }: AcademySidebarProps) {
       <div>
         <Link
           href="/"
-          className="block text-sm font-semibold tracking-[0.12em] text-white uppercase focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+          className="flex items-center gap-3 text-sm font-semibold tracking-[0.12em] text-white uppercase focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
         >
-          Invictus GEX
+          <Image
+            alt=""
+            aria-hidden="true"
+            className="h-8 w-8 rounded-full object-contain"
+            height={32}
+            src="/brand/invictus-gex-logo.png"
+            width={32}
+          />
+          <span>Invictus GEX</span>
         </Link>
       </div>
 

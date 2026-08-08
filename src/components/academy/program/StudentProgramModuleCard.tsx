@@ -33,9 +33,7 @@ export function StudentProgramModuleCard({
           />
         ) : (
           <div className="flex aspect-[16/10] items-center justify-center bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] text-sm text-[var(--color-text-muted)] lg:aspect-square">
-            <span className="rounded-full border border-[var(--color-border)] px-3 py-1">
-              Sin imagen
-            </span>
+            <span className="h-px w-16 bg-cyan-200/20" />
           </div>
         )}
       </div>

@@ -24,9 +24,17 @@ function mapUser(user: User | null): AuthUser | null {
     return null;
   }
 
+  const metadataFullName =
+    typeof user.user_metadata?.full_name === "string"
+      ? user.user_metadata.full_name
+      : typeof user.user_metadata?.name === "string"
+        ? user.user_metadata.name
+        : null;
+
   return {
     id: user.id,
     email: user.email ?? null,
+    fullName: metadataFullName,
   };
 }
 

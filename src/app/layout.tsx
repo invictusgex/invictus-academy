@@ -25,6 +25,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    apple: "/apple-icon.png",
+    icon: [
+      { sizes: "any", type: "image/x-icon", url: "/favicon.ico" },
+      { sizes: "192x192", type: "image/png", url: "/icon.png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     description: siteDescription,
     locale: "es_US",

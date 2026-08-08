@@ -13,9 +13,19 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/favicon.ico",
         type: "image/x-icon",
       },
+      {
+        sizes: "192x192",
+        src: "/brand/invictus-gex-icon-192.png",
+        type: "image/png",
+      },
+      {
+        sizes: "512x512",
+        src: "/brand/invictus-gex-icon-512.png",
+        type: "image/png",
+      },
     ],
     name: siteName,
-    short_name: "Invictus Academy",
+    short_name: "Invictus GEX",
     start_url: "/",
     theme_color: "#030712",
   };

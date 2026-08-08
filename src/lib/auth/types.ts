@@ -1,6 +1,7 @@
 export interface AuthUser {
   id: string;
   email: string | null;
+  fullName?: string | null;
 }
 
 export interface AuthSession {

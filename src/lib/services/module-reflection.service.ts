@@ -172,7 +172,7 @@ async function resolveReflectionScope(
     );
   }
 
-  const moduleRow = await ModuleReflectionRepository.getAvailablePublishedModule(
+  const moduleRow = await ModuleReflectionRepository.getPublishedModule(
     {
       moduleKey,
       productId: product.id,

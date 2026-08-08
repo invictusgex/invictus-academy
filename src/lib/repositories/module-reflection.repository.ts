@@ -44,7 +44,7 @@ type AttachmentInsertInput = ModuleReflectionScope & {
 };
 
 export const ModuleReflectionRepository = {
-  async getAvailablePublishedModule(
+  async getPublishedModule(
     input: {
       moduleKey: string;
       productId: string;
@@ -57,7 +57,6 @@ export const ModuleReflectionRepository = {
       .eq("product_id", input.productId)
       .eq("module_key", input.moduleKey)
       .eq("status", "published")
-      .eq("availability", "available")
       .maybeSingle();
 
     if (error) {

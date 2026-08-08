@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import type { AuthSession, AuthUser } from "@/lib/auth/types";
+import { getSupabaseClient } from "@/lib/database/client";
 import { AuthRepository } from "@/lib/repositories/auth.repository";
+import { ProfileRepository } from "@/lib/repositories/profile.repository";
 
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -25,14 +27,40 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     let isMounted = true;
+    let profileRequestId = 0;
 
     function updateAuthState(nextSession: AuthSession | null) {
       if (!isMounted) {
         return;
       }
 
+      const requestId = profileRequestId + 1;
+
+      profileRequestId = requestId;
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
+
+      if (!nextSession?.user) {
+        return;
+      }
+
+      void ProfileRepository.getById(getSupabaseClient(), nextSession.user.id)
+        .then((profile) => {
+          if (!isMounted || requestId !== profileRequestId || !profile) {
+            return;
+          }
+
+          setUser((currentUser) =>
+            currentUser?.id === nextSession.user.id
+              ? {
+                  ...currentUser,
+                  email: profile.email ?? currentUser.email,
+                  fullName: profile.fullName ?? currentUser.fullName ?? null,
+                }
+              : currentUser,
+          );
+        })
+        .catch(() => undefined);
     }
 
     async function loadInitialSession() {

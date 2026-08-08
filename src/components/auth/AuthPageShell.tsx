@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 type AuthPageShellProps = {
@@ -17,10 +18,18 @@ export function AuthPageShell({
     <main className="flex min-h-screen flex-1 items-center justify-center bg-[var(--color-page-bg)] px-5 py-16">
       <section className="w-full max-w-md">
         <Link
-          className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase transition hover:text-[var(--color-cyan-hover)]"
+          className="inline-flex items-center gap-3 text-sm font-semibold tracking-[0.18em] text-white uppercase transition hover:text-[var(--color-cyan-hover)]"
           href="/"
         >
-          Invictus GEX
+          <Image
+            alt=""
+            aria-hidden="true"
+            className="h-9 w-9 rounded-full object-contain"
+            height={36}
+            src="/brand/invictus-gex-logo.png"
+            width={36}
+          />
+          <span>Invictus GEX</span>
         </Link>
         <p className="mt-8 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           {eyebrow}

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -22,9 +23,17 @@ export function AdminShell({ children }: AdminShellProps) {
       <aside className="flex w-full flex-col border-b border-[var(--color-border)] bg-[var(--color-panel-bg)] px-5 py-5 lg:min-h-screen lg:w-72 lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
         <Link
           href="/academy"
-          className="block text-sm font-semibold tracking-[0.12em] text-white uppercase"
+          className="flex items-center gap-3 text-sm font-semibold tracking-[0.12em] text-white uppercase"
         >
-          Invictus GEX
+          <Image
+            alt=""
+            aria-hidden="true"
+            className="h-8 w-8 rounded-full object-contain"
+            height={32}
+            src="/brand/invictus-gex-logo.png"
+            width={32}
+          />
+          <span>Invictus GEX</span>
         </Link>
         <p className="mt-2 text-xs font-medium tracking-[0.16em] text-[var(--color-cyan)] uppercase">
           Administración

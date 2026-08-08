@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { formationCtaHref } from "@/config/public-cta";
@@ -76,9 +77,17 @@ function OfferHeader() {
     <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
       <Link
         href="/"
-        className="max-w-[13rem] text-xs font-semibold tracking-[0.12em] text-white uppercase transition hover:text-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:max-w-none sm:text-sm"
+        className="flex max-w-[13rem] items-center gap-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition hover:text-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:max-w-none sm:text-sm"
       >
-        Invictus GEX
+        <Image
+          alt=""
+          aria-hidden="true"
+          className="h-8 w-8 rounded-full object-contain"
+          height={32}
+          src="/brand/invictus-gex-logo.png"
+          width={32}
+        />
+        <span>Invictus GEX</span>
       </Link>
       <nav
         aria-label="Navegacion de la propuesta"
