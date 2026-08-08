@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { StudentCard, StudentStatusBadge } from "@/components/student";
@@ -8,11 +9,16 @@ import type { ModuleProgressStatus } from "@/utils/module-progress";
 
 type ModuleCompletionPanelProps = {
   moduleId: string;
+  nextModule?: {
+    id: string;
+    title: string;
+  };
   status: ModuleProgressStatus;
 };
 
 export function ModuleCompletionPanel({
   moduleId,
+  nextModule,
   status,
 }: ModuleCompletionPanelProps) {
   const { markModuleCompleted } = useProgressContext();
@@ -60,18 +66,30 @@ export function ModuleCompletionPanel({
           ) : null}
         </div>
 
-        <button
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-          disabled={completed || saving}
-          onClick={handleCompleteModule}
-          type="button"
-        >
-          {completed
-            ? "Continuar a la siguiente etapa"
-            : saving
-              ? "Guardando..."
-              : "Completar esta etapa"}
-        </button>
+        {completed ? (
+          nextModule ? (
+            <Link
+              aria-label={`Continuar a la siguiente etapa: ${nextModule.title}`}
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+              href={`/academy/programa/${nextModule.id}`}
+            >
+              Continuar a la siguiente etapa
+            </Link>
+          ) : (
+            <p className="text-sm font-semibold text-[var(--color-cyan)]">
+              Etapa completada
+            </p>
+          )
+        ) : (
+          <button
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            disabled={saving}
+            onClick={handleCompleteModule}
+            type="button"
+          >
+            {saving ? "Guardando..." : "Completar esta etapa"}
+          </button>
+        )}
       </div>
     </StudentCard>
   );

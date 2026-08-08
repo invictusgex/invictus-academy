@@ -75,7 +75,11 @@ export function StudentModuleDetailPage({
         resources={validResources}
       />
 
-      <ModuleCompletionPanel moduleId={academyModule.id} status={status} />
+      <ModuleCompletionPanel
+        moduleId={academyModule.id}
+        nextModule={nextModule}
+        status={status}
+      />
 
       <StudentModuleNavigation
         nextModule={nextModule}
