@@ -22,8 +22,9 @@ export function AdminProvider({ children }: AdminProviderProps) {
   const [loading, setLoading] = useState(true);
 
   const refreshAdminStatus = useCallback(async () => {
+    setIsAdmin(false);
+
     if (!user) {
-      setIsAdmin(false);
       setLoading(false);
       return;
     }
