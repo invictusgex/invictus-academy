@@ -30,6 +30,7 @@ export type CreateCheckoutSessionInput = {
 
 export type CreateCheckoutSessionResult = {
   url: string;
+  recoveredPendingSession: boolean;
 };
 
 function buildCheckoutUrl(pathname: string) {
@@ -59,7 +60,7 @@ function normalizeStripeCurrency(currency: string) {
   if (!/^[A-Z]{3}$/.test(normalizedCurrency)) {
     throw new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.PRICE_NOT_PURCHASABLE,
-      "La moneda configurada para este producto no es valida.",
+      "La moneda configurada para este producto no es válida.",
       {
         status: 500,
       },
@@ -94,7 +95,7 @@ async function getPurchasablePrice(stripe: Stripe, priceId: string) {
   if (price.unit_amount === null) {
     throw new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.PRICE_AMOUNT_UNAVAILABLE,
-      "Stripe no devolvio un importe entero para este precio.",
+      "Stripe no devolvió un importe entero para este precio.",
       {
         status: 500,
       },
@@ -164,6 +165,46 @@ async function compensateUnusableCheckoutSession(
   );
 }
 
+async function recoverPendingCheckoutSession(
+  stripe: Stripe,
+  purchase: Purchase,
+): Promise<CreateCheckoutSessionResult | null> {
+  if (!purchase.providerCheckoutSessionId) {
+    await PurchaseService.markCheckoutCreationFailed(
+      {
+        purchaseId: purchase.id,
+        summary:
+          "Pending purchase did not have a Stripe Checkout session to recover.",
+      },
+      getSupabaseAdminClient(),
+    );
+
+    return null;
+  }
+
+  const session = await stripe.checkout.sessions.retrieve(
+    purchase.providerCheckoutSessionId,
+  );
+
+  if (session.status === "open" && session.url) {
+    return {
+      url: session.url,
+      recoveredPendingSession: true,
+    };
+  }
+
+  await PurchaseService.markCheckoutCreationFailed(
+    {
+      purchaseId: purchase.id,
+      summary:
+        "Pending purchase had an expired or unusable Stripe Checkout session.",
+    },
+    getSupabaseAdminClient(),
+  );
+
+  return null;
+}
+
 export async function createCheckoutSession(
   input: CreateCheckoutSessionInput,
 ): Promise<CreateCheckoutSessionResult> {
@@ -188,13 +229,14 @@ export async function createCheckoutSession(
       const pendingCreatedAt = new Date(existingPendingPurchase.createdAt);
 
       if (pendingCreatedAt >= pendingPurchaseCutoff) {
-        throw new StripeCheckoutError(
-          STRIPE_CHECKOUT_ERROR_CODES.DUPLICATE_PENDING_PURCHASE,
-          "Ya existe una compra pendiente reciente para este producto.",
-          {
-            status: 409,
-          },
+        const recoveredCheckoutSession = await recoverPendingCheckoutSession(
+          stripe,
+          existingPendingPurchase,
         );
+
+        if (recoveredCheckoutSession) {
+          return recoveredCheckoutSession;
+        }
       }
 
       await PurchaseService.markCheckoutCreationFailed(
@@ -308,7 +350,7 @@ export async function createCheckoutSession(
 
       throw new StripeCheckoutError(
         STRIPE_CHECKOUT_ERROR_CODES.CHECKOUT_CREATION_FAILED,
-        "Stripe no devolvio una URL de Checkout.",
+        "Stripe no devolvió una URL de Checkout.",
       );
     }
 
@@ -366,6 +408,7 @@ export async function createCheckoutSession(
 
     return {
       url: session.url,
+      recoveredPendingSession: false,
     };
   } catch (error) {
     if (error instanceof StripeCheckoutError) {

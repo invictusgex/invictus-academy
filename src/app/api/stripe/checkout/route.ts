@@ -22,6 +22,7 @@ export const runtime = "nodejs";
 type CheckoutResponseBody =
   | {
       url: string;
+      recoveredPendingSession?: boolean;
     }
   | {
       error: {
@@ -255,6 +256,7 @@ export async function POST(request: Request) {
     return jsonResponse(
       {
         url: checkoutSession.url,
+        recoveredPendingSession: checkoutSession.recoveredPendingSession,
       },
       200,
     );

@@ -11,6 +11,7 @@ type CheckoutStartPageProps = {
 type CheckoutResponse =
   | {
       url: string;
+      recoveredPendingSession?: boolean;
     }
   | {
       error: {
@@ -23,6 +24,9 @@ export function CheckoutStartPage({ productSlug }: CheckoutStartPageProps) {
   const router = useRouter();
   const startedRef = useRef(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pendingCheckoutUrl, setPendingCheckoutUrl] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     if (startedRef.current) {
@@ -33,6 +37,7 @@ export function CheckoutStartPage({ productSlug }: CheckoutStartPageProps) {
 
     async function startCheckout() {
       setErrorMessage(null);
+      setPendingCheckoutUrl(null);
 
       try {
         const response = await fetch("/api/stripe/checkout", {
@@ -45,6 +50,11 @@ export function CheckoutStartPage({ productSlug }: CheckoutStartPageProps) {
         const payload = (await response.json()) as CheckoutResponse;
 
         if ("url" in payload) {
+          if (payload.recoveredPendingSession) {
+            setPendingCheckoutUrl(payload.url);
+            return;
+          }
+
           window.location.assign(payload.url);
           return;
         }
@@ -94,6 +104,24 @@ export function CheckoutStartPage({ productSlug }: CheckoutStartPageProps) {
             <p>{errorMessage}</p>
             <Link
               className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
+              href="/oferta"
+            >
+              Volver a la oferta
+            </Link>
+          </div>
+        ) : pendingCheckoutUrl ? (
+          <div className="mt-6 rounded-lg border border-[var(--color-border)] bg-white/5 px-4 py-4 text-sm leading-6 text-[var(--color-text-secondary)]">
+            <h2 className="text-lg font-semibold text-white">
+              Tu proceso de pago sigue disponible.
+            </h2>
+            <a
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
+              href={pendingCheckoutUrl}
+            >
+              Continuar con el pago
+            </a>
+            <Link
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-5 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)]"
               href="/oferta"
             >
               Volver a la oferta
