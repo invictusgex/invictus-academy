@@ -14,6 +14,7 @@ const placeholderDescriptionPatterns = [
   "contenido pendiente de definición",
   "pendiente de definicion",
   "pendiente de definición",
+  "en este módulo desarrollarás los conceptos fundamentales correspondientes a esta etapa del programa.",
 ];
 
 function getLearningObjectives(value: unknown) {

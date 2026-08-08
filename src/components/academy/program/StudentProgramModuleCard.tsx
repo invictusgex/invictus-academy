@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { getModuleStatusTone } from "@/components/academy/dashboard/student-dashboard-utils";
@@ -20,24 +19,7 @@ export function StudentProgramModuleCard({
   statusLabel,
 }: StudentProgramModuleCardProps) {
   return (
-    <StudentCard className="grid gap-5 lg:grid-cols-[12rem_minmax(0,1fr)_auto] lg:items-center">
-      <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
-        {academyModule.thumbnailUrl ? (
-          <Image
-            alt={`Imagen de ${academyModule.title}`}
-            className="aspect-[16/10] w-full object-cover lg:aspect-square"
-            height={220}
-            src={academyModule.thumbnailUrl}
-            unoptimized
-            width={320}
-          />
-        ) : (
-          <div className="flex aspect-[16/10] items-center justify-center bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] text-sm text-[var(--color-text-muted)] lg:aspect-square">
-            <span className="h-px w-16 bg-cyan-200/20" />
-          </div>
-        )}
-      </div>
-
+    <StudentCard className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">

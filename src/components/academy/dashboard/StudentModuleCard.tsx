@@ -1,7 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
 
-import { getExternalThumbnailUrl } from "@/components/academy/dashboard/student-dashboard-utils";
 import { StudentCard, StudentStatusBadge } from "@/components/student";
 import type { Module } from "@/types/academy";
 import type { ModuleProgressStatus } from "@/utils/module-progress";
@@ -17,9 +15,6 @@ export function StudentModuleCard({
   status,
   statusLabel,
 }: StudentModuleCardProps) {
-  const thumbnailUrl =
-    academyModule.thumbnailUrl ??
-    getExternalThumbnailUrl(academyModule.videos[0]?.thumbnailUrl);
   const statusTone =
     status === "completed"
       ? "complete"
@@ -29,25 +24,7 @@ export function StudentModuleCard({
 
   return (
     <StudentCard className="flex h-full flex-col">
-      <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
-        {thumbnailUrl ? (
-          <Image
-            alt={`Miniatura de ${academyModule.title}`}
-            className="aspect-[16/10] w-full object-cover"
-            height={220}
-            src={thumbnailUrl}
-            unoptimized
-            width={360}
-          />
-        ) : (
-          <div className="flex aspect-[16/10] items-center justify-center bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] text-sm text-[var(--color-text-muted)]">
-            <span className="rounded-full border border-[var(--color-border)] px-3 py-1">
-              Sin miniatura
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="mt-5 flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4">
         <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
           Módulo {academyModule.number}
         </p>

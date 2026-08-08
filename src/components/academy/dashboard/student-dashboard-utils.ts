@@ -42,21 +42,3 @@ export function getModuleStatusTone(status: ModuleProgressStatus) {
 
   return "neutral" as const;
 }
-
-export function getExternalThumbnailUrl(thumbnailUrl: string | null | undefined) {
-  if (!thumbnailUrl) {
-    return null;
-  }
-
-  try {
-    const parsedUrl = new URL(thumbnailUrl);
-
-    if (parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") {
-      return thumbnailUrl;
-    }
-  } catch {
-    return null;
-  }
-
-  return null;
-}

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { getModuleStatusTone } from "@/components/academy/dashboard/student-dashboard-utils";
@@ -10,17 +9,15 @@ type StudentModuleHeroProps = {
   academyModule: Module;
   status: ModuleProgressStatus;
   statusLabel: string;
-  thumbnailUrl: string | null;
 };
 
 export function StudentModuleHero({
   academyModule,
   status,
   statusLabel,
-  thumbnailUrl,
 }: StudentModuleHeroProps) {
   return (
-    <section className="grid gap-6 rounded-2xl border border-cyan-200/20 bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-5 shadow-[0_18px_54px_rgba(0,0,0,0.2)] sm:p-8 lg:p-10 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-center">
+    <section className="rounded-2xl border border-cyan-200/20 bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-5 shadow-[0_18px_54px_rgba(0,0,0,0.2)] sm:p-8 lg:p-10">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
@@ -44,23 +41,6 @@ export function StudentModuleHero({
             Iniciar esta etapa
           </Link>
         ) : null}
-      </div>
-
-      <div className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)]">
-        {thumbnailUrl ? (
-          <Image
-            alt={`Miniatura de ${academyModule.title}`}
-            className="aspect-[16/10] w-full object-cover xl:aspect-[4/3]"
-            height={360}
-            src={thumbnailUrl}
-            unoptimized
-            width={520}
-          />
-        ) : (
-          <div className="flex aspect-[16/10] items-center justify-center bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] text-sm text-[var(--color-text-muted)] xl:aspect-[4/3]">
-            <span className="h-px w-16 bg-cyan-200/20" />
-          </div>
-        )}
       </div>
     </section>
   );

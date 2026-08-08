@@ -13,33 +13,6 @@ function getAllowedResourceKinds(resource: ModuleResource) {
   return ["resource_pdf", "resource_doc", "resource_image"] as const;
 }
 
-export function useModuleThumbnailUrl(thumbnailUrl: string | null | undefined) {
-  const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    let isActive = true;
-
-    async function resolveThumbnail() {
-      const resolved = await StorageService.resolveAssetUrl({
-        allowedKinds: ["module_thumbnail"],
-        value: thumbnailUrl ?? null,
-      });
-
-      if (isActive) {
-        setResolvedUrl(resolved?.url ?? null);
-      }
-    }
-
-    void resolveThumbnail();
-
-    return () => {
-      isActive = false;
-    };
-  }, [thumbnailUrl]);
-
-  return resolvedUrl;
-}
-
 export function useModuleResourceUrls(resources: ModuleResource[]) {
   const [resourceUrls, setResourceUrls] = useState<Record<string, string>>({});
 

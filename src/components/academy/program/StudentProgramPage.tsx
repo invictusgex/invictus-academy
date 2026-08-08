@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
 
-import { useModuleThumbnailUrls } from "@/components/academy/dashboard/useModuleThumbnailUrls";
 import { CurrentProgramModuleCard } from "@/components/academy/program/CurrentProgramModuleCard";
 import { StudentProgramModuleCard } from "@/components/academy/program/StudentProgramModuleCard";
 import { StudentProgramOverview } from "@/components/academy/program/StudentProgramOverview";
@@ -30,30 +28,8 @@ function getModuleCtaLabel(status: ProgramModuleProgress["status"]) {
 
 export function StudentProgramPage() {
   const { loading: progressLoading, progress } = useProgressContext();
-  const moduleThumbnailInputs = useMemo(
-    () =>
-      progress.modules
-        .map((moduleSummary) => ({
-          id: moduleSummary.academyModule.id,
-          thumbnailUrl: moduleSummary.academyModule.thumbnailUrl ?? null,
-        }))
-        .filter(({ thumbnailUrl }) => thumbnailUrl),
-    [progress.modules],
-  );
-  const moduleThumbnailUrls = useModuleThumbnailUrls(moduleThumbnailInputs);
-  const displayModuleSummaries = useMemo(
-    () =>
-      progress.modules.map((moduleSummary) => ({
-        ...moduleSummary,
-        academyModule: {
-          ...moduleSummary.academyModule,
-          thumbnailUrl: moduleThumbnailUrls[moduleSummary.academyModule.id] ?? null,
-        },
-      })),
-    [progress.modules, moduleThumbnailUrls],
-  );
   const displayCurrentModule =
-    displayModuleSummaries.find(
+    progress.modules.find(
       (moduleSummary) =>
         moduleSummary.academyModule.id === progress.currentModule?.academyModule.id,
     ) ?? null;
@@ -122,7 +98,7 @@ export function StudentProgramPage() {
             title="Etapas del programa"
           >
             <div className="grid gap-4">
-              {displayModuleSummaries.map((moduleSummary) => (
+              {progress.modules.map((moduleSummary) => (
                 <StudentProgramModuleCard
                   academyModule={moduleSummary.academyModule}
                   ctaLabel={getModuleCtaLabel(moduleSummary.status)}

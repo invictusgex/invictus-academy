@@ -13,7 +13,6 @@ import { StudentModuleHero } from "@/components/academy/module/StudentModuleHero
 import { StudentModuleNavigation } from "@/components/academy/module/StudentModuleNavigation";
 import {
   useModuleResourceUrls,
-  useModuleThumbnailUrl,
 } from "@/components/academy/module/useModuleAssetUrls";
 import { useProgressContext } from "@/contexts/ProgressContext";
 import type { Module } from "@/types/academy";
@@ -32,7 +31,6 @@ export function StudentModuleDetailPage({
   const moduleProgress = progress.modulesById[academyModule.id];
   const status = moduleProgress?.status ?? "not-started";
   const statusLabel = formatModuleProgressStatusLabel(status);
-  const thumbnailUrl = useModuleThumbnailUrl(academyModule.thumbnailUrl);
   const validResources = useMemo(
     () => getValidModuleResources(academyModule.resources),
     [academyModule.resources],
@@ -58,7 +56,6 @@ export function StudentModuleDetailPage({
         academyModule={academyModule}
         status={status}
         statusLabel={statusLabel}
-        thumbnailUrl={thumbnailUrl}
       />
 
       <div id="videos">
