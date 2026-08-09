@@ -9,6 +9,8 @@ export const runtime = "nodejs";
 
 type RegisterResponseBody =
   | {
+      accountHelpMessage?: string;
+      accountHelpTitle?: string;
       message: string;
       status: "confirmation_required" | "registered";
       title?: string;
@@ -18,7 +20,9 @@ type RegisterResponseBody =
     };
 
 const ambiguousConfirmationMessage =
-  "Si esta dirección puede registrarse, recibirás un enlace para confirmar tu cuenta. Si ya tienes una cuenta, puedes iniciar sesión o recuperar tu contraseña.";
+  "Si esta dirección puede registrarse, recibirás un enlace para confirmar tu cuenta.";
+const accountHelpMessage =
+  "Si ya utilizaste este correo para registrarte, inicia sesión. Si no recuerdas tu contraseña, puedes recuperarla.";
 
 function jsonResponse(body: RegisterResponseBody, status: number) {
   return NextResponse.json(body, {
@@ -123,6 +127,8 @@ export async function POST(request: Request) {
     ) {
       return jsonResponse(
         {
+          accountHelpMessage,
+          accountHelpTitle: "¿Ya habías creado una cuenta?",
           message: ambiguousConfirmationMessage,
           status: "confirmation_required",
           title: "Revisa tu correo",
@@ -150,6 +156,8 @@ export async function POST(request: Request) {
 
   return jsonResponse(
     {
+      accountHelpMessage,
+      accountHelpTitle: "¿Ya habías creado una cuenta?",
       message: ambiguousConfirmationMessage,
       status: data.session ? "registered" : "confirmation_required",
       title: "Revisa tu correo",

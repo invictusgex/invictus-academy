@@ -8,6 +8,8 @@ type RegisterFormProps = {
 };
 
 type RegisterResponse = {
+  accountHelpMessage?: string;
+  accountHelpTitle?: string;
   error?: string;
   message?: string;
   title?: string;
@@ -24,12 +26,18 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [accountHelpMessage, setAccountHelpMessage] = useState<string | null>(
+    null,
+  );
+  const [accountHelpTitle, setAccountHelpTitle] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [successTitle, setSuccessTitle] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setAccountHelpMessage(null);
+    setAccountHelpTitle(null);
     setErrorMessage(null);
     setSuccessMessage(null);
     setSuccessTitle(null);
@@ -62,9 +70,16 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
 
       setSuccessMessage(
         payload.message ??
-          "Si esta dirección puede registrarse, recibirás un enlace para confirmar tu cuenta. Si ya tienes una cuenta, puedes iniciar sesión o recuperar tu contraseña.",
+          "Si esta dirección puede registrarse, recibirás un enlace para confirmar tu cuenta.",
       );
       setSuccessTitle(payload.title ?? "Revisa tu correo");
+      setAccountHelpMessage(
+        payload.accountHelpMessage ??
+          "Si ya utilizaste este correo para registrarte, inicia sesión. Si no recuerdas tu contraseña, puedes recuperarla.",
+      );
+      setAccountHelpTitle(
+        payload.accountHelpTitle ?? "¿Ya habías creado una cuenta?",
+      );
       setPassword("");
       setPasswordConfirmation("");
     } catch {
@@ -178,6 +193,15 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
         <div className="mt-4 rounded-lg border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">
           <p className="font-semibold">{successTitle ?? "Revisa tu correo"}</p>
           <p className="mt-2 leading-6">{successMessage}</p>
+          <div className="mt-4 rounded-lg border border-emerald-200/20 bg-emerald-950/20 p-4">
+            <p className="font-semibold">
+              {accountHelpTitle ?? "¿Ya habías creado una cuenta?"}
+            </p>
+            <p className="mt-2 leading-6">
+              {accountHelpMessage ??
+                "Si ya utilizaste este correo para registrarte, inicia sesión. Si no recuerdas tu contraseña, puedes recuperarla."}
+            </p>
+          </div>
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
             <Link
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-emerald-200/50 px-5 text-sm font-semibold text-emerald-50 transition hover:border-emerald-100 hover:bg-emerald-100/10"
