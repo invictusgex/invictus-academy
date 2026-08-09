@@ -1,3 +1,4 @@
+import { requireAdminServerContext } from "@/app/admin/admin-auth";
 import { AdminContentVideoEditPage } from "@/components/admin/content/AdminContentVideoEditPage";
 
 type AdminContentVideoEditRouteProps = {
@@ -10,6 +11,8 @@ type AdminContentVideoEditRouteProps = {
 export default async function AdminContentVideoEditRoute({
   params,
 }: AdminContentVideoEditRouteProps) {
+  await requireAdminServerContext();
+
   const { moduleId, videoId } = await params;
 
   return <AdminContentVideoEditPage moduleId={moduleId} videoId={videoId} />;

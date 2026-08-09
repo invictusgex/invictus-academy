@@ -1,3 +1,4 @@
+import { requireAdminServerContext } from "@/app/admin/admin-auth";
 import { AdminContentResourceEditPage } from "@/components/admin/content/AdminContentResourceEditPage";
 
 type AdminContentResourceEditRouteProps = {
@@ -10,6 +11,8 @@ type AdminContentResourceEditRouteProps = {
 export default async function AdminContentResourceEditRoute({
   params,
 }: AdminContentResourceEditRouteProps) {
+  await requireAdminServerContext();
+
   const { moduleId, resourceId } = await params;
 
   return (
