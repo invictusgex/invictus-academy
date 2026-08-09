@@ -9,6 +9,7 @@ export type AuthContextValue = {
   session: AuthSession | null;
   loading: boolean;
   initialized: boolean;
+  authAction: "checkingAccess" | "signingIn" | "signingOut" | null;
   signIn: (input: { email: string; password: string }) => Promise<void>;
   signOut: () => Promise<void>;
 };

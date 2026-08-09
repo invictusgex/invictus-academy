@@ -65,7 +65,7 @@ export async function POST(request: Request) {
   }
 
   const supabase = getSupabaseAdminClient();
-  const redirectTo = `${getSiteUrl()}/auth/confirm?next=${encodeURIComponent(
+  const redirectTo = `${getSiteUrl()}/auth/confirm?type=recovery&next=${encodeURIComponent(
     `/reset-password?next=${encodeURIComponent(next)}`,
   )}`;
 

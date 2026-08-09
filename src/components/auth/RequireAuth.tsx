@@ -18,11 +18,15 @@ export type RequireAuthProps = {
 };
 
 function DefaultLoadingFallback() {
+  const { authAction } = useAuth();
+  const message =
+    authAction === "signingOut" ? "Cerrando sesión..." : "Verificando acceso...";
+
   return (
     <main className="flex min-h-screen flex-1 items-center justify-center bg-[var(--color-page-bg)] px-5">
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] px-6 py-5 text-center">
         <p className="text-sm font-medium text-[var(--color-text-secondary)]">
-          Verificando acceso...
+          {message}
         </p>
       </div>
     </main>

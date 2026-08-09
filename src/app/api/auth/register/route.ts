@@ -88,7 +88,6 @@ export async function POST(request: Request) {
     typeof body.passwordConfirmation === "string"
       ? body.passwordConfirmation
       : "";
-  const acceptedTerms = body.acceptedTerms === true;
   const next = getSafeInternalRedirect(
     typeof body.next === "string" ? body.next : null,
   );
@@ -110,13 +109,6 @@ export async function POST(request: Request) {
 
   if (password !== passwordConfirmation) {
     return jsonResponse({ error: "Las contraseñas no coinciden." }, 400);
-  }
-
-  if (!acceptedTerms) {
-    return jsonResponse(
-      { error: "Debes aceptar los términos y la política de privacidad." },
-      400,
-    );
   }
 
   const supabase = getSupabaseAdminClient();

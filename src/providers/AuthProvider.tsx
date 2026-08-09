@@ -24,6 +24,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
+  const [authAction, setAuthAction] = useState<
+    "checkingAccess" | "signingIn" | "signingOut" | null
+  >("checkingAccess");
 
   useEffect(() => {
     let isMounted = true;
@@ -73,6 +76,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (isMounted) {
           setLoading(false);
           setInitialized(true);
+          setAuthAction(null);
         }
       }
     }
@@ -83,6 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       updateAuthState(authState.session);
       setLoading(false);
       setInitialized(true);
+      setAuthAction(null);
     });
 
     void loadInitialSession();
@@ -95,6 +100,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function signIn(input: SignInInput) {
     setLoading(true);
+    setAuthAction("signingIn");
 
     try {
       const authState = await AuthRepository.signIn(input);
@@ -103,11 +109,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setLoading(false);
       setInitialized(true);
+      setAuthAction(null);
     }
   }
 
   async function signOut() {
     setLoading(true);
+    setAuthAction("signingOut");
 
     try {
       await AuthRepository.signOut();
@@ -116,6 +124,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setLoading(false);
       setInitialized(true);
+      setAuthAction(null);
     }
   }
 
@@ -125,10 +134,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       session,
       loading,
       initialized,
+      authAction,
       signIn,
       signOut,
     }),
-    [initialized, loading, session, user],
+    [authAction, initialized, loading, session, user],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;

@@ -15,10 +15,10 @@ export function AuthPageShell({
   title,
 }: AuthPageShellProps) {
   return (
-    <main className="flex min-h-screen flex-1 items-center justify-center bg-[var(--color-page-bg)] px-5 py-16">
-      <section className="w-full max-w-md">
+    <main className="flex min-h-screen min-w-0 flex-1 items-center justify-center overflow-x-clip bg-[var(--color-page-bg)] px-4 py-16 sm:px-5">
+      <section className="w-full max-w-md min-w-0">
         <Link
-          className="inline-flex items-center gap-3 text-sm font-semibold tracking-[0.18em] text-white uppercase transition hover:text-[var(--color-cyan-hover)]"
+          className="inline-flex max-w-full min-w-0 items-center gap-3 text-sm font-semibold tracking-[0.12em] text-white uppercase transition hover:text-[var(--color-cyan-hover)] sm:tracking-[0.18em]"
           href="/"
         >
           <Image
@@ -29,9 +29,9 @@ export function AuthPageShell({
             src="/brand/invictus-gex-logo.png"
             width={36}
           />
-          <span>Invictus GEX</span>
+          <span className="min-w-0 break-words">Invictus GEX</span>
         </Link>
-        <p className="mt-8 text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+        <p className="mt-8 break-words text-sm font-semibold tracking-[0.12em] text-[var(--color-cyan)] uppercase sm:tracking-[0.18em]">
           {eyebrow}
         </p>
         <h1 className="mt-4 text-3xl font-semibold text-white">{title}</h1>

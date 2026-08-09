@@ -24,7 +24,6 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [accountHelpMessage, setAccountHelpMessage] = useState<string | null>(
     null,
@@ -46,7 +45,6 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
     try {
       const response = await fetch("/api/auth/register", {
         body: JSON.stringify({
-          acceptedTerms,
           email,
           fullName,
           next: nextPath,
@@ -168,20 +166,6 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
           value={passwordConfirmation}
         />
       </div>
-
-      <label className="mt-5 flex gap-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-        <input
-          checked={acceptedTerms}
-          className="mt-1 h-4 w-4 rounded border-[var(--color-border)] bg-[var(--color-surface)] accent-[var(--color-cyan)]"
-          onChange={(event) => setAcceptedTerms(event.target.checked)}
-          required
-          type="checkbox"
-        />
-        <span>
-          Acepto los términos de uso y la política de privacidad de Invictus
-          Trading Academy.
-        </span>
-      </label>
 
       {errorMessage ? (
         <p className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-100">

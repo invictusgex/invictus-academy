@@ -118,24 +118,29 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
         </p>
       ) : null}
 
-      <button
-        className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] disabled:cursor-not-allowed disabled:opacity-60"
-        disabled={submitting}
-        type="submit"
-      >
-        {submitting ? "Actualizando..." : "Actualizar contraseña"}
-      </button>
-
-      <p className="mt-5 text-center text-sm text-[var(--color-text-secondary)]">
-        Cuando termines, puedes{" "}
+      {successMessage ? (
         <Link
-          className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
+          className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
           href={`/login?next=${encodeURIComponent(nextPath)}`}
         >
-          iniciar sesión
+          Iniciar sesión
         </Link>
-        .
-      </p>
+      ) : (
+        <button
+          className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={submitting}
+          type="submit"
+        >
+          {submitting ? "Guardando..." : "Actualizar contraseña"}
+        </button>
+      )}
+
+      {!successMessage ? (
+        <p className="mt-5 text-center text-sm text-[var(--color-text-secondary)]">
+          El enlace debe abrirse desde el correo de recuperación para validar tu
+          sesión.
+        </p>
+      ) : null}
     </form>
   );
 }

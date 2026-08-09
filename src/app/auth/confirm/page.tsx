@@ -11,6 +11,8 @@ type AuthConfirmPageProps = {
   searchParams: Promise<{
     code?: string;
     next?: string;
+    token_hash?: string;
+    type?: string;
   }>;
 };
 
@@ -25,13 +27,19 @@ export default async function AuthConfirmPage({
 }: AuthConfirmPageProps) {
   const params = await searchParams;
   const nextPath = getSafeInternalRedirect(params.next);
+  const confirmationType = params.type === "recovery" ? "recovery" : "signup";
   const code = params.code;
+  const tokenHash = params.token_hash;
 
-  if (!code) {
+  if (!code && !tokenHash) {
     return (
       <AuthPageShell
-        description="El enlace no incluye un código de confirmación válido."
-        eyebrow="Confirmación de cuenta"
+        description="El enlace no incluye un código válido."
+        eyebrow={
+          confirmationType === "recovery"
+            ? "Recuperación de acceso"
+            : "Confirmación de cuenta"
+        }
         title="No pudimos confirmar el acceso"
       >
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6">
@@ -50,13 +58,22 @@ export default async function AuthConfirmPage({
   }
 
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  const { error } = code
+    ? await supabase.auth.exchangeCodeForSession(code)
+    : await supabase.auth.verifyOtp({
+        token_hash: tokenHash ?? "",
+        type: confirmationType,
+      });
 
   if (error) {
     return (
       <AuthPageShell
         description="El enlace puede haber expirado o ya fue utilizado."
-        eyebrow="Confirmación de cuenta"
+        eyebrow={
+          confirmationType === "recovery"
+            ? "Recuperación de acceso"
+            : "Confirmación de cuenta"
+        }
         title="No pudimos confirmar el acceso"
       >
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6">
@@ -65,7 +82,9 @@ export default async function AuthConfirmPage({
           </p>
           <Link
             className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
-            href="/forgot-password"
+            href={
+              confirmationType === "recovery" ? "/forgot-password" : "/login"
+            }
           >
             Solicitar nuevo enlace
           </Link>
@@ -76,7 +95,7 @@ export default async function AuthConfirmPage({
 
   const { data } = await supabase.auth.getUser();
 
-  if (data.user) {
+  if (data.user && confirmationType !== "recovery") {
     const adminSupabase = getSupabaseAdminClient();
     await ProfileRepository.upsertStudentProfile(adminSupabase, {
       email: data.user.email ?? "",
