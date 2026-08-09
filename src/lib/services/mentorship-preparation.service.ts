@@ -23,7 +23,9 @@ export type MentorshipPreparationSummary = {
   completedModules: number;
   moduleReflectionCount: number;
   modules: MentorshipPreparationModule[];
+  practiceRequirementWaived: boolean;
   publishedModules: number;
+  requiredTradingDays: number;
   requirementsSatisfied: boolean;
   rules: {
     key: string;
@@ -58,7 +60,6 @@ export type AdminMentorshipPreparationSummary = Omit<
   completionPercent: number;
   modules: AdminMentorshipPreparationModule[];
   pendingItems: string[];
-  requiredTradingDays: number;
 };
 
 function hasMeaningfulReflection(content: string) {
@@ -148,7 +149,9 @@ export const MentorshipPreparationService = {
       moduleReflectionCount: modules.filter((moduleItem) => moduleItem.hasReflection)
         .length,
       modules,
+      practiceRequirementWaived: workflow.practiceRequirementWaived,
       publishedModules: workflow.publishedModules,
+      requiredTradingDays: workflow.requiredTradingDays,
       requirementsSatisfied: workflow.requirementsSatisfied,
       rules: workflow.rules.map((rule) => ({
         key: rule.key,
@@ -235,7 +238,7 @@ export const MentorshipPreparationService = {
       0,
     );
 
-    if (missingTradingDays > 0) {
+    if (missingTradingDays > 0 && !workflow.practiceRequirementWaived) {
       pendingItems.push(`Días de práctica faltantes: ${missingTradingDays}`);
     }
 
@@ -247,6 +250,7 @@ export const MentorshipPreparationService = {
       ).length,
       modules,
       pendingItems,
+      practiceRequirementWaived: workflow.practiceRequirementWaived,
       publishedModules: workflow.publishedModules,
       requiredTradingDays: workflow.requiredTradingDays,
       requirementsSatisfied: workflow.requirementsSatisfied,

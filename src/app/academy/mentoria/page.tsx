@@ -32,22 +32,28 @@ export default async function AcademyMentorshipPage() {
     },
     supabase,
   );
-  const [slots, bookings, outcomes] = preparation.requirementsSatisfied
-    ? await Promise.all([
-        MentorshipSchedulingService.listAvailableSlots(supabase),
-        MentorshipSchedulingService.listStudentBookings(profile.id, supabase),
-        MentorshipOutcomeService.listSharedOutcomesByProfile(
-          profile.id,
-          supabase,
-        ),
-      ])
-    : [[], [], []];
+  const [bookings, outcomes] = await Promise.all([
+    MentorshipSchedulingService.listStudentBookings(profile.id, supabase),
+    MentorshipOutcomeService.listSharedOutcomesByProfile(profile.id, supabase),
+  ]);
+  const academyBookings = bookings.filter(
+    (booking) => booking.productId === academyProduct.productId,
+  );
+  const academyBookingIds = new Set(
+    academyBookings.map((booking) => booking.id),
+  );
+  const academyOutcomes = outcomes.filter((outcome) =>
+    academyBookingIds.has(outcome.bookingId),
+  );
+  const slots = preparation.requirementsSatisfied
+    ? await MentorshipSchedulingService.listAvailableSlots(supabase)
+    : [];
 
   return (
     <AcademyShell>
       <MentorshipPreparationPage
-        bookings={bookings}
-        outcomes={outcomes}
+        bookings={academyBookings}
+        outcomes={academyOutcomes}
         preparation={preparation}
         slots={slots}
       />

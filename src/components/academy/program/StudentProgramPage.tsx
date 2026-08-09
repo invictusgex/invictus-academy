@@ -26,6 +26,37 @@ function getModuleCtaLabel(status: ProgramModuleProgress["status"]) {
   return "Comenzar etapa";
 }
 
+function FormationCompletedTransition() {
+  return (
+    <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 sm:p-8">
+      <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+        Formación completada
+      </p>
+      <h2 className="mt-3 text-2xl font-semibold text-white">
+        Has completado tu recorrido de formación
+      </h2>
+      <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)]">
+        Has finalizado las 7 etapas del Programa de Formación y tu recorrido ha
+        quedado documentado en tu expediente.
+      </p>
+      <p className="mt-5 text-sm font-semibold text-white">
+        Tu siguiente etapa es la mentoría privada en vivo 1 a 1.
+      </p>
+      <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)]">
+        Tu mentor revisará previamente tu progreso, reflexiones y material
+        adjunto para preparar una sesión centrada en profundizar, integrar y
+        consolidar la metodología.
+      </p>
+      <Link
+        className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto"
+        href="/academy/mentoria"
+      >
+        Continuar a mi mentoría
+      </Link>
+    </section>
+  );
+}
+
 export function StudentProgramPage() {
   const { loading: progressLoading, progress } = useProgressContext();
   const displayCurrentModule =
@@ -82,14 +113,7 @@ export function StudentProgramPage() {
                 statusLabel={displayCurrentModule.statusLabel}
               />
             ) : (
-              <StudentEmptyState
-                actionHref="/academy"
-                actionLabel="Volver al Centro de Formación"
-                title="Programa completado"
-              >
-                Completaste las etapas disponibles. Puedes volver a revisar
-                cualquier etapa desde el listado.
-              </StudentEmptyState>
+              <FormationCompletedTransition />
             )}
           </StudentSection>
 

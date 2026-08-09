@@ -7,11 +7,13 @@ type NavigationModule = {
 };
 
 type StudentModuleNavigationProps = {
+  formationCompleted?: boolean;
   nextModule?: NavigationModule;
   previousModule?: NavigationModule;
 };
 
 export function StudentModuleNavigation({
+  formationCompleted = false,
   nextModule,
   previousModule,
 }: StudentModuleNavigationProps) {
@@ -62,6 +64,18 @@ export function StudentModuleNavigation({
             </span>
             <span className="mt-2 break-words text-sm font-semibold text-white">
               {nextModule.title}
+            </span>
+          </Link>
+        ) : formationCompleted ? (
+          <Link
+            className="flex min-h-24 min-w-0 flex-col justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-cyan)] hover:bg-white/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            href="/academy/mentoria"
+          >
+            <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
+              Siguiente etapa
+            </span>
+            <span className="mt-2 break-words text-sm font-semibold text-white">
+              Mentoría privada 1 a 1
             </span>
           </Link>
         ) : (

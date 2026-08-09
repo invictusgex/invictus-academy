@@ -510,15 +510,15 @@ function ParticipantOutcomeForm({
         <label className="grid gap-2 text-sm font-semibold text-white">
           Resumen de la sesión
           <textarea
-            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            className="min-h-56 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
             defaultValue={outcome?.summary ?? ""}
             name="participantSummary"
           />
         </label>
         <label className="grid gap-2 text-sm font-semibold text-white">
-          Proximos pasos
+          Próximos pasos
           <textarea
-            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            className="min-h-56 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
             defaultValue={outcome?.nextSteps ?? ""}
             name="participantNextSteps"
           />
@@ -526,7 +526,7 @@ function ParticipantOutcomeForm({
         <label className="grid gap-2 text-sm font-semibold text-white">
           Recursos recomendados
           <textarea
-            className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
+            className="min-h-56 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
             defaultValue={outcome?.resources ?? ""}
             name="participantResources"
           />

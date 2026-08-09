@@ -178,6 +178,11 @@ export function MentorshipSchedulingPanel({
       try {
         if (!response.ok) {
           if ("error" in payload) {
+            if (payload.error.code === "MENTORSHIP_ALREADY_COMPLETED") {
+              await refreshScheduling();
+              return;
+            }
+
             setError(payload.error.message);
           }
           await refreshScheduling();
@@ -240,29 +245,16 @@ export function MentorshipSchedulingPanel({
     });
   }
 
-  if (!requirementsSatisfied) {
-    return (
-      <StudentSection title="Agenda de mentoría">
-        <StudentCard>
-          <h2 className="text-2xl font-semibold text-white">
-            La agenda se habilitará al completar tu preparación.
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
-            Cuando completes los requisitos pendientes, podrás elegir un horario
-            disponible para tu mentoría individual desde esta misma sección.
-          </p>
-        </StudentCard>
-      </StudentSection>
-    );
-  }
-
   if (completedBooking) {
     return (
       <StudentSection title="Mentoría completada">
         <StudentCard elevated>
           {completedOutcome ? (
-            <div className="grid gap-5">
+            <div className="mx-auto grid max-w-4xl gap-8">
               <div>
+                <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+                  Mentoría completada
+                </p>
                 <h2 className="text-2xl font-semibold text-white">
                   Cierre de tu mentoría
                 </h2>
@@ -285,34 +277,31 @@ export function MentorshipSchedulingPanel({
                   </p>
                 ) : null}
               </div>
-              <div className="grid gap-4 lg:grid-cols-3">
-                <div className="rounded-xl border border-[var(--color-border)] p-4">
-                  <h3 className="text-sm font-semibold text-white">
-                    Resumen
-                  </h3>
-                  <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
-                    {completedOutcome.summary ?? "Sin resumen publicado."}
-                  </p>
-                </div>
-                <div className="rounded-xl border border-[var(--color-border)] p-4">
-                  <h3 className="text-sm font-semibold text-white">
-                    Proximos pasos
-                  </h3>
-                  <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
-                    {completedOutcome.nextSteps ??
-                      "Sin próximos pasos publicados."}
-                  </p>
-                </div>
-                <div className="rounded-xl border border-[var(--color-border)] p-4">
-                  <h3 className="text-sm font-semibold text-white">
-                    Recursos recomendados
-                  </h3>
-                  <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
-                    {completedOutcome.resources ??
-                      "Sin recursos publicados."}
-                  </p>
-                </div>
-              </div>
+              <section className="border-t border-[var(--color-border)] pt-6">
+                <h3 className="text-sm font-semibold tracking-[0.14em] text-white uppercase">
+                  Resumen de la sesión
+                </h3>
+                <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-[var(--color-text-secondary)]">
+                  {completedOutcome.summary ?? "Sin resumen publicado."}
+                </p>
+              </section>
+              <section className="border-t border-[var(--color-border)] pt-6">
+                <h3 className="text-sm font-semibold tracking-[0.14em] text-white uppercase">
+                  Próximos pasos
+                </h3>
+                <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-[var(--color-text-secondary)]">
+                  {completedOutcome.nextSteps ??
+                    "Sin próximos pasos publicados."}
+                </p>
+              </section>
+              <section className="border-t border-[var(--color-border)] pt-6">
+                <h3 className="text-sm font-semibold tracking-[0.14em] text-white uppercase">
+                  Recursos recomendados
+                </h3>
+                <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-[var(--color-text-secondary)]">
+                  {completedOutcome.resources ?? "Sin recursos publicados."}
+                </p>
+              </section>
               <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
                 Has completado esta etapa de tu formación. Los próximos pasos
                 te ayudarán a consolidar la metodología mediante práctica
@@ -330,6 +319,22 @@ export function MentorshipSchedulingPanel({
               </p>
             </div>
           )}
+        </StudentCard>
+      </StudentSection>
+    );
+  }
+
+  if (!requirementsSatisfied) {
+    return (
+      <StudentSection title="Agenda de mentoría">
+        <StudentCard>
+          <h2 className="text-2xl font-semibold text-white">
+            La agenda se habilitará al completar tu preparación.
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">
+            Cuando completes los requisitos pendientes, podrás elegir un horario
+            disponible para tu mentoría individual desde esta misma sección.
+          </p>
         </StudentCard>
       </StudentSection>
     );

@@ -49,6 +49,7 @@ export function StudentModuleDetailPage({
     currentIndex >= 0 && currentIndex < orderedModules.length - 1
       ? orderedModules[currentIndex + 1]
       : undefined;
+  const completedFinalModule = status === "completed" && !nextModule;
 
   return (
     <div className="space-y-6">
@@ -82,6 +83,7 @@ export function StudentModuleDetailPage({
       />
 
       <StudentModuleNavigation
+        formationCompleted={completedFinalModule}
         nextModule={nextModule}
         previousModule={previousModule}
       />

@@ -147,6 +147,15 @@ function mapError(error: unknown) {
     };
   }
 
+  if (message.includes("MENTORSHIP_ALREADY_COMPLETED")) {
+    return {
+      code: "MENTORSHIP_ALREADY_COMPLETED",
+      message:
+        "Esta mentoría ya fue completada. Puedes revisar el cierre publicado en tu sección de mentoría.",
+      status: 409,
+    };
+  }
+
   if (message.includes("BOOKING_COMPLETED")) {
     return {
       code: "BOOKING_COMPLETED",

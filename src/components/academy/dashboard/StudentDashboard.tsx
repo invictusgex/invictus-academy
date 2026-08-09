@@ -13,6 +13,7 @@ import type { ProgramModuleProgress } from "@/utils/module-progress";
 
 type StudentDashboardProps = {
   activeProducts: ActiveEnrollmentProduct[];
+  mentorshipState: "eligible" | "reserved" | "completed" | "preparation";
   session101Unlocked: boolean;
 };
 
@@ -32,13 +33,31 @@ function getStageLabel(moduleProgress: ProgramModuleProgress | null) {
 
 function getPrimaryAction({
   currentModule,
+  mentorshipState,
   programStatus,
   session101Unlocked,
 }: {
   currentModule: ProgramModuleProgress | null;
+  mentorshipState: StudentDashboardProps["mentorshipState"];
   programStatus: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
   session101Unlocked: boolean;
 }): PrimaryAction {
+  if (mentorshipState === "completed") {
+    return {
+      href: "/academy/mentoria",
+      label: "Ver cierre de mi mentoría",
+      note: "Has completado tu formación y tu mentoría privada 1 a 1. Tu cierre personalizado ya está disponible con el resumen de la sesión, próximos pasos y recursos recomendados.",
+    };
+  }
+
+  if (mentorshipState === "reserved") {
+    return {
+      href: "/academy/mentoria",
+      label: "Ver mentoría programada",
+      note: "Tu mentoría ya está reservada. Puedes revisar la fecha, hora y contexto enviado para la sesión.",
+    };
+  }
+
   if (session101Unlocked) {
     return {
       href: "/academy/mentoria",
@@ -207,6 +226,7 @@ function FormationRecord() {
 
 export function StudentDashboard({
   activeProducts,
+  mentorshipState,
   session101Unlocked,
 }: StudentDashboardProps) {
   const {
@@ -216,9 +236,11 @@ export function StudentDashboard({
   const primaryProduct = activeProducts[0];
   const primaryAction = getPrimaryAction({
     currentModule: progress.currentModule,
+    mentorshipState,
     programStatus: progress.status,
     session101Unlocked,
   });
+  const completedMentorship = mentorshipState === "completed";
 
   return (
     <div className="space-y-8">
@@ -281,7 +303,7 @@ export function StudentDashboard({
         <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-              Próxima acción
+              {completedMentorship ? "Recorrido completado" : "Próxima acción"}
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-white">
               {primaryAction.label}

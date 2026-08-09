@@ -25,6 +25,7 @@ export function ModuleCompletionPanel({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const completed = status === "completed";
+  const completedFinalModule = completed && !nextModule;
 
   async function handleCompleteModule() {
     if (completed || saving) {
@@ -91,6 +92,35 @@ export function ModuleCompletionPanel({
           </button>
         )}
       </div>
+
+      {completedFinalModule ? (
+        <div className="mt-8 rounded-2xl border border-cyan-200/25 bg-cyan-200/[0.04] p-5 sm:p-6">
+          <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+            Formación completada
+          </p>
+          <h3 className="mt-3 text-2xl font-semibold text-white">
+            Has completado tu recorrido de formación
+          </h3>
+          <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)] sm:text-base sm:leading-7">
+            Has finalizado las 7 etapas del Programa de Formación y tu recorrido
+            ha quedado documentado en tu expediente.
+          </p>
+          <p className="mt-5 text-base font-semibold text-white">
+            Tu siguiente etapa es la mentoría privada en vivo 1 a 1.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)] sm:text-base sm:leading-7">
+            Tu mentor revisará previamente tu progreso, reflexiones y material
+            adjunto para preparar una sesión centrada en profundizar, integrar y
+            consolidar la metodología.
+          </p>
+          <Link
+            className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-fit motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            href="/academy/mentoria"
+          >
+            Continuar a mi mentoría
+          </Link>
+        </div>
+      ) : null}
     </StudentCard>
   );
 }

@@ -55,14 +55,16 @@ export const TradingDaysRule: CompletionRule = {
   evaluate(context: CompletionRuleContext): CompletionRuleResult {
     const satisfied =
       context.enrollmentActive &&
-      context.tradingDays >= context.requiredTradingDays;
+      (context.tradingDays >= context.requiredTradingDays ||
+        context.practiceRequirementWaived);
 
     return {
       currentValue: context.tradingDays,
       key: TradingDaysRule.key,
-      label: "Registrar días de trading",
+      label: "Documentar 5 días distintos de práctica",
       metadata: {
         enrollmentActive: context.enrollmentActive,
+        practiceRequirementWaived: context.practiceRequirementWaived,
         requiredTradingDays: context.requiredTradingDays,
       },
       requiredValue: context.requiredTradingDays,

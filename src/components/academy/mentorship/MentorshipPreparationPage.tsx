@@ -24,7 +24,7 @@ type MentorshipPreparationPageProps = {
 
 const journeySteps = [
   "Formación estructurada",
-  "Reflexiónes documentadas",
+  "Reflexiones documentadas",
   "Práctica registrada",
   "Requisitos completados",
   "Mentoría individual",
@@ -46,6 +46,18 @@ export function MentorshipPreparationPage({
   preparation,
   slots,
 }: MentorshipPreparationPageProps) {
+  const practiceDaysRemaining = Math.max(
+    preparation.requiredTradingDays - preparation.tradingDays,
+    0,
+  );
+  const formationCompleted =
+    preparation.publishedModules > 0 &&
+    preparation.completedModules === preparation.publishedModules;
+  const waitingForPractice =
+    formationCompleted &&
+    !preparation.practiceRequirementWaived &&
+    practiceDaysRemaining > 0;
+
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8">
@@ -107,12 +119,58 @@ export function MentorshipPreparationPage({
             value={String(preparation.totalAttachments)}
           />
           <StudentStatCard
-            caption="Registros existentes"
+            caption={`${preparation.requiredTradingDays} días requeridos`}
             label="Práctica"
-            value={String(preparation.tradingDays)}
+            value={`${preparation.tradingDays}/${preparation.requiredTradingDays}`}
           />
         </StudentContentGrid>
       </StudentSection>
+
+      {waitingForPractice ? (
+        <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 sm:p-8">
+          <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+            Formación completada
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold text-white">
+            Tu siguiente etapa es la mentoría privada 1 a 1
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)]">
+            Has completado las 7 etapas de formación. Antes de agendar tu
+            sesión, documenta al menos 5 días distintos de interacción con el
+            mercado.
+          </p>
+          <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)]">
+            Durante estos días, registra la mayor cantidad posible de
+            escenarios reales que encuentres: operaciones realizadas,
+            oportunidades que descartaste, dudas, contextos de mercado y
+            situaciones que quieras revisar con tu mentor.
+          </p>
+          <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)]">
+            Cuanto más completo sea tu expediente, más específica y útil podrá
+            ser la preparación de tu mentoría.
+          </p>
+          <div className="mt-5 inline-flex rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-white">
+            Días documentados: {preparation.tradingDays} de{" "}
+            {preparation.requiredTradingDays}
+          </div>
+        </section>
+      ) : null}
+
+      {preparation.requirementsSatisfied ? (
+        <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 sm:p-8">
+          <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+            Siguiente etapa
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold text-white">
+            Ya puedes agendar tu mentoría privada 1 a 1
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--color-text-secondary)]">
+            La plataforma ya cuenta con el recorrido necesario para preparar
+            una sesión centrada en profundizar, integrar y consolidar la
+            metodología.
+          </p>
+        </section>
+      ) : null}
 
       <StudentSection
         description="Cada requisito se evalúa con datos existentes del programa."

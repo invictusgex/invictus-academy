@@ -7,12 +7,17 @@ import type { Database } from "@/lib/supabase/database.types";
 import type {
   LearningWorkflowEnrollmentRow,
   LearningWorkflowModuleRow,
+  LearningWorkflowPracticeRequirementOverrideRow,
   LearningWorkflowProgressRow,
 } from "@/lib/types/learning-workflow.types";
 
 type LearningWorkflowReadInput = {
   productId: string;
   profileId: string;
+};
+
+type LearningWorkflowOverrideInput = LearningWorkflowReadInput & {
+  enrollmentId: string;
 };
 
 const moduleSelect = `
@@ -27,6 +32,18 @@ const progressSelect = `
   status,
   progress_percent,
   completed_at
+`;
+
+const practiceRequirementOverrideSelect = `
+  id,
+  profile_id,
+  product_id,
+  enrollment_id,
+  practice_requirement_waived_at,
+  practice_requirement_waived_by,
+  revoked_at,
+  revoked_by,
+  reason
 `;
 
 export const LearningWorkflowRepository = {
@@ -93,5 +110,30 @@ export const LearningWorkflowRepository = {
     }
 
     return (data as LearningWorkflowProgressRow[] | null) ?? [];
+  },
+
+  /**
+   * Reads the active administrative waiver for the mentorship practice requirement.
+   */
+  async getActivePracticeRequirementOverride(
+    input: LearningWorkflowOverrideInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<LearningWorkflowPracticeRequirementOverrideRow | null> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_requirement_overrides")
+      .select(practiceRequirementOverrideSelect)
+      .eq("profile_id", input.profileId)
+      .eq("product_id", input.productId)
+      .eq("enrollment_id", input.enrollmentId)
+      .is("revoked_at", null)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return (
+      (data as LearningWorkflowPracticeRequirementOverrideRow | null) ?? null
+    );
   },
 };

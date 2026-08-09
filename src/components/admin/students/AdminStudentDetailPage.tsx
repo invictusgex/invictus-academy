@@ -16,6 +16,8 @@ import type {
 
 type AdminStudentDetailPageProps = {
   detail: AdminStudentManagementDetail;
+  onRevokePracticeRequirementWaiver?: (formData: FormData) => Promise<void>;
+  onWaivePracticeRequirement?: (formData: FormData) => Promise<void>;
 };
 
 function getDisplayName(fullName: string | null) {
@@ -72,14 +74,27 @@ function getStatusTone(status: string) {
 
 function MentorshipPreparationSection({
   detail,
+  onRevokePracticeRequirementWaiver,
+  onWaivePracticeRequirement,
+  studentId,
 }: {
   detail: AdminStudentEnrollmentDetail;
+  onRevokePracticeRequirementWaiver?: (formData: FormData) => Promise<void>;
+  onWaivePracticeRequirement?: (formData: FormData) => Promise<void>;
+  studentId: string;
 }) {
   const preparation = detail.mentorshipPreparation;
 
   if (!preparation) {
     return null;
   }
+
+  const missingTradingDays = Math.max(
+    preparation.requiredTradingDays - preparation.tradingDays,
+    0,
+  );
+  const canUsePracticeOverride =
+    Boolean(onWaivePracticeRequirement) && missingTradingDays > 0;
 
   return (
     <section className="mt-5 min-w-0 rounded-xl border border-[var(--color-border)] p-4">
@@ -136,6 +151,84 @@ function MentorshipPreparationSection({
           </dd>
         </div>
       </dl>
+
+      {canUsePracticeOverride || preparation.practiceRequirementWaived ? (
+        <div className="mt-5 rounded-lg border border-[var(--color-border)] bg-black/20 p-4">
+          <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0">
+              <h5 className="text-sm font-semibold text-white">
+                Bypass administrativo de práctica
+              </h5>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                Uso interno para QA o validación supervisada. No crea días de
+                práctica falsos y queda limitado a este enrollment.
+              </p>
+              {preparation.practiceRequirementWaived ? (
+                <p className="mt-2 text-sm font-semibold text-[var(--color-cyan)]">
+                  Requisito de práctica eximido por administración.
+                </p>
+              ) : (
+                <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                  Faltan {missingTradingDays} días documentados para cumplir el
+                  requisito estándar.
+                </p>
+              )}
+            </div>
+            {preparation.practiceRequirementWaived ? (
+              onRevokePracticeRequirementWaiver ? (
+                <form action={onRevokePracticeRequirementWaiver}>
+                  <input
+                    name="enrollmentId"
+                    type="hidden"
+                    value={detail.enrollment.id}
+                  />
+                  <input
+                    name="productId"
+                    type="hidden"
+                    value={detail.enrollment.productId}
+                  />
+                  <input
+                    name="profileId"
+                    type="hidden"
+                    value={studentId}
+                  />
+                  <button
+                    className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-white/[0.03] sm:w-auto"
+                    type="submit"
+                  >
+                    Revertir bypass
+                  </button>
+                </form>
+              ) : null
+            ) : onWaivePracticeRequirement ? (
+              <form action={onWaivePracticeRequirement}>
+                <input
+                  name="enrollmentId"
+                  type="hidden"
+                  value={detail.enrollment.id}
+                />
+                <input
+                  name="productId"
+                  type="hidden"
+                  value={detail.enrollment.productId}
+                />
+                <input name="profileId" type="hidden" value={studentId} />
+                <input
+                  name="reason"
+                  type="hidden"
+                  value="QA supervisado antes de producción"
+                />
+                <button
+                  className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-white/[0.03] sm:w-auto"
+                  type="submit"
+                >
+                  Marcar requisito como cumplido
+                </button>
+              </form>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-5 grid gap-4">
         {preparation.modules.map((moduleItem) => (
@@ -253,8 +346,14 @@ function MentorshipPreparationSection({
 
 function EnrollmentDetailCard({
   detail,
+  onRevokePracticeRequirementWaiver,
+  onWaivePracticeRequirement,
+  studentId,
 }: {
   detail: AdminStudentEnrollmentDetail;
+  onRevokePracticeRequirementWaiver?: (formData: FormData) => Promise<void>;
+  onWaivePracticeRequirement?: (formData: FormData) => Promise<void>;
+  studentId: string;
 }) {
   const moduleProgress = detail.workflow
     ? `${detail.workflow.completedModules}/${detail.workflow.publishedModules}`
@@ -318,7 +417,12 @@ function EnrollmentDetailCard({
         </div>
       </dl>
 
-      <MentorshipPreparationSection detail={detail} />
+      <MentorshipPreparationSection
+        detail={detail}
+        onRevokePracticeRequirementWaiver={onRevokePracticeRequirementWaiver}
+        onWaivePracticeRequirement={onWaivePracticeRequirement}
+        studentId={studentId}
+      />
 
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
         <div className="min-w-0 rounded-xl border border-[var(--color-border)] p-4">
@@ -451,6 +555,8 @@ function EnrollmentDetailCard({
 
 export function AdminStudentDetailPage({
   detail,
+  onRevokePracticeRequirementWaiver,
+  onWaivePracticeRequirement,
 }: AdminStudentDetailPageProps) {
   const student = detail.student;
 
@@ -511,6 +617,11 @@ export function AdminStudentDetailPage({
             <EnrollmentDetailCard
               detail={enrollmentDetail}
               key={enrollmentDetail.enrollment.id}
+              onRevokePracticeRequirementWaiver={
+                onRevokePracticeRequirementWaiver
+              }
+              onWaivePracticeRequirement={onWaivePracticeRequirement}
+              studentId={student.id}
             />
           ))}
           {detail.enrollmentDetails.length === 0 ? (

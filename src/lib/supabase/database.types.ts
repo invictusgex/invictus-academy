@@ -204,6 +204,84 @@ export type Database = {
           },
         ]
       }
+      academy_mentorship_requirement_overrides: {
+        Row: {
+          created_at: string
+          enrollment_id: string
+          id: string
+          practice_requirement_waived_at: string
+          practice_requirement_waived_by: string
+          product_id: string
+          profile_id: string
+          reason: string | null
+          revoked_at: string | null
+          revoked_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          practice_requirement_waived_at?: string
+          practice_requirement_waived_by: string
+          product_id: string
+          profile_id: string
+          reason?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          practice_requirement_waived_at?: string
+          practice_requirement_waived_by?: string
+          product_id?: string
+          profile_id?: string
+          reason?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_mentorship_requirement_overrides_enrollment_fkey"
+            columns: ["enrollment_id", "profile_id", "product_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id", "profile_id", "product_id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_requirement_overrides_practice_requirement_waived_by_fkey"
+            columns: ["practice_requirement_waived_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_requirement_overrides_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_requirement_overrides_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academy_mentorship_requirement_overrides_revoked_by_fkey"
+            columns: ["revoked_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       academy_mentorship_notes: {
         Row: {
           booking_id: string

@@ -32,6 +32,7 @@ export type CompletionRuleContext = {
   completedModules: number;
   enrollmentActive: boolean;
   modules: LearningWorkflowModuleSummary[];
+  practiceRequirementWaived: boolean;
   publishedModules: number;
   requiredForms: number;
   requiredTradingDays: number;
@@ -50,6 +51,7 @@ export type LearningWorkflowEvaluation = {
   completionPercent: number;
   enrollmentActive: boolean;
   modules: LearningWorkflowModuleSummary[];
+  practiceRequirementWaived: boolean;
   productId: string;
   profileId: string;
   publishedModules: number;
@@ -86,4 +88,16 @@ export type LearningWorkflowProgressRow = {
   module_key: string;
   progress_percent: number;
   status: string;
+};
+
+export type LearningWorkflowPracticeRequirementOverrideRow = {
+  enrollment_id: string;
+  id: string;
+  practice_requirement_waived_at: string;
+  practice_requirement_waived_by: string;
+  product_id: string;
+  profile_id: string;
+  reason: string | null;
+  revoked_at: string | null;
+  revoked_by: string | null;
 };

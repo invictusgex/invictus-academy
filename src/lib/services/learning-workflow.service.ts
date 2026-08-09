@@ -127,6 +127,17 @@ export const LearningWorkflowService = {
       ),
     ]);
     const enrollmentActive = isEnrollmentActive(enrollment);
+    const practiceRequirementOverride =
+      enrollmentActive && enrollment
+        ? await LearningWorkflowRepository.getActivePracticeRequirementOverride(
+            {
+              enrollmentId: enrollment.id,
+              productId,
+              profileId,
+            },
+            supabase,
+          )
+        : null;
     const requiredFormsProgress = await FormService.getRequiredFormsProgress(
       {
         enrollmentId: enrollmentActive ? enrollment?.id ?? null : null,
@@ -156,6 +167,7 @@ export const LearningWorkflowService = {
         completedModules,
         enrollmentActive,
         modules,
+        practiceRequirementWaived: Boolean(practiceRequirementOverride),
         publishedModules: totalModules,
         requiredForms: requiredFormsProgress.requiredForms,
         requiredTradingDays: tradingDaysProgress.requiredTradingDays,
@@ -170,6 +182,7 @@ export const LearningWorkflowService = {
       completionPercent: getCompletionPercent(completedModules, totalModules),
       enrollmentActive,
       modules,
+      practiceRequirementWaived: Boolean(practiceRequirementOverride),
       productId,
       profileId,
       publishedModules: totalModules,
