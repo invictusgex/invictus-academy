@@ -4,9 +4,10 @@ export const module05: Module = {
   id: "5",
   number: 5,
   title: "Módulo 5",
-  description: "Contenido pendiente de definición",
+  description:
+    "Integrar Order Flow y Perfil de Volumen para analizar participación, agresión, aceptación, rechazo y ubicación del precio dentro de la estructura del mercado.",
   overview:
-    "En este módulo desarrollarás los conceptos fundamentales correspondientes a está etapa del programa.",
+    "Integrar Order Flow y Perfil de Volumen para analizar participación, agresión, aceptación, rechazo y ubicación del precio dentro de la estructura del mercado.",
   learningObjectives: [
     "Objetivo de aprendizaje 1",
     "Objetivo de aprendizaje 2",

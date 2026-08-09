@@ -78,7 +78,7 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
           minLength={8}
           name="password"
           onChange={(event) => setPassword(event.target.value)}
-          placeholder="Minimo 8 caracteres"
+          placeholder="Mínimo 8 caracteres"
           required
           type="password"
           value={password}

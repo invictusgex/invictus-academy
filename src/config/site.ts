@@ -1,15 +1,37 @@
-const fallbackSiteUrl = "http://localhost:3000";
+const developmentSiteUrl = "http://localhost:3000";
+const productionSiteUrl = "https://invictusgex.com";
 const fallbackSupportEmail = "invictusgex@gmail.com";
 
 export const siteName = "Invictus GEX";
 
 export const siteDescription =
-  "Programa de Formación Profesional basado en datos, Order Flow, Heatmap, Perfil de Volumen y Exposición de Gamma.";
+  "Programa de Formación Profesional para desarrollar criterio de lectura de mercado, con formación estructurada y mentoría privada en vivo 1 a 1.";
 
 export function getSiteUrl() {
-  const appUrl = process.env.APP_URL?.trim();
+  const appUrl =
+    process.env.APP_URL?.trim() || process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
-  return appUrl ? appUrl.replace(/\/+$/, "") : fallbackSiteUrl;
+  if (appUrl) {
+    const normalizedUrl = appUrl.replace(/\/+$/, "");
+
+    if (process.env.NODE_ENV === "production") {
+      try {
+        const hostname = new URL(normalizedUrl).hostname;
+
+        if (hostname === "localhost" || hostname === "127.0.0.1") {
+          return productionSiteUrl;
+        }
+      } catch {
+        return productionSiteUrl;
+      }
+    }
+
+    return normalizedUrl;
+  }
+
+  return process.env.NODE_ENV === "production"
+    ? productionSiteUrl
+    : developmentSiteUrl;
 }
 
 export function getSupportEmail() {

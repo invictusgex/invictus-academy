@@ -4,9 +4,10 @@ export const module07: Module = {
   id: "7",
   number: 7,
   title: "Módulo 7",
-  description: "Contenido pendiente de definición",
+  description:
+    "Consolidar la metodología mediante gestión del riesgo, disciplina, preparación y evaluación del proceso para desarrollar una operativa profesional y sostenible.",
   overview:
-    "En este módulo desarrollarás los conceptos fundamentales correspondientes a está etapa del programa.",
+    "Consolidar la metodología mediante gestión del riesgo, disciplina, preparación y evaluación del proceso para desarrollar una operativa profesional y sostenible.",
   learningObjectives: [
     "Objetivo de aprendizaje 1",
     "Objetivo de aprendizaje 2",

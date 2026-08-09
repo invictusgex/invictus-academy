@@ -88,7 +88,7 @@ export async function POST(request: Request) {
 
   if (!acceptedTerms) {
     return jsonResponse(
-      { error: "Debes aceptar los terminos y la politica de privacidad." },
+      { error: "Debes aceptar los términos y la política de privacidad." },
       400,
     );
   }

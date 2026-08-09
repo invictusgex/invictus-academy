@@ -4,9 +4,10 @@ export const module06: Module = {
   id: "6",
   number: 6,
   title: "Módulo 6",
-  description: "Contenido pendiente de definición",
+  description:
+    "Combinar contexto, liquidez, exposición gamma, volumen y flujo de órdenes para construir escenarios estructurados antes de tomar una decisión.",
   overview:
-    "En este módulo desarrollarás los conceptos fundamentales correspondientes a está etapa del programa.",
+    "Combinar contexto, liquidez, exposición gamma, volumen y flujo de órdenes para construir escenarios estructurados antes de tomar una decisión.",
   learningObjectives: [
     "Objetivo de aprendizaje 1",
     "Objetivo de aprendizaje 2",

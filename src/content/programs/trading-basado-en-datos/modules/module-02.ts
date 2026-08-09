@@ -4,9 +4,10 @@ export const module02: Module = {
   id: "2",
   number: 2,
   title: "Módulo 2",
-  description: "Contenido pendiente de definición",
+  description:
+    "Comprender cómo interactúan liquidez, participantes, ejecución y estructura de mercado para explicar el movimiento del precio más allá de una lectura superficial del gráfico.",
   overview:
-    "En este módulo desarrollarás los conceptos fundamentales correspondientes a está etapa del programa.",
+    "Comprender cómo interactúan liquidez, participantes, ejecución y estructura de mercado para explicar el movimiento del precio más allá de una lectura superficial del gráfico.",
   learningObjectives: [
     "Objetivo de aprendizaje 1",
     "Objetivo de aprendizaje 2",

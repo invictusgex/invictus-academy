@@ -4,9 +4,10 @@ export const module04: Module = {
   id: "4",
   number: 4,
   title: "Módulo 4",
-  description: "Contenido pendiente de definición",
+  description:
+    "Interpretar exposición gamma, niveles relevantes y herramientas de lectura para convertir datos institucionales en escenarios de análisis.",
   overview:
-    "En este módulo desarrollarás los conceptos fundamentales correspondientes a está etapa del programa.",
+    "Interpretar exposición gamma, niveles relevantes y herramientas de lectura para convertir datos institucionales en escenarios de análisis.",
   learningObjectives: [
     "Objetivo de aprendizaje 1",
     "Objetivo de aprendizaje 2",

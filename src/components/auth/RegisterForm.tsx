@@ -122,7 +122,7 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
           minLength={8}
           name="password"
           onChange={(event) => setPassword(event.target.value)}
-          placeholder="Minimo 8 caracteres"
+          placeholder="Mínimo 8 caracteres"
           required
           type="password"
           value={password}
@@ -159,7 +159,7 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
           type="checkbox"
         />
         <span>
-          Acepto los terminos de uso y la politica de privacidad de Invictus
+          Acepto los términos de uso y la política de privacidad de Invictus
           Trading Academy.
         </span>
       </label>

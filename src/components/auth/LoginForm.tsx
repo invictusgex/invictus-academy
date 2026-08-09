@@ -111,7 +111,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
             className="font-semibold text-[var(--color-cyan)] transition hover:text-[var(--color-cyan-hover)]"
             href={`/registro?next=${encodeURIComponent(nextPath)}`}
           >
-            Registrate
+            Regístrate
           </Link>
         </p>
         <Link

@@ -4,9 +4,10 @@ export const module03: Module = {
   id: "3",
   number: 3,
   title: "Módulo 3",
-  description: "Contenido pendiente de definición",
+  description:
+    "Comprender cómo el posicionamiento en opciones y la exposición gamma pueden influir en la estabilidad, expansión y comportamiento del precio.",
   overview:
-    "En este módulo desarrollarás los conceptos fundamentales correspondientes a está etapa del programa.",
+    "Comprender cómo el posicionamiento en opciones y la exposición gamma pueden influir en la estabilidad, expansión y comportamiento del precio.",
   learningObjectives: [
     "Objetivo de aprendizaje 1",
     "Objetivo de aprendizaje 2",

@@ -90,7 +90,7 @@ function OfferHeader() {
         <span>Invictus GEX</span>
       </Link>
       <nav
-        aria-label="Navegacion de la propuesta"
+        aria-label="Navegación de la propuesta"
         className="hidden items-center gap-6 text-sm text-[var(--color-text-secondary)] md:flex"
       >
         <a className="transition hover:text-white" href="#incluye">
@@ -147,7 +147,7 @@ function IncludesSection() {
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Que recibes al ingresar
+          Qué recibes al ingresar
         </p>
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {offerIncludes.map((item) => (
@@ -177,7 +177,7 @@ function JourneySection() {
           Cómo se desarrolla tu formación
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-white">
-          El valor esta en avanzar con orden.
+          El valor está en avanzar con orden.
         </h2>
       </div>
       <ol className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
@@ -226,7 +226,7 @@ function CompetenciesSection() {
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
       <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-        Lo que desarrollaras
+        Lo que desarrollarás
       </p>
       <div className="mt-6 grid gap-3 md:grid-cols-2">
         {publicGlobalCompetencies.map((competency) => (

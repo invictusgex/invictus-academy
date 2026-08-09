@@ -300,7 +300,7 @@ function CompetenciesBlock() {
     <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-          Lo que desarrollaras
+          Lo que desarrollarás
         </p>
         <div className="mt-6 grid gap-3 md:grid-cols-2">
           {publicGlobalCompetencies.map((competency) => (

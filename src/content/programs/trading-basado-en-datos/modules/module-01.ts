@@ -4,9 +4,10 @@ export const module01: Module = {
   id: "1",
   number: 1,
   title: "Módulo 1",
-  description: "Contenido pendiente de definición",
+  description:
+    "Comprender por qué el precio debe interpretarse como el resultado de múltiples fuerzas del mercado y establecer las bases de una metodología centrada en datos, contexto y evidencia.",
   overview:
-    "En este módulo desarrollarás los conceptos fundamentales correspondientes a está etapa del programa.",
+    "Comprender por qué el precio debe interpretarse como el resultado de múltiples fuerzas del mercado y establecer las bases de una metodología centrada en datos, contexto y evidencia.",
   learningObjectives: [
     "Objetivo de aprendizaje 1",
     "Objetivo de aprendizaje 2",
