@@ -2,9 +2,13 @@ import { headers } from "next/headers";
 
 import { requireAdminServerContext } from "@/app/admin/admin-auth";
 import { SystemVersionCopyButton } from "@/components/admin/system/SystemVersionCopyButton";
+import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
 import {
+  formatSystemEnvironment,
   formatSystemVersionForClipboard,
-  getSystemVersionInfo,
+  formatVersionStatusLabel,
+  getSystemVersionStatus,
+  type VersionComparisonStatus,
 } from "@/lib/services/system-version.service";
 
 const adminCards = [
@@ -26,24 +30,26 @@ const adminCards = [
   },
 ];
 
-function formatEnvironment(environment: "development" | "production" | "test") {
-  if (environment === "production") {
-    return "Producción";
+function getVersionStatusTone(status: VersionComparisonStatus) {
+  if (status === "up_to_date") {
+    return "success";
   }
 
-  if (environment === "test") {
-    return "Pruebas";
+  if (status === "update_pending" || status === "deployed_version_unknown") {
+    return "warning";
   }
 
-  return "Desarrollo";
+  return "neutral";
 }
 
 export default async function AdminPage() {
   await requireAdminServerContext();
 
   const requestHeaders = await headers();
-  const systemVersion = getSystemVersionInfo(requestHeaders.get("host") ?? undefined);
-  const copyValue = formatSystemVersionForClipboard(systemVersion);
+  const systemStatus = await getSystemVersionStatus(
+    requestHeaders.get("host") ?? undefined,
+  );
+  const copyValue = formatSystemVersionForClipboard(systemStatus);
 
   return (
     <div className="space-y-6">
@@ -79,7 +85,12 @@ export default async function AdminPage() {
               GEX está ejecutando esta instancia.
             </p>
           </div>
-          <SystemVersionCopyButton value={copyValue} />
+          <div className="flex flex-col items-start gap-3 lg:items-end">
+            <AdminStatusBadge tone={getVersionStatusTone(systemStatus.status)}>
+              {formatVersionStatusLabel(systemStatus.status)}
+            </AdminStatusBadge>
+            <SystemVersionCopyButton value={copyValue} />
+          </div>
         </div>
 
         <dl className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -88,7 +99,7 @@ export default async function AdminPage() {
               Estado
             </dt>
             <dd className="mt-2 text-base font-semibold text-white">
-              {formatEnvironment(systemVersion.environment)}
+              {formatSystemEnvironment(systemStatus.deployed.environment)}
             </dd>
           </div>
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4">
@@ -96,7 +107,7 @@ export default async function AdminPage() {
               Versión
             </dt>
             <dd className="mt-2 text-base font-semibold text-white">
-              {systemVersion.version}
+              {systemStatus.deployed.version}
             </dd>
           </div>
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4">
@@ -104,15 +115,28 @@ export default async function AdminPage() {
               Commit desplegado
             </dt>
             <dd className="mt-2 break-all text-base font-semibold text-white">
-              {systemVersion.commit}
+              {systemStatus.deployed.commit}
             </dd>
+          </div>
+          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4">
+            <dt className="text-xs font-semibold tracking-[0.16em] text-[var(--color-text-muted)] uppercase">
+              Último en GitHub
+            </dt>
+            <dd className="mt-2 break-all text-base font-semibold text-white">
+              {systemStatus.github?.shortSha ?? "No configurado"}
+            </dd>
+            {systemStatus.github?.message ? (
+              <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                {systemStatus.github.message}
+              </p>
+            ) : null}
           </div>
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4">
             <dt className="text-xs font-semibold tracking-[0.16em] text-[var(--color-text-muted)] uppercase">
               Construido
             </dt>
             <dd className="mt-2 break-words text-base font-semibold text-white">
-              {systemVersion.buildTime}
+              {systemStatus.deployed.buildTime}
             </dd>
           </div>
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4">
@@ -120,8 +144,22 @@ export default async function AdminPage() {
               Dominio
             </dt>
             <dd className="mt-2 break-all text-base font-semibold text-white">
-              {systemVersion.domain}
+              {systemStatus.deployed.domain}
             </dd>
+          </div>
+          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4">
+            <dt className="text-xs font-semibold tracking-[0.16em] text-[var(--color-text-muted)] uppercase">
+              Verificado
+            </dt>
+            <dd className="mt-2 break-words text-base font-semibold text-white">
+              {systemStatus.checkedAt}
+            </dd>
+            {systemStatus.error ? (
+              <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                GitHub no respondió correctamente. La versión desplegada local
+                sigue visible.
+              </p>
+            ) : null}
           </div>
         </dl>
       </section>
