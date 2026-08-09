@@ -10,6 +10,7 @@ type RegisterFormProps = {
 type RegisterResponse = {
   error?: string;
   message?: string;
+  title?: string;
 };
 
 async function readResponse(response: Response): Promise<RegisterResponse> {
@@ -24,12 +25,14 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [successTitle, setSuccessTitle] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
+    setSuccessTitle(null);
     setSubmitting(true);
 
     try {
@@ -59,8 +62,9 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
 
       setSuccessMessage(
         payload.message ??
-          "Revisa tu email para confirmar tu cuenta antes de iniciar sesión.",
+          "Si esta dirección puede registrarse, recibirás un enlace para confirmar tu cuenta. Si ya tienes una cuenta, puedes iniciar sesión o recuperar tu contraseña.",
       );
+      setSuccessTitle(payload.title ?? "Revisa tu correo");
       setPassword("");
       setPasswordConfirmation("");
     } catch {
@@ -171,9 +175,24 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
       ) : null}
 
       {successMessage ? (
-        <p className="mt-4 rounded-lg border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">
-          {successMessage}
-        </p>
+        <div className="mt-4 rounded-lg border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">
+          <p className="font-semibold">{successTitle ?? "Revisa tu correo"}</p>
+          <p className="mt-2 leading-6">{successMessage}</p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <Link
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-emerald-200/50 px-5 text-sm font-semibold text-emerald-50 transition hover:border-emerald-100 hover:bg-emerald-100/10"
+              href={`/login?next=${encodeURIComponent(nextPath)}`}
+            >
+              Iniciar sesión
+            </Link>
+            <Link
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-emerald-200/30 px-5 text-sm font-semibold text-emerald-50 transition hover:border-emerald-100 hover:bg-emerald-100/10"
+              href={`/forgot-password?next=${encodeURIComponent(nextPath)}`}
+            >
+              Recuperar contraseña
+            </Link>
+          </div>
+        </div>
       ) : null}
 
       <button

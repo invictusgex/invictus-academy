@@ -11,10 +11,14 @@ type RegisterResponseBody =
   | {
       message: string;
       status: "confirmation_required" | "registered";
+      title?: string;
     }
   | {
       error: string;
     };
+
+const ambiguousConfirmationMessage =
+  "Si esta dirección puede registrarse, recibirás un enlace para confirmar tu cuenta. Si ya tienes una cuenta, puedes iniciar sesión o recuperar tu contraseña.";
 
 function jsonResponse(body: RegisterResponseBody, status: number) {
   return NextResponse.json(body, {
@@ -119,9 +123,9 @@ export async function POST(request: Request) {
     ) {
       return jsonResponse(
         {
-          message:
-            "Si el email puede registrarse, recibirás un mensaje para continuar.",
+          message: ambiguousConfirmationMessage,
           status: "confirmation_required",
+          title: "Revisa tu correo",
         },
         200,
       );
@@ -146,9 +150,9 @@ export async function POST(request: Request) {
 
   return jsonResponse(
     {
-      message:
-        "Revisa tu email para confirmar tu cuenta antes de iniciar sesión.",
+      message: ambiguousConfirmationMessage,
       status: data.session ? "registered" : "confirmation_required",
+      title: "Revisa tu correo",
     },
     200,
   );
