@@ -1,5 +1,8 @@
 import "server-only";
 
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import packageInfo from "../../../package.json";
 
 export type SystemVersionInfo = {
@@ -39,6 +42,7 @@ const githubRepo = "invictus-academy";
 const githubBranch = "main";
 const githubCacheTtlMs = 120_000;
 const githubRequestTimeoutMs = 5_000;
+const buildMetadataPath = join(process.cwd(), ".next", "invictus-build-info.json");
 
 type GitHubCacheEntry = {
   expiresAt: number;
@@ -46,6 +50,13 @@ type GitHubCacheEntry = {
 };
 
 let githubMainCommitCache: GitHubCacheEntry | null = null;
+let buildMetadataCache: BuildMetadata | null | undefined;
+
+type BuildMetadata = {
+  buildTime?: string | null;
+  gitSha?: string | null;
+  gitShaSource?: string | null;
+};
 
 function normalizeEnvironment(): SystemVersionInfo["environment"] {
   if (process.env.NODE_ENV === "production") {
@@ -97,6 +108,24 @@ function normalizeDomain(value: string | undefined) {
   return value?.trim() || unknownValue;
 }
 
+function readBuildMetadata() {
+  if (buildMetadataCache !== undefined) {
+    return buildMetadataCache;
+  }
+
+  try {
+    const payload = JSON.parse(
+      readFileSync(buildMetadataPath, "utf8"),
+    ) as BuildMetadata;
+
+    buildMetadataCache = payload && typeof payload === "object" ? payload : null;
+  } catch {
+    buildMetadataCache = null;
+  }
+
+  return buildMetadataCache;
+}
+
 function isValidGitSha(value: string) {
   return /^[a-f0-9]{7,40}$/i.test(value.trim());
 }
@@ -120,14 +149,21 @@ function compareGitSha(deployedSha: string | null, githubSha: string | null) {
 }
 
 export function getSystemVersionInfo(domain: string | undefined): SystemVersionInfo {
+  const buildMetadata = readBuildMetadata();
   const commitInfo = normalizeCommit(
-    process.env.APP_GIT_SHA || process.env.NEXT_PUBLIC_APP_GIT_SHA,
+    process.env.APP_GIT_SHA ||
+      process.env.NEXT_PUBLIC_APP_GIT_SHA ||
+      buildMetadata?.gitSha ||
+      undefined,
   );
 
   return {
     appName: "Invictus GEX",
     buildTime: normalizeBuildTime(
-      process.env.APP_BUILD_TIME || process.env.NEXT_PUBLIC_APP_BUILD_TIME,
+      process.env.APP_BUILD_TIME ||
+        process.env.NEXT_PUBLIC_APP_BUILD_TIME ||
+        buildMetadata?.buildTime ||
+        undefined,
     ),
     domain: normalizeDomain(domain),
     environment: normalizeEnvironment(),
