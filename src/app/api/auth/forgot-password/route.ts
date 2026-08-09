@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 
 import { getSiteUrl } from "@/config/site";
 import { getSafeInternalRedirect } from "@/lib/auth/redirects";
+import {
+  checkRateLimit,
+  createSimpleRateLimitResponse,
+  getRateLimitIdentity,
+} from "@/lib/security/rate-limit";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -18,6 +23,19 @@ function isValidEmail(email: string) {
 }
 
 export async function POST(request: Request) {
+  const rateLimit = checkRateLimit({
+    key: `auth:forgot-password:${getRateLimitIdentity(request)}`,
+    limit: 5,
+    windowMs: 15 * 60 * 1000,
+  });
+
+  if (!rateLimit.allowed) {
+    return createSimpleRateLimitResponse(
+      "Demasiadas solicitudes de recuperación. Intenta nuevamente en unos minutos.",
+      rateLimit.retryAfterSeconds,
+    );
+  }
+
   let payload: unknown;
 
   try {

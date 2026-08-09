@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 
 import { getSafeInternalRedirect } from "@/lib/auth/redirects";
 import { ProfileRepository } from "@/lib/repositories/profile.repository";
+import {
+  checkRateLimit,
+  createSimpleRateLimitResponse,
+  getRateLimitIdentity,
+} from "@/lib/security/rate-limit";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getSiteUrl } from "@/config/site";
 
@@ -50,6 +55,19 @@ function validatePassword(password: string) {
 }
 
 export async function POST(request: Request) {
+  const rateLimit = checkRateLimit({
+    key: `auth:register:${getRateLimitIdentity(request)}`,
+    limit: 5,
+    windowMs: 15 * 60 * 1000,
+  });
+
+  if (!rateLimit.allowed) {
+    return createSimpleRateLimitResponse(
+      "Demasiadas solicitudes de registro. Intenta nuevamente en unos minutos.",
+      rateLimit.retryAfterSeconds,
+    );
+  }
+
   let payload: unknown;
 
   try {

@@ -6,6 +6,11 @@ import {
 } from "@/lib/auth/server-errors";
 import { requireServerAuthContext } from "@/lib/auth/server";
 import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentity,
+} from "@/lib/security/rate-limit";
+import {
   MODULE_REFLECTION_ERROR_CODES,
   ModuleReflectionService,
   ModuleReflectionServiceError,
@@ -265,6 +270,22 @@ export async function POST(request: Request) {
   try {
     const contentType = request.headers.get("content-type")?.toLowerCase() ?? "";
     const { profile } = await requireServerAuthContext();
+    const rateLimit = checkRateLimit({
+      key: `academy:module-reflections:write:${getRateLimitIdentity(
+        request,
+        profile.id,
+      )}`,
+      limit: contentType.includes("multipart/form-data") ? 10 : 30,
+      windowMs: 10 * 60 * 1000,
+    });
+
+    if (!rateLimit.allowed) {
+      return createRateLimitResponse(
+        "Demasiadas solicitudes para actualizar tu expediente. Intenta nuevamente en unos minutos.",
+        rateLimit.retryAfterSeconds,
+      );
+    }
+
     const supabase = await createSupabaseServerClient();
 
     if (contentType.includes("multipart/form-data")) {
@@ -310,6 +331,22 @@ export async function DELETE(request: Request) {
   try {
     const payload = await readDeletePayload(request);
     const { profile } = await requireServerAuthContext();
+    const rateLimit = checkRateLimit({
+      key: `academy:module-reflections:delete:${getRateLimitIdentity(
+        request,
+        profile.id,
+      )}`,
+      limit: 20,
+      windowMs: 10 * 60 * 1000,
+    });
+
+    if (!rateLimit.allowed) {
+      return createRateLimitResponse(
+        "Demasiadas solicitudes para actualizar tus adjuntos. Intenta nuevamente en unos minutos.",
+        rateLimit.retryAfterSeconds,
+      );
+    }
+
     const supabase = await createSupabaseServerClient();
 
     await ModuleReflectionService.deleteModuleReflectionAttachment(

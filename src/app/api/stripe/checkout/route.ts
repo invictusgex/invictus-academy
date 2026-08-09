@@ -7,6 +7,11 @@ import {
 import { requireServerAuthContext } from "@/lib/auth/server";
 import { EnrollmentRepository } from "@/lib/repositories/enrollment.repository";
 import { ProductRepository } from "@/lib/repositories/product.repository";
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentity,
+} from "@/lib/security/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   isCheckoutProductSlug,
@@ -188,6 +193,19 @@ export async function POST(request: Request) {
   try {
     const payload = await readCheckoutPayload(request);
     const { user, profile } = await requireServerAuthContext();
+    const rateLimit = checkRateLimit({
+      key: `stripe:checkout:${getRateLimitIdentity(request, profile.id)}`,
+      limit: 6,
+      windowMs: 10 * 60 * 1000,
+    });
+
+    if (!rateLimit.allowed) {
+      return createRateLimitResponse(
+        "Demasiados intentos de iniciar Checkout. Intenta nuevamente en unos minutos.",
+        rateLimit.retryAfterSeconds,
+      );
+    }
+
     const supabase = await createSupabaseServerClient();
     const product = await ProductRepository.getBySlug(
       supabase,

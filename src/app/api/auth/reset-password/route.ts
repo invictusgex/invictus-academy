@@ -1,10 +1,28 @@
 import { NextResponse } from "next/server";
 
+import {
+  checkRateLimit,
+  createSimpleRateLimitResponse,
+  getRateLimitIdentity,
+} from "@/lib/security/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const rateLimit = checkRateLimit({
+    key: `auth:reset-password:${getRateLimitIdentity(request)}`,
+    limit: 10,
+    windowMs: 15 * 60 * 1000,
+  });
+
+  if (!rateLimit.allowed) {
+    return createSimpleRateLimitResponse(
+      "Demasiados intentos de actualización. Intenta nuevamente en unos minutos.",
+      rateLimit.retryAfterSeconds,
+    );
+  }
+
   let payload: unknown;
 
   try {

@@ -6,6 +6,11 @@ import {
 } from "@/lib/auth/server-errors";
 import { requireServerAuthContext } from "@/lib/auth/server";
 import { academyProductSlug } from "@/lib/academy-product";
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getRateLimitIdentity,
+} from "@/lib/security/rate-limit";
 import { getAcademyEnrollmentAccess } from "@/lib/services/academy-access.service";
 import { MentorshipPreparationService } from "@/lib/services/mentorship-preparation.service";
 import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
@@ -228,7 +233,23 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    await requireServerAuthContext();
+    const { profile } = await requireServerAuthContext();
+    const rateLimit = checkRateLimit({
+      key: `academy:mentorship:book:${getRateLimitIdentity(
+        request,
+        profile.id,
+      )}`,
+      limit: 5,
+      windowMs: 10 * 60 * 1000,
+    });
+
+    if (!rateLimit.allowed) {
+      return createRateLimitResponse(
+        "Demasiadas solicitudes de reserva. Intenta nuevamente en unos minutos.",
+        rateLimit.retryAfterSeconds,
+      );
+    }
+
     const payload = await readBookPayload(request);
     const supabase = await createSupabaseServerClient();
     const booking = await MentorshipSchedulingService.bookSlot(
@@ -258,7 +279,23 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    await requireServerAuthContext();
+    const { profile } = await requireServerAuthContext();
+    const rateLimit = checkRateLimit({
+      key: `academy:mentorship:cancel:${getRateLimitIdentity(
+        request,
+        profile.id,
+      )}`,
+      limit: 5,
+      windowMs: 10 * 60 * 1000,
+    });
+
+    if (!rateLimit.allowed) {
+      return createRateLimitResponse(
+        "Demasiadas solicitudes de cancelación. Intenta nuevamente en unos minutos.",
+        rateLimit.retryAfterSeconds,
+      );
+    }
+
     const payload = await readCancelPayload(request);
     const supabase = await createSupabaseServerClient();
     const booking = await MentorshipSchedulingService.cancelBooking(
