@@ -6,11 +6,7 @@ import { FormEvent, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
 
-type ResetPasswordFormProps = {
-  nextPath: string;
-};
-
-export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
+export function ResetPasswordForm() {
   const router = useRouter();
   const {
     initialized,
@@ -87,7 +83,7 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
         </p>
         <Link
           className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
-          href={`/forgot-password?next=${encodeURIComponent(nextPath)}`}
+          href="/forgot-password"
         >
           Solicitar un nuevo enlace
         </Link>
@@ -154,7 +150,7 @@ export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
       {successMessage ? (
         <Link
           className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
-          href={`/login?next=${encodeURIComponent(nextPath)}`}
+          href="/login"
         >
           Iniciar sesión
         </Link>

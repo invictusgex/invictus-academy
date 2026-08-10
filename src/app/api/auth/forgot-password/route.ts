@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { getSiteUrl } from "@/config/site";
-import { getSafeInternalRedirect } from "@/lib/auth/redirects";
 import {
   checkRateLimit,
   createSimpleRateLimitResponse,
@@ -52,10 +51,6 @@ export async function POST(request: Request) {
       ? (payload as Record<string, unknown>)
       : {};
   const email = normalizeEmail(body.email);
-  const next = getSafeInternalRedirect(
-    typeof body.next === "string" ? body.next : null,
-    "/academy",
-  );
 
   if (!isValidEmail(email)) {
     return NextResponse.json(
@@ -65,9 +60,7 @@ export async function POST(request: Request) {
   }
 
   const supabase = getSupabaseAdminClient();
-  const redirectTo = `${getSiteUrl()}/reset-password?next=${encodeURIComponent(
-    next,
-  )}`;
+  const redirectTo = `${getSiteUrl()}/reset-password`;
 
   await supabase.auth.resetPasswordForEmail(email, {
     redirectTo,

@@ -17,16 +17,6 @@ type SignInInput = {
   password: string;
 };
 
-function hasPasswordRecoveryHash() {
-  if (typeof window === "undefined") {
-    return false;
-  }
-
-  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-
-  return hashParams.get("type") === "recovery";
-}
-
 // El provider coordina el estado global de auth sin conocer Supabase.
 // Toda lectura de sesion y suscripcion pasa por AuthRepository.
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -96,10 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // como login, logout o refresh de token cuando existan pantallas que los usen.
     const unsubscribe = AuthRepository.onAuthStateChange((authState, event) => {
       updateAuthState(authState.session);
-      setPasswordRecovery(
-        event === "passwordRecovery" ||
-          Boolean(authState.session && hasPasswordRecoveryHash()),
-      );
+      setPasswordRecovery(event === "passwordRecovery");
       setLoading(false);
       setInitialized(true);
       setAuthAction(null);
