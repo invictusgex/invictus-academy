@@ -12,6 +12,7 @@ export function ResetPasswordForm() {
     initialized,
     loading,
     passwordRecovery,
+    passwordRecoveryStatus,
     session,
     signOut,
     updatePassword,
@@ -53,6 +54,7 @@ export function ResetPasswordForm() {
       setSuccessMessage("Tu contraseña fue actualizada correctamente.");
       setPassword("");
       setPasswordConfirmation("");
+      window.history.replaceState(null, "", "/reset-password");
       await signOut();
       router.refresh();
     } catch {
@@ -64,10 +66,19 @@ export function ResetPasswordForm() {
     }
   }
 
-  if (!initialized || loading) {
+  if (
+    !successMessage &&
+    !submitting &&
+    (!initialized ||
+      passwordRecoveryStatus === "checking" ||
+      (loading && !canResetPassword))
+  ) {
     return (
-      <div className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6">
-        <div className="h-4 w-2/3 animate-pulse rounded-full bg-white/10" />
+      <div className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 text-center">
+        <p className="text-sm font-medium text-white">
+          Validando enlace de recuperación...
+        </p>
+        <div className="mx-auto mt-5 h-3 w-2/3 animate-pulse rounded-full bg-white/10" />
         <div className="mt-5 h-12 animate-pulse rounded-lg bg-white/10" />
         <div className="mt-5 h-12 animate-pulse rounded-lg bg-white/10" />
         <div className="mt-6 h-12 animate-pulse rounded-full bg-white/10" />
@@ -75,7 +86,7 @@ export function ResetPasswordForm() {
     );
   }
 
-  if (!canResetPassword && !successMessage) {
+  if (passwordRecoveryStatus === "invalid" && !successMessage) {
     return (
       <div className="w-full rounded-xl border border-red-500/40 bg-red-500/10 p-6 text-center">
         <p className="text-sm font-medium text-red-100">
