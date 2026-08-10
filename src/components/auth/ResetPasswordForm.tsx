@@ -6,23 +6,26 @@ import { FormEvent, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
 
-export function ResetPasswordForm() {
+type ResetPasswordFormProps = {
+  recoveryVerified: boolean;
+};
+
+type ResetPasswordResponse = {
+  error?: string;
+  message?: string;
+};
+
+export function ResetPasswordForm({
+  recoveryVerified,
+}: ResetPasswordFormProps) {
   const router = useRouter();
-  const {
-    initialized,
-    loading,
-    passwordRecovery,
-    passwordRecoveryStatus,
-    session,
-    signOut,
-    updatePassword,
-  } = useAuth();
+  const { initialized, loading, session, signOut } = useAuth();
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const canResetPassword = Boolean(initialized && passwordRecovery && session);
+  const canResetPassword = Boolean(initialized && recoveryVerified && session);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,11 +50,28 @@ export function ResetPasswordForm() {
     setSubmitting(true);
 
     try {
-      await updatePassword({
-        password,
+      const response = await fetch("/api/auth/reset-password", {
+        body: JSON.stringify({
+          password,
+          passwordConfirmation,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
       });
+      const payload = (await response.json()) as ResetPasswordResponse;
 
-      setSuccessMessage("Tu contraseña fue actualizada correctamente.");
+      if (!response.ok || payload.error) {
+        setErrorMessage(
+          payload.error ?? "No pudimos actualizar tu contraseña.",
+        );
+        return;
+      }
+
+      setSuccessMessage(
+        payload.message ?? "Tu contraseña fue actualizada correctamente.",
+      );
       setPassword("");
       setPasswordConfirmation("");
       window.history.replaceState(null, "", "/reset-password");
@@ -59,20 +79,14 @@ export function ResetPasswordForm() {
       router.refresh();
     } catch {
       setErrorMessage(
-        "No pudimos actualizar la contraseña. Solicita un nuevo enlace e intenta nuevamente.",
+        "No pudimos conectar con el servidor. Intenta nuevamente.",
       );
     } finally {
       setSubmitting(false);
     }
   }
 
-  if (
-    !successMessage &&
-    !submitting &&
-    (!initialized ||
-      passwordRecoveryStatus === "checking" ||
-      (loading && !canResetPassword))
-  ) {
+  if (!successMessage && (!initialized || loading)) {
     return (
       <div className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 text-center">
         <p className="text-sm font-medium text-white">
@@ -86,7 +100,7 @@ export function ResetPasswordForm() {
     );
   }
 
-  if (passwordRecoveryStatus === "invalid" && !successMessage) {
+  if (!canResetPassword && !successMessage) {
     return (
       <div className="w-full rounded-xl border border-red-500/40 bg-red-500/10 p-6 text-center">
         <p className="text-sm font-medium text-red-100">

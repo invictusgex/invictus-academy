@@ -1,5 +1,10 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
+import {
+  passwordRecoveryCookieName,
+  passwordRecoveryCookieValue,
+} from "@/lib/auth/password-recovery";
 import {
   checkRateLimit,
   createSimpleRateLimitResponse,
@@ -8,6 +13,15 @@ import {
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
+
+function invalidRecoveryResponse() {
+  return NextResponse.json(
+    {
+      error: "Este enlace de recuperación no es válido o ha expirado.",
+    },
+    { status: 403, headers: { "Cache-Control": "no-store" } },
+  );
+}
 
 export async function POST(request: Request) {
   const rateLimit = checkRateLimit({
@@ -58,7 +72,22 @@ export async function POST(request: Request) {
     );
   }
 
+  const cookieStore = await cookies();
+  const recoveryVerified =
+    cookieStore.get(passwordRecoveryCookieName)?.value ===
+    passwordRecoveryCookieValue;
+
+  if (!recoveryVerified) {
+    return invalidRecoveryResponse();
+  }
+
   const supabase = await createSupabaseServerClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !userData.user) {
+    return invalidRecoveryResponse();
+  }
+
   const { error } = await supabase.auth.updateUser({
     password,
   });
@@ -73,8 +102,17 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json(
+  const response = NextResponse.json(
     { message: "Tu contraseña fue actualizada correctamente." },
     { status: 200, headers: { "Cache-Control": "no-store" } },
   );
+
+  response.cookies.set({
+    maxAge: 0,
+    name: passwordRecoveryCookieName,
+    path: "/",
+    value: "",
+  });
+
+  return response;
 }

@@ -17,18 +17,6 @@ type SignInInput = {
   password: string;
 };
 
-type PasswordRecoveryStatus = "checking" | "valid" | "invalid";
-
-function hasPasswordRecoveryUrlSignal() {
-  if (typeof window === "undefined") {
-    return false;
-  }
-
-  const hashParams = new URLSearchParams(window.location.hash.slice(1));
-
-  return hashParams.get("type") === "recovery";
-}
-
 // El provider coordina el estado global de auth sin conocer Supabase.
 // Toda lectura de sesion y suscripcion pasa por AuthRepository.
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -36,8 +24,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
-  const [passwordRecoveryStatus, setPasswordRecoveryStatus] =
-    useState<PasswordRecoveryStatus>("checking");
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [authAction, setAuthAction] = useState<
     "checkingAccess" | "signingIn" | "signingOut" | null
   >("checkingAccess");
@@ -45,33 +32,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     let isMounted = true;
     let profileRequestId = 0;
-    let recoveryFallbackTimeout: ReturnType<typeof setTimeout> | null = null;
-    const startedFromPasswordRecovery = hasPasswordRecoveryUrlSignal();
-
-    function scheduleRecoveryFallback() {
-      if (!startedFromPasswordRecovery || recoveryFallbackTimeout) {
-        return;
-      }
-
-      recoveryFallbackTimeout = setTimeout(() => {
-        if (!isMounted) {
-          return;
-        }
-
-        setPasswordRecoveryStatus((currentStatus) =>
-          currentStatus === "valid" ? "valid" : "invalid",
-        );
-      }, 2500);
-    }
-
-    function clearRecoveryFallback() {
-      if (!recoveryFallbackTimeout) {
-        return;
-      }
-
-      clearTimeout(recoveryFallbackTimeout);
-      recoveryFallbackTimeout = null;
-    }
 
     function updateAuthState(nextSession: AuthSession | null) {
       if (!isMounted) {
@@ -111,25 +71,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         const authState = await AuthRepository.getSession();
         updateAuthState(authState.session);
-
-        if (startedFromPasswordRecovery && authState.session) {
-          setPasswordRecoveryStatus("valid");
-          clearRecoveryFallback();
-        } else if (startedFromPasswordRecovery) {
-          setPasswordRecoveryStatus("checking");
-          scheduleRecoveryFallback();
-        } else {
-          setPasswordRecoveryStatus("invalid");
-        }
       } catch {
         updateAuthState(null);
-        setPasswordRecoveryStatus(
-          startedFromPasswordRecovery ? "checking" : "invalid",
-        );
-
-        if (startedFromPasswordRecovery) {
-          scheduleRecoveryFallback();
-        }
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -143,17 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // como login, logout o refresh de token cuando existan pantallas que los usen.
     const unsubscribe = AuthRepository.onAuthStateChange((authState, event) => {
       updateAuthState(authState.session);
-
-      if (event === "passwordRecovery") {
-        setPasswordRecoveryStatus("valid");
-        clearRecoveryFallback();
-      } else if (startedFromPasswordRecovery && authState.session) {
-        setPasswordRecoveryStatus("valid");
-        clearRecoveryFallback();
-      } else if (!startedFromPasswordRecovery || event === "signedOut") {
-        setPasswordRecoveryStatus("invalid");
-      }
-
+      setPasswordRecovery(event === "passwordRecovery");
       setLoading(false);
       setInitialized(true);
       setAuthAction(null);
@@ -163,7 +96,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     return () => {
       isMounted = false;
-      clearRecoveryFallback();
       unsubscribe();
     };
   }, []);
@@ -176,7 +108,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const authState = await AuthRepository.signIn(input);
       setSession(authState.session);
       setUser(authState.user);
-      setPasswordRecoveryStatus("invalid");
+      setPasswordRecovery(false);
     } finally {
       setLoading(false);
       setInitialized(true);
@@ -192,7 +124,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await AuthRepository.signOut();
       setSession(null);
       setUser(null);
-      setPasswordRecoveryStatus("invalid");
+      setPasswordRecovery(false);
     } finally {
       setLoading(false);
       setInitialized(true);
@@ -218,13 +150,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       loading,
       initialized,
       authAction,
-      passwordRecovery: passwordRecoveryStatus === "valid",
-      passwordRecoveryStatus,
+      passwordRecovery,
       signIn,
       signOut,
       updatePassword,
     }),
-    [authAction, initialized, loading, passwordRecoveryStatus, session, user],
+    [authAction, initialized, loading, passwordRecovery, session, user],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;
