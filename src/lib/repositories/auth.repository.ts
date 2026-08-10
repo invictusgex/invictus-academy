@@ -5,6 +5,7 @@ import {
   resetPassword as resetAuthPassword,
   signIn as signInWithAuthService,
   signOut as signOutWithAuthService,
+  updatePassword as updateAuthPassword,
 } from "@/lib/auth/service";
 
 type SignInInput = {
@@ -14,6 +15,10 @@ type SignInInput = {
 
 type ResetPasswordInput = {
   email: string;
+};
+
+type UpdatePasswordInput = {
+  password: string;
 };
 
 // Este repositorio es la API estable que usaran hooks y componentes futuros.
@@ -28,6 +33,9 @@ export const AuthRepository = {
   signOut: signOutWithAuthService,
   resetPassword(input: ResetPasswordInput) {
     return resetAuthPassword(input);
+  },
+  updatePassword(input: UpdatePasswordInput) {
+    return updateAuthPassword(input);
   },
   onAuthStateChange: onAuthServiceStateChange,
 };

@@ -4,62 +4,95 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
+import { useAuth } from "@/hooks/useAuth";
+
 type ResetPasswordFormProps = {
   nextPath: string;
 };
 
-type ResetPasswordResponse = {
-  error?: string;
-  message?: string;
-};
-
 export function ResetPasswordForm({ nextPath }: ResetPasswordFormProps) {
   const router = useRouter();
+  const {
+    initialized,
+    loading,
+    passwordRecovery,
+    session,
+    signOut,
+    updatePassword,
+  } = useAuth();
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const canResetPassword = Boolean(initialized && passwordRecovery && session);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
+
+    if (!canResetPassword) {
+      setErrorMessage("Este enlace de recuperación no es válido o ha expirado.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setErrorMessage("La nueva contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
+
+    if (password !== passwordConfirmation) {
+      setErrorMessage("Las contraseñas no coinciden.");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
-      const response = await fetch("/api/auth/reset-password", {
-        body: JSON.stringify({
-          password,
-          passwordConfirmation,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
+      await updatePassword({
+        password,
       });
-      const payload = (await response.json()) as ResetPasswordResponse;
 
-      if (!response.ok || payload.error) {
-        setErrorMessage(
-          payload.error ?? "No pudimos actualizar tu contraseña.",
-        );
-        return;
-      }
-
-      setSuccessMessage(
-        payload.message ?? "Tu contraseña fue actualizada correctamente.",
-      );
+      setSuccessMessage("Tu contraseña fue actualizada correctamente.");
       setPassword("");
       setPasswordConfirmation("");
+      await signOut();
       router.refresh();
     } catch {
       setErrorMessage(
-        "No pudimos conectar con el servidor. Intenta nuevamente.",
+        "No pudimos actualizar la contraseña. Solicita un nuevo enlace e intenta nuevamente.",
       );
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (!initialized || loading) {
+    return (
+      <div className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6">
+        <div className="h-4 w-2/3 animate-pulse rounded-full bg-white/10" />
+        <div className="mt-5 h-12 animate-pulse rounded-lg bg-white/10" />
+        <div className="mt-5 h-12 animate-pulse rounded-lg bg-white/10" />
+        <div className="mt-6 h-12 animate-pulse rounded-full bg-white/10" />
+      </div>
+    );
+  }
+
+  if (!canResetPassword && !successMessage) {
+    return (
+      <div className="w-full rounded-xl border border-red-500/40 bg-red-500/10 p-6 text-center">
+        <p className="text-sm font-medium text-red-100">
+          Este enlace de recuperación no es válido o ha expirado.
+        </p>
+        <Link
+          className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)]"
+          href={`/forgot-password?next=${encodeURIComponent(nextPath)}`}
+        >
+          Solicitar un nuevo enlace
+        </Link>
+      </div>
+    );
   }
 
   return (

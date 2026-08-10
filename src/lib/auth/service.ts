@@ -1,8 +1,9 @@
-import type { Session, User } from "@supabase/supabase-js";
+import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 
 import { getAuthClient } from "@/lib/auth/client";
 import type {
   AuthSession,
+  AuthEvent,
   AuthState,
   AuthStateChangeHandler,
   AuthUnsubscribe,
@@ -18,6 +19,29 @@ type SignInInput = {
 type ResetPasswordInput = {
   email: string;
 };
+
+type UpdatePasswordInput = {
+  password: string;
+};
+
+function mapAuthEvent(event: AuthChangeEvent): AuthEvent {
+  switch (event) {
+    case "INITIAL_SESSION":
+      return "initialSession";
+    case "SIGNED_IN":
+      return "signedIn";
+    case "SIGNED_OUT":
+      return "signedOut";
+    case "PASSWORD_RECOVERY":
+      return "passwordRecovery";
+    case "TOKEN_REFRESHED":
+      return "tokenRefreshed";
+    case "USER_UPDATED":
+      return "userUpdated";
+    default:
+      return "unknown";
+  }
+}
 
 function mapUser(user: User | null): AuthUser | null {
   if (!user) {
@@ -146,6 +170,22 @@ export async function resetPassword(input: ResetPasswordInput): Promise<void> {
   }
 }
 
+// Actualiza la password solamente cuando Supabase ya establecio una sesion valida.
+export async function updatePassword(input: UpdatePasswordInput): Promise<void> {
+  if (!isSupabaseConfigured()) {
+    throw new Error("Supabase Auth is not configured.");
+  }
+
+  const authClient = getAuthClient();
+  const { error } = await authClient.updateUser({
+    password: input.password,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
 // Encapsula la suscripcion del proveedor para que React solo consuma AuthRepository.
 export function onAuthStateChange(
   handler: AuthStateChangeHandler,
@@ -155,8 +195,8 @@ export function onAuthStateChange(
   }
 
   const authClient = getAuthClient();
-  const { data } = authClient.onAuthStateChange((_event, session) => {
-    handler(createAuthState(session));
+  const { data } = authClient.onAuthStateChange((event, session) => {
+    handler(createAuthState(session), mapAuthEvent(event));
   });
 
   return () => {

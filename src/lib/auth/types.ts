@@ -15,6 +15,18 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
-export type AuthStateChangeHandler = (state: AuthState) => void;
+export type AuthEvent =
+  | "initialSession"
+  | "signedIn"
+  | "signedOut"
+  | "passwordRecovery"
+  | "tokenRefreshed"
+  | "userUpdated"
+  | "unknown";
+
+export type AuthStateChangeHandler = (
+  state: AuthState,
+  event: AuthEvent,
+) => void;
 
 export type AuthUnsubscribe = () => void;

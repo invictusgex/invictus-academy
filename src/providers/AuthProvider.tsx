@@ -17,6 +17,16 @@ type SignInInput = {
   password: string;
 };
 
+function hasPasswordRecoveryHash() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+
+  return hashParams.get("type") === "recovery";
+}
+
 // El provider coordina el estado global de auth sin conocer Supabase.
 // Toda lectura de sesion y suscripcion pasa por AuthRepository.
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -24,6 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [authAction, setAuthAction] = useState<
     "checkingAccess" | "signingIn" | "signingOut" | null
   >("checkingAccess");
@@ -83,8 +94,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Primero cargamos la sesion persistida; despues escuchamos cambios futuros
     // como login, logout o refresh de token cuando existan pantallas que los usen.
-    const unsubscribe = AuthRepository.onAuthStateChange((authState) => {
+    const unsubscribe = AuthRepository.onAuthStateChange((authState, event) => {
       updateAuthState(authState.session);
+      setPasswordRecovery(
+        event === "passwordRecovery" ||
+          Boolean(authState.session && hasPasswordRecoveryHash()),
+      );
       setLoading(false);
       setInitialized(true);
       setAuthAction(null);
@@ -106,6 +121,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const authState = await AuthRepository.signIn(input);
       setSession(authState.session);
       setUser(authState.user);
+      setPasswordRecovery(false);
     } finally {
       setLoading(false);
       setInitialized(true);
@@ -121,10 +137,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await AuthRepository.signOut();
       setSession(null);
       setUser(null);
+      setPasswordRecovery(false);
     } finally {
       setLoading(false);
       setInitialized(true);
       setAuthAction(null);
+    }
+  }
+
+  async function updatePassword(input: { password: string }) {
+    setLoading(true);
+
+    try {
+      await AuthRepository.updatePassword(input);
+    } finally {
+      setLoading(false);
+      setInitialized(true);
     }
   }
 
@@ -135,10 +163,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       loading,
       initialized,
       authAction,
+      passwordRecovery,
       signIn,
       signOut,
+      updatePassword,
     }),
-    [authAction, initialized, loading, session, user],
+    [authAction, initialized, loading, passwordRecovery, session, user],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;
