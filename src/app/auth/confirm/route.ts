@@ -43,6 +43,12 @@ export async function GET(request: Request) {
     requestUrl.searchParams.get("next"),
     isRecovery ? "/reset-password" : "/academy",
   );
+  const recoveryNextPath =
+    isRecovery && nextPath === "/reset-password" ? nextPath : "/reset-password";
+
+  if (isRecovery && !tokenHash) {
+    return NextResponse.redirect(buildRedirect(request, "/forgot-password"));
+  }
 
   if (!code && (!tokenHash || !otpType)) {
     return NextResponse.redirect(
@@ -75,7 +81,9 @@ export async function GET(request: Request) {
     });
   }
 
-  const response = NextResponse.redirect(buildRedirect(request, nextPath));
+  const response = NextResponse.redirect(
+    buildRedirect(request, isRecovery ? recoveryNextPath : nextPath),
+  );
 
   if (isRecovery) {
     response.cookies.set({

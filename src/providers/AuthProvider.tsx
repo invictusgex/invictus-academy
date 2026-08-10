@@ -24,7 +24,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
-  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [authAction, setAuthAction] = useState<
     "checkingAccess" | "signingIn" | "signingOut" | null
   >("checkingAccess");
@@ -84,9 +83,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Primero cargamos la sesion persistida; despues escuchamos cambios futuros
     // como login, logout o refresh de token cuando existan pantallas que los usen.
-    const unsubscribe = AuthRepository.onAuthStateChange((authState, event) => {
+    const unsubscribe = AuthRepository.onAuthStateChange((authState) => {
       updateAuthState(authState.session);
-      setPasswordRecovery(event === "passwordRecovery");
       setLoading(false);
       setInitialized(true);
       setAuthAction(null);
@@ -108,7 +106,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const authState = await AuthRepository.signIn(input);
       setSession(authState.session);
       setUser(authState.user);
-      setPasswordRecovery(false);
     } finally {
       setLoading(false);
       setInitialized(true);
@@ -124,7 +121,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await AuthRepository.signOut();
       setSession(null);
       setUser(null);
-      setPasswordRecovery(false);
     } finally {
       setLoading(false);
       setInitialized(true);
@@ -150,12 +146,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       loading,
       initialized,
       authAction,
-      passwordRecovery,
       signIn,
       signOut,
       updatePassword,
     }),
-    [authAction, initialized, loading, passwordRecovery, session, user],
+    [authAction, initialized, loading, session, user],
   );
 
   return <AuthContext value={value}>{children}</AuthContext>;

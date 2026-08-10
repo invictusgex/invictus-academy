@@ -19,7 +19,6 @@ export type AuthEvent =
   | "initialSession"
   | "signedIn"
   | "signedOut"
-  | "passwordRecovery"
   | "tokenRefreshed"
   | "userUpdated"
   | "unknown";

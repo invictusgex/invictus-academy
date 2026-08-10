@@ -32,8 +32,6 @@ function mapAuthEvent(event: AuthChangeEvent): AuthEvent {
       return "signedIn";
     case "SIGNED_OUT":
       return "signedOut";
-    case "PASSWORD_RECOVERY":
-      return "passwordRecovery";
     case "TOKEN_REFRESHED":
       return "tokenRefreshed";
     case "USER_UPDATED":

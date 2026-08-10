@@ -60,7 +60,7 @@ export async function POST(request: Request) {
   }
 
   const supabase = getSupabaseAdminClient();
-  const redirectTo = `${getSiteUrl()}/reset-password`;
+  const redirectTo = `${getSiteUrl()}/auth/confirm`;
 
   await supabase.auth.resetPasswordForEmail(email, {
     redirectTo,
