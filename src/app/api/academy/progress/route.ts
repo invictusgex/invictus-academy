@@ -36,7 +36,10 @@ function jsonResponse(body: ProgressResponseBody, status: number) {
 }
 
 function mapAuthStatus(error: ServerAuthError) {
-  if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
+  if (
+    error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED ||
+    error.code === SERVER_AUTH_ERROR_CODES.SESSION_REPLACED
+  ) {
     return 401;
   }
 

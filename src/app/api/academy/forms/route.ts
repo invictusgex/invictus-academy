@@ -102,7 +102,10 @@ async function readFormPayload(request: Request) {
 }
 
 function mapAuthError(error: ServerAuthError) {
-  if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
+  if (
+    error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED ||
+    error.code === SERVER_AUTH_ERROR_CODES.SESSION_REPLACED
+  ) {
     return new FormServiceError(
       FORM_ERROR_CODES.ACTIVE_ENROLLMENT_REQUIRED,
       "Debes iniciar sesión para responder formularios.",

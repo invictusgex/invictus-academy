@@ -7,6 +7,7 @@ import {
   ServerAuthError,
 } from "@/lib/auth/server-errors";
 import { ProfileRepository, type Profile } from "@/lib/repositories/profile.repository";
+import { assertCurrentAuthSessionIsActive } from "@/lib/services/auth-active-session.service";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type ServerAuthUser = {
@@ -67,7 +68,24 @@ export async function getCurrentServerUser(): Promise<ServerAuthUser | null> {
     throw mapAuthError(error);
   }
 
-  return data.user ? mapServerUser(data.user) : null;
+  if (!data.user) {
+    return null;
+  }
+
+  try {
+    await assertCurrentAuthSessionIsActive(supabase, data.user);
+  } catch (error) {
+    if (
+      error instanceof ServerAuthError &&
+      error.code === SERVER_AUTH_ERROR_CODES.SESSION_REPLACED
+    ) {
+      return null;
+    }
+
+    throw error;
+  }
+
+  return mapServerUser(data.user);
 }
 
 export async function requireServerUser(): Promise<ServerAuthUser> {
@@ -103,6 +121,8 @@ export async function requireServerAuthContext(): Promise<ServerAuthContext> {
       },
     );
   }
+
+  await assertCurrentAuthSessionIsActive(supabase, data.user);
 
   let profile: Profile | null = null;
 

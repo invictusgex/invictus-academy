@@ -120,7 +120,10 @@ async function readCancelPayload(request: Request) {
 
 function mapError(error: unknown) {
   if (error instanceof ServerAuthError) {
-    if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
+    if (
+      error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED ||
+      error.code === SERVER_AUTH_ERROR_CODES.SESSION_REPLACED
+    ) {
       return {
         code: "UNAUTHENTICATED",
         message: "Debes iniciar sesión para gestionar tu mentoría.",

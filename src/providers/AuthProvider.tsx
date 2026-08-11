@@ -17,6 +17,16 @@ type SignInInput = {
   password: string;
 };
 
+async function registerActiveSession() {
+  const response = await fetch("/api/auth/active-session", {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error("No se pudo registrar este dispositivo.");
+  }
+}
+
 // El provider coordina el estado global de auth sin conocer Supabase.
 // Toda lectura de sesion y suscripcion pasa por AuthRepository.
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -144,6 +154,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     try {
       const authState = await AuthRepository.signIn(input);
+      try {
+        await registerActiveSession();
+      } catch (error) {
+        await AuthRepository.signOut().catch(() => undefined);
+        throw error;
+      }
       setSession(authState.session);
       setUser(authState.user);
     } finally {

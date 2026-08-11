@@ -140,7 +140,10 @@ async function readCheckoutPayload(request: Request) {
 }
 
 function mapAuthError(error: ServerAuthError) {
-  if (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED) {
+  if (
+    error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED ||
+    error.code === SERVER_AUTH_ERROR_CODES.SESSION_REPLACED
+  ) {
     return new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.UNAUTHENTICATED,
       "Debes iniciar sesión para continuar con la compra.",

@@ -22,7 +22,8 @@ export default async function CheckoutSuccessRoute() {
   } catch (error) {
     if (
       error instanceof ServerAuthError &&
-      error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED
+      (error.code === SERVER_AUTH_ERROR_CODES.UNAUTHENTICATED ||
+        error.code === SERVER_AUTH_ERROR_CODES.SESSION_REPLACED)
     ) {
       redirect("/login");
     }
