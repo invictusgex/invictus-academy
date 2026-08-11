@@ -38,7 +38,8 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
   const tokenHash = requestUrl.searchParams.get("token_hash");
   const otpType = getEmailOtpType(requestUrl.searchParams.get("type"));
-  const isRecovery = otpType === "recovery";
+  const recoveryFlow = requestUrl.searchParams.get("flow") === "recovery";
+  const isRecovery = otpType === "recovery" || recoveryFlow;
   const nextPath = getSafeInternalRedirect(
     requestUrl.searchParams.get("next"),
     isRecovery ? "/reset-password" : "/academy",
@@ -46,7 +47,7 @@ export async function GET(request: Request) {
   const recoveryNextPath =
     isRecovery && nextPath === "/reset-password" ? nextPath : "/reset-password";
 
-  if (isRecovery && !tokenHash) {
+  if (isRecovery && !code && !tokenHash) {
     return NextResponse.redirect(buildRedirect(request, "/forgot-password"));
   }
 

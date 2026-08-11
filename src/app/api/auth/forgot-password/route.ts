@@ -12,6 +12,8 @@ export const runtime = "nodejs";
 
 const genericMessage =
   "Si el email corresponde a una cuenta, recibirás instrucciones para continuar.";
+const deliveryErrorMessage =
+  "No pudimos enviar instrucciones en este momento. Intenta nuevamente en unos minutos.";
 
 function normalizeEmail(value: unknown) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
@@ -60,11 +62,20 @@ export async function POST(request: Request) {
   }
 
   const supabase = getSupabaseAdminClient();
-  const redirectTo = `${getSiteUrl()}/auth/confirm`;
+  const redirectTo = `${getSiteUrl()}/auth/confirm?flow=recovery&next=${encodeURIComponent(
+    "/reset-password",
+  )}`;
 
-  await supabase.auth.resetPasswordForEmail(email, {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo,
   });
+
+  if (error) {
+    return NextResponse.json(
+      { error: deliveryErrorMessage },
+      { status: 503, headers: { "Cache-Control": "no-store" } },
+    );
+  }
 
   return NextResponse.json(
     { message: genericMessage },
