@@ -244,7 +244,7 @@ export function StudentDashboard({
 
   return (
     <div className="space-y-8">
-      <section className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8 lg:p-12">
+      <section className="academy-dashboard-hero public-glass-panel p-6 sm:p-8 lg:p-12">
         <p className="text-sm font-semibold tracking-[0.2em] text-[var(--color-cyan)] uppercase">
           Programa de Formación Profesional
         </p>
@@ -299,7 +299,7 @@ export function StudentDashboard({
         <FormationRecord />
       </StudentSection>
 
-      <section className="rounded-2xl border border-[var(--color-cyan)] bg-[var(--color-panel-bg)] p-6 sm:p-8 lg:p-10">
+      <section className="public-glass-panel public-glass-panel-accent p-6 sm:p-8 lg:p-10">
         <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">

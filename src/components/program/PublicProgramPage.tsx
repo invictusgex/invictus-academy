@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { PublicBackgroundField } from "@/components/public/PublicBackgroundField";
+import { PublicSiteMotion } from "@/components/public/PublicSiteMotion";
 import { formationCtaHref } from "@/config/public-cta";
 import { getSupportMailtoHref } from "@/config/site";
 import {
@@ -23,7 +25,7 @@ function PublicProgramHeader() {
   const contactHref = getSupportMailtoHref(CONTACT_SUBJECT);
 
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
+    <header className="public-header mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
       <Link
         href="/"
         className="flex max-w-[13rem] items-center gap-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition hover:text-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:max-w-none sm:text-sm"
@@ -63,7 +65,8 @@ function PublicProgramHeader() {
           href="/"
           className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
         >
-          Volver al inicio
+          <span className="sm:hidden">Inicio</span>
+          <span className="hidden sm:inline">Volver al inicio</span>
         </Link>
       </div>
     </header>
@@ -80,14 +83,17 @@ function ProgramHero({ course }: PublicProgramPageProps) {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-5 pt-10 pb-14 sm:px-6 sm:pt-14 lg:px-8 lg:pt-16">
-      <div className="max-w-4xl">
+      <div
+        className="public-mobile-copy w-full sm:max-w-4xl"
+        style={{ maxWidth: "min(56rem, calc(100vw - 2.5rem))" }}
+      >
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           Programa profesional Invictus GEX
         </p>
-        <h1 className="mt-5 text-4xl leading-tight font-semibold text-white sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
+        <h1 className="mt-5 max-w-full text-[2.35rem] leading-tight font-semibold text-white sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
           Invictus GEX
         </h1>
-        <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
+        <p className="mt-6 max-w-full text-base leading-7 text-[var(--color-text-secondary)] sm:max-w-3xl sm:text-lg sm:leading-8">
           Una formación privada para desarrollar criterio profesional en
           lectura de mercado basada en datos. El recorrido construye
           fundamentos y culmina en una mentoría privada en vivo 1 a 1 con el
@@ -97,7 +103,7 @@ function ProgramHero({ course }: PublicProgramPageProps) {
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <p
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm font-semibold text-white"
+            className="public-glass-panel p-4 text-sm font-semibold text-white"
             key={stat}
           >
             {stat}
@@ -126,7 +132,7 @@ function JourneyIntro() {
   return (
     <section
       id="recorrido"
-      className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]"
+      className="public-flow-section"
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <div className="max-w-4xl">
@@ -146,7 +152,7 @@ function JourneyIntro() {
         <ol className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
           {publicFormationJourney.map((step, index) => (
             <li
-              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
+              className="public-glass-panel p-4"
               key={step}
             >
               <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
@@ -177,7 +183,7 @@ function PublicModulesSection() {
       <div className="mt-8 space-y-5">
         {publicProgramModules.map((academyModule) => (
           <article
-            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5 sm:p-6 lg:p-8"
+            className="public-glass-panel p-5 sm:p-6 lg:p-8"
             id={academyModule.id}
             key={academyModule.id}
           >
@@ -228,7 +234,7 @@ function PublicModulesSection() {
                   </div>
                 </div>
                 {academyModule.transition ? (
-                  <p className="mt-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-4 text-sm leading-6 text-[var(--color-text-secondary)]">
+                  <p className="public-glass-panel mt-6 p-4 text-sm leading-6 text-[var(--color-text-secondary)]">
                     {academyModule.transition}
                   </p>
                 ) : null}
@@ -243,7 +249,7 @@ function PublicModulesSection() {
 
 function MethodologyBlock() {
   return (
-    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+    <section className="public-flow-section">
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-semibold text-white">
           La metodología integra cinco criterios profesionales.
@@ -251,7 +257,7 @@ function MethodologyBlock() {
         <div className="mt-8 grid gap-4 md:grid-cols-5">
           {publicMethodologySteps.map((step, index) => (
             <article
-              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5"
+              className="public-glass-panel p-5"
               key={step.title}
             >
               <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
@@ -266,7 +272,7 @@ function MethodologyBlock() {
             </article>
           ))}
         </div>
-        <p className="mt-8 rounded-xl border border-[var(--color-cyan)] bg-[var(--color-card-bg)] p-5 text-base font-semibold text-white">
+        <p className="public-glass-panel public-glass-panel-accent mt-8 p-5 text-base font-semibold text-white">
           La decisión aparece al final de la lectura, no al comienzo.
         </p>
       </div>
@@ -289,7 +295,7 @@ function MentorshipPreparationBlock() {
         A medida que avanzas, documentas lecturas, ejemplos y puntos de
         integración. Esa evidencia permite trabajar cómo se relacionan
         Exposición Gamma, Mapa de Liquidez, Order Flow, Big Trades, CVD, Delta,
-        Speed of Tape, VWAP y desviaciones dentro de una sola metodología.
+        Speed of Tape, VWAP y Perfil de Volumen dentro de una sola metodología.
       </p>
     </section>
   );
@@ -297,7 +303,7 @@ function MentorshipPreparationBlock() {
 
 function CompetenciesBlock() {
   return (
-    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+    <section className="public-flow-section">
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           Lo que desarrollarás
@@ -305,7 +311,7 @@ function CompetenciesBlock() {
         <div className="mt-6 grid gap-3 md:grid-cols-2">
           {publicGlobalCompetencies.map((competency) => (
             <p
-              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm leading-6 text-[var(--color-text-secondary)]"
+              className="public-glass-panel p-4 text-sm leading-6 text-[var(--color-text-secondary)]"
               key={competency}
             >
               {competency}
@@ -320,7 +326,7 @@ function CompetenciesBlock() {
 function AudienceBlock() {
   return (
     <section id="perfil" className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-14 sm:px-6 lg:grid-cols-2 lg:px-8">
-      <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
+      <article className="public-glass-panel p-6 sm:p-8">
         <h2 className="text-2xl font-semibold text-white">
           Este programa es para ti si...
         </h2>
@@ -335,7 +341,7 @@ function AudienceBlock() {
           ))}
         </ul>
       </article>
-      <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
+      <article className="public-glass-panel p-6 sm:p-8">
         <h2 className="text-2xl font-semibold text-white">
           Este programa probablemente no sea para ti si...
         </h2>
@@ -357,7 +363,7 @@ function AudienceBlock() {
 function FinalCta() {
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8 lg:p-10">
+      <div className="public-glass-panel p-6 sm:p-8 lg:p-10">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           Siguiente paso
         </p>
@@ -398,9 +404,11 @@ function Footer() {
 
 export function PublicProgramPage({ course }: PublicProgramPageProps) {
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)]">
+    <div className="public-site min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)]">
+      <PublicSiteMotion />
       <PublicProgramHeader />
       <main>
+        <PublicBackgroundField />
         <ProgramHero course={course} />
         <JourneyIntro />
         <PublicModulesSection />

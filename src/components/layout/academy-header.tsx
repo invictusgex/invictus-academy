@@ -42,7 +42,7 @@ export function AcademyHeader() {
     "IG";
 
   return (
-    <header className="flex flex-col gap-5 border-b border-[var(--color-border)] px-5 py-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+    <header className="app-shell-header flex flex-col gap-5 border-b border-[var(--color-border)] px-5 py-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
       <div>
         <p className="text-2xl font-semibold text-white sm:text-3xl">
           Centro de control

@@ -16,7 +16,7 @@ export function StudentSection({
   title,
 }: StudentSectionProps) {
   return (
-    <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-7 lg:p-8">
+    <section className="public-glass-panel student-section-surface p-5 sm:p-7 lg:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
           {eyebrow ? (

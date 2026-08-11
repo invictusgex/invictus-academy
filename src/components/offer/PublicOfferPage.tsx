@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { PublicBackgroundField } from "@/components/public/PublicBackgroundField";
+import { PublicSiteMotion } from "@/components/public/PublicSiteMotion";
 import { formationCtaHref } from "@/config/public-cta";
 import {
   publicFormationJourney,
@@ -21,7 +23,7 @@ const offerIncludes = [
   {
     title: "Lectura profesional",
     description:
-      "Integración de GEX, liquidez, volumen, estructura, reacción y riesgo.",
+      "Integración de exposición de gamma, liquidez, volumen, Order Flow, estructura, reacción y riesgo.",
   },
   {
     title: "Preparación individual",
@@ -74,7 +76,7 @@ const faqs = [
 
 function OfferHeader() {
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
+    <header className="public-header mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
       <Link
         href="/"
         className="flex max-w-[13rem] items-center gap-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition hover:text-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:max-w-none sm:text-sm"
@@ -107,7 +109,8 @@ function OfferHeader() {
         href="/programa"
         className="shrink-0 rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
       >
-        Ver programa
+        <span className="sm:hidden">Programa</span>
+        <span className="hidden sm:inline">Ver programa</span>
       </Link>
     </header>
   );
@@ -116,14 +119,17 @@ function OfferHeader() {
 function OfferHero() {
   return (
     <section className="mx-auto w-full max-w-6xl px-5 pt-10 pb-14 sm:px-6 sm:pt-14 lg:px-8 lg:pt-16">
-      <div className="max-w-4xl">
+      <div
+        className="public-mobile-copy w-full sm:max-w-4xl"
+        style={{ maxWidth: "min(56rem, calc(100vw - 2.5rem))" }}
+      >
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           Ingreso a Invictus GEX
         </p>
-        <h1 className="mt-5 text-4xl leading-tight font-semibold text-white sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
+        <h1 className="mt-5 max-w-full text-[2.35rem] leading-tight font-semibold text-white sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
           Una invitación a formarte con estructura, práctica y criterio.
         </h1>
-        <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--color-text-secondary)]">
+        <p className="mt-6 max-w-full text-base leading-7 text-[var(--color-text-secondary)] sm:max-w-3xl sm:text-lg sm:leading-8">
           El ingreso a Invictus GEX abre un proceso: comprendes el programa,
           comienzas tu formación, practicas, documentas tu avance y llegas a
           una mentoría privada en vivo 1 a 1 preparada con tu recorrido.
@@ -143,7 +149,7 @@ function IncludesSection() {
   return (
     <section
       id="incluye"
-      className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]"
+      className="public-flow-section"
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
@@ -152,7 +158,7 @@ function IncludesSection() {
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {offerIncludes.map((item) => (
             <article
-              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5"
+              className="public-glass-panel p-5"
               key={item.title}
             >
               <h2 className="text-lg font-semibold text-white">
@@ -183,7 +189,7 @@ function JourneySection() {
       <ol className="mt-8 grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
         {publicFormationJourney.map((step, index) => (
           <li
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
+            className="public-glass-panel p-4"
             key={step}
           >
             <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
@@ -201,7 +207,7 @@ function JourneySection() {
 
 function MentorshipSection() {
   return (
-    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+    <section className="public-flow-section">
       <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
         <div>
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
@@ -231,7 +237,7 @@ function CompetenciesSection() {
       <div className="mt-6 grid gap-3 md:grid-cols-2">
         {publicGlobalCompetencies.map((competency) => (
           <p
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4 text-sm leading-6 text-[var(--color-text-secondary)]"
+            className="public-glass-panel p-4 text-sm leading-6 text-[var(--color-text-secondary)]"
             key={competency}
           >
             {competency}
@@ -246,14 +252,14 @@ function ComparisonSection() {
   return (
     <section
       id="comparativa"
-      className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]"
+      className="public-flow-section"
     >
       <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           Diferencia de enfoque
         </p>
         <div className="mt-6 grid gap-5 lg:grid-cols-2">
-          <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6">
+          <article className="public-glass-panel p-6">
             <h2 className="text-2xl font-semibold text-white">
               Consumo educativo tradicional
             </h2>
@@ -268,7 +274,7 @@ function ComparisonSection() {
               ))}
             </ul>
           </article>
-          <article className="rounded-xl border border-[var(--color-cyan)] bg-[var(--color-card-bg)] p-6">
+          <article className="public-glass-panel public-glass-panel-accent p-6">
             <h2 className="text-2xl font-semibold text-white">
               Formación Invictus GEX
             </h2>
@@ -298,7 +304,7 @@ function FaqSection() {
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         {faqs.map((faq) => (
           <article
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5"
+            className="public-glass-panel p-5"
             key={faq.question}
           >
             <h2 className="text-lg font-semibold text-white">
@@ -317,7 +323,7 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8 lg:p-10">
+      <div className="public-glass-panel p-6 sm:p-8 lg:p-10">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           Ingreso al programa
         </p>
@@ -347,9 +353,11 @@ function Footer() {
 
 export function PublicOfferPage() {
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)]">
+    <div className="public-site min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)]">
+      <PublicSiteMotion />
       <OfferHeader />
       <main>
+        <PublicBackgroundField />
         <OfferHero />
         <IncludesSection />
         <JourneySection />

@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { PublicBackgroundField } from "@/components/public/PublicBackgroundField";
+import { PublicSiteMotion } from "@/components/public/PublicSiteMotion";
 
 type AdminShellProps = {
   children: ReactNode;
@@ -19,8 +21,10 @@ const adminNavigation = [
 
 export function AdminShell({ children }: AdminShellProps) {
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)] lg:flex">
-      <aside className="flex w-full flex-col border-b border-[var(--color-border)] bg-[var(--color-panel-bg)] px-5 py-5 lg:min-h-screen lg:w-72 lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
+    <div className="public-site app-shell-surface relative min-h-screen overflow-x-hidden bg-[var(--color-page-bg)] text-[var(--color-text-primary)] lg:flex">
+      <PublicSiteMotion />
+      <PublicBackgroundField />
+      <aside className="app-shell-sidebar relative z-20 flex w-full flex-col border-b border-[var(--color-border)] bg-[var(--color-panel-bg)] px-5 py-5 lg:min-h-screen lg:w-72 lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
         <Link
           href="/academy"
           className="flex items-center gap-3 text-sm font-semibold tracking-[0.12em] text-white uppercase"
@@ -59,8 +63,8 @@ export function AdminShell({ children }: AdminShellProps) {
         </div>
       </aside>
 
-      <div className="min-w-0 flex-1">
-        <header className="border-b border-[var(--color-border)] px-5 py-6 lg:px-8">
+      <div className="relative z-10 min-w-0 flex-1">
+        <header className="app-shell-header border-b border-[var(--color-border)] px-5 py-6 lg:px-8">
           <p className="text-2xl font-semibold text-white sm:text-3xl">
             Panel administrativo
           </p>

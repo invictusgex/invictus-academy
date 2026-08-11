@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { PublicBackgroundField } from "@/components/public/PublicBackgroundField";
+import { PublicSiteMotion } from "@/components/public/PublicSiteMotion";
 import { formationCtaHref } from "@/config/public-cta";
 import { getSupportMailtoHref } from "@/config/site";
 import {
@@ -100,7 +102,7 @@ function Header() {
   const contactHref = getSupportMailtoHref(CONTACT_SUBJECT);
 
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
+    <header className="public-header mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
       <a
         href="#inicio"
         className="flex max-w-[13rem] items-center gap-3 text-xs font-semibold tracking-[0.12em] text-white uppercase sm:max-w-none sm:text-sm"
@@ -149,21 +151,71 @@ function Header() {
 
 function Hero() {
   return (
-    <section className="mx-auto grid w-full max-w-6xl items-center gap-10 px-5 pt-10 pb-14 sm:px-6 sm:pt-14 sm:pb-16 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14 lg:px-8 lg:pt-16 lg:pb-18">
-      <div className="max-w-[45rem]">
+    <section className="cinematic-hero relative isolate mx-auto grid w-full max-w-6xl items-center gap-10 overflow-hidden px-5 py-12 sm:px-6 sm:py-18 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:px-8">
+      <div className="hero-field" aria-hidden="true">
+        <Image
+          alt=""
+          aria-hidden="true"
+          className="hero-reference-image hero-reference-image-orderflow"
+          height={1350}
+          priority
+          src="/visuals/market-orderflow-terminal.png"
+          width={1620}
+        />
+        <Image
+          alt=""
+          aria-hidden="true"
+          className="hero-reference-image hero-reference-image-heatmap"
+          height={338}
+          priority
+          src="/visuals/market-heatmap-terminal.png"
+          width={626}
+        />
+        <span className="hero-signal-sweep" />
+        <span className="hero-data-line hero-data-line-one" />
+        <span className="hero-data-line hero-data-line-two" />
+        <span className="hero-data-line hero-data-line-three" />
+        <span className="hero-liquidity-zone hero-liquidity-zone-positive" />
+        <span className="hero-liquidity-zone hero-liquidity-zone-negative" />
+        <span className="hero-price-axis" />
+        <span className="hero-market-bar hero-market-bar-one" />
+        <span className="hero-market-bar hero-market-bar-two" />
+        <span className="hero-market-bar hero-market-bar-three" />
+        <span className="hero-market-bar hero-market-bar-four" />
+        <span className="hero-market-point hero-market-point-one" />
+        <span className="hero-market-point hero-market-point-two" />
+        <span className="hero-market-point hero-market-point-three" />
+        <span className="hero-market-point hero-market-point-four" />
+        <span className="hero-orderflow-panel">
+          <span className="hero-orderflow-row hero-orderflow-row-one" />
+          <span className="hero-orderflow-row hero-orderflow-row-two" />
+          <span className="hero-orderflow-row hero-orderflow-row-three" />
+          <span className="hero-orderflow-row hero-orderflow-row-four" />
+          <span className="hero-orderflow-row hero-orderflow-row-five" />
+          <span className="hero-orderflow-row hero-orderflow-row-six" />
+        </span>
+      </div>
+
+      <div
+        className="public-hero-copy public-mobile-copy relative z-10 w-full sm:max-w-[47rem]"
+        style={{ maxWidth: "min(47rem, calc(100vw - 2.5rem))" }}
+      >
         <p className="mb-6 text-sm font-semibold tracking-[0.2em] text-[var(--color-cyan)] uppercase">
           El problema no es aprender más
         </p>
-        <h1 className="max-w-[44rem] text-4xl leading-tight font-semibold text-balance text-white sm:text-5xl lg:text-[3.65rem] lg:leading-[1.05]">
-          Tienes información, pero todavía no sabes cómo conectarla.
+        <h1 className="max-w-full text-[2rem] leading-[1.07] font-semibold text-white min-[420px]:text-[2.35rem] sm:max-w-[46rem] sm:text-6xl lg:text-[4.85rem] lg:leading-[0.98]">
+          <span className="block">Tienes información,</span>
+          <span className="block">pero todavía</span>
+          <span className="block">no sabes cómo</span>
+          <span className="block">conectarla.</span>
         </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--color-text-secondary)]">
+        <p className="mt-6 max-w-full text-sm leading-6 text-[var(--color-text-secondary)] sm:max-w-2xl sm:text-lg sm:leading-8">
           Has estudiado estrategias, indicadores y herramientas. Pero cuando
           llega el momento de tomar una decisión, cada pieza parece funcionar
           por separado. El problema no es aprender más, sino integrar lo que ya
           aprendiste.
         </p>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)]">
+        <p className="mt-5 max-w-full text-sm leading-6 text-[var(--color-text-secondary)] sm:max-w-2xl sm:text-base sm:leading-7">
           Formación estructurada que culmina en una mentoría privada en vivo 1
           a 1, preparada a partir de tu recorrido.
         </p>
@@ -185,16 +237,25 @@ function Hero() {
 
       <aside
         aria-label="Síntesis visual del proceso de admisión"
-        className="rounded-xl border border-[var(--color-border)] bg-[linear-gradient(180deg,var(--color-panel-bg),var(--color-card-bg))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:p-6 lg:p-7"
+        className="hero-system-map relative z-10 overflow-hidden p-4 sm:p-6 lg:p-7"
       >
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-chart-bg)] p-5">
-          <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
-            Mapa académico
-          </p>
-          <div className="mt-8 grid gap-5">
+        <div className="hero-system-grid" aria-hidden="true" />
+        <div className="hero-orbit" aria-hidden="true" />
+        <div className="hero-system-inner relative p-4 sm:p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-5">
+            <div>
+              <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+                Mapa académico
+              </p>
+              <h2 className="mt-3 max-w-sm text-xl leading-tight font-semibold text-white sm:text-2xl">
+                Secuencia de formación profesional
+              </h2>
+            </div>
+          </div>
+          <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-5">
             {academicMap.map((step, index) => (
               <div
-                className="rounded-lg border border-[var(--color-border-soft)] bg-[var(--color-chart-surface)] p-4"
+                className="hero-map-step p-4"
                 key={step.title}
               >
                 <span className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
@@ -221,7 +282,7 @@ function Hero() {
 
 function PositioningSection() {
   return (
-    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+    <section className="public-flow-section">
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
@@ -260,7 +321,7 @@ function PositioningSection() {
 
 function LearningCostSection() {
   return (
-    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+    <section className="public-flow-section">
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
@@ -344,7 +405,7 @@ function TransformationSection() {
 
 function IntegrationSection() {
   return (
-    <section className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]">
+    <section className="public-flow-section">
       <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
@@ -410,7 +471,7 @@ function MentorshipSection() {
   return (
     <section
       id="mentoria"
-      className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]"
+      className="public-flow-section"
     >
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
         <div>
@@ -430,8 +491,8 @@ function MentorshipSection() {
           <p className="mt-5 text-base leading-7 text-[var(--color-text-secondary)]">
             Durante la mentoría profundizarás en la integración de exposición
             gamma, mapa de liquidez, Order Flow, Big Trades, CVD, Delta, Speed
-            of Tape, VWAP y sus desviaciones dentro de una metodología completa
-            de interpretación del mercado.
+            of Tape, VWAP y Perfil de Volumen dentro de una metodología
+            completa de interpretación del mercado.
           </p>
         </div>
         <div className="grid gap-3">
@@ -493,7 +554,7 @@ function ProgramPreview({ course }: PublicLandingProps) {
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         {course.modules.map((academyModule) => (
           <article
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card-bg)] p-5"
+            className="public-glass-panel p-5"
             key={academyModule.id}
           >
             <p className="text-xs font-semibold tracking-[0.16em] text-[var(--color-cyan)] uppercase">
@@ -509,7 +570,7 @@ function ProgramPreview({ course }: PublicLandingProps) {
               href={`/programa#${academyModule.id}`}
               className="mt-5 inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-semibold text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
             >
-              Explorar capacidad
+              Explorar contenido
             </Link>
           </article>
         ))}
@@ -522,10 +583,10 @@ function AudienceSection() {
   return (
     <section
       id="perfil"
-      className="border-y border-[var(--color-border)] bg-[var(--color-section-bg)]"
+      className="public-flow-section"
     >
       <div className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
-        <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
+        <article className="public-glass-panel p-6 sm:p-8">
           <h2 className="text-2xl font-semibold text-white">
             Este programa es para ti si...
           </h2>
@@ -540,7 +601,7 @@ function AudienceSection() {
             ))}
           </ul>
         </article>
-        <article className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-6 sm:p-8">
+        <article className="public-glass-panel p-6 sm:p-8">
           <h2 className="text-2xl font-semibold text-white">
             Este programa probablemente no sea para ti si...
           </h2>
@@ -563,7 +624,7 @@ function AudienceSection() {
 function FinalCta() {
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-panel-bg),var(--color-card-bg))] p-6 sm:p-8 lg:p-10">
+      <div className="public-glass-panel p-6 sm:p-8 lg:p-10">
         <p className="text-sm font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
           Siguiente paso
         </p>
@@ -599,9 +660,11 @@ function Footer() {
 
 export function PublicLanding({ course }: PublicLandingProps) {
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)]">
+    <div className="public-site min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)]">
+      <PublicSiteMotion />
       <Header />
       <main id="inicio">
+        <PublicBackgroundField />
         <Hero />
         <LearningCostSection />
         <PositioningSection />

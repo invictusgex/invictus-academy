@@ -25,7 +25,7 @@ export function AcademySidebar({ navigation }: AcademySidebarProps) {
   );
 
   return (
-    <aside className="flex w-full flex-col border-b border-[var(--color-border)] bg-[var(--color-panel-bg)] px-5 py-5 lg:min-h-screen lg:w-72 lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
+    <aside className="app-shell-sidebar relative z-20 flex w-full flex-col border-b border-[var(--color-border)] bg-[var(--color-panel-bg)] px-5 py-5 lg:min-h-screen lg:w-72 lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
       <div>
         <Link
           href="/"
