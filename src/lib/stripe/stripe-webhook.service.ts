@@ -7,6 +7,7 @@ import {
   CommercialFulfillmentError,
   CommercialFulfillmentService,
 } from "@/lib/services/commercial-fulfillment.service";
+import { PurchaseWelcomeEmailService } from "@/lib/services/purchase-welcome-email.service";
 import { PurchaseService } from "@/lib/services/purchase.service";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
@@ -718,6 +719,12 @@ export const StripeWebhookService = {
         },
         supabase,
       );
+
+      if (event.type === "payment_intent.succeeded") {
+        await PurchaseWelcomeEmailService.sendForPurchase(purchase.id).catch(
+          () => undefined,
+        );
+      }
 
       return {
         stripeEventId: event.id,

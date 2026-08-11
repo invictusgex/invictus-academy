@@ -28,6 +28,23 @@ function mapProduct(row: ProductRow): Product {
 }
 
 export const ProductRepository = {
+  async getById(
+    supabase: SupabaseClient<Database>,
+    productId: string,
+  ): Promise<Product | null> {
+    const { data, error } = await supabase
+      .from("products")
+      .select("id, slug, title, status")
+      .eq("id", productId)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return data ? mapProduct(data) : null;
+  },
+
   async getBySlug(
     supabase: SupabaseClient<Database>,
     slug: string,

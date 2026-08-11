@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Invictus GEX</title>
+  <rect width="512" height="512" fill="#05080c"/>
+  <circle cx="256" cy="256" r="226" fill="#071018" stroke="#f5f20a" stroke-width="18"/>
+  <circle cx="256" cy="256" r="188" fill="#020405" stroke="#1f3446" stroke-width="6"/>
+  <path fill="#f8fafc" d="M126 165h56l72 161 74-161h58L278 394h-48L126 165z"/>
+  <path fill="#f5f20a" d="M134 165h38l67 150 69-150h38L264 355h-42L134 165z"/>
+  <path fill="#f8fafc" d="M212 118h31v48h-31v-48zm58 0h31v48h-31v-48z"/>
+  <path fill="#f5f20a" d="M220 126h15v32h-15v-32zm58 0h15v32h-15v-32z"/>
+  <path fill="#f8fafc" d="M175 402h162v24H175v-24z"/>
+  <path fill="#f5f20a" d="M202 430h108v16H202v-16z"/>
+</svg>
