@@ -6,6 +6,7 @@ import {
   passwordRecoveryCookieName,
   passwordRecoveryCookieValue,
 } from "@/lib/auth/password-recovery";
+import { getSiteUrl } from "@/config/site";
 import { getSafeInternalRedirect } from "@/lib/auth/redirects";
 import { ProfileRepository } from "@/lib/repositories/profile.repository";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -29,8 +30,8 @@ function normalizeFullName(value: unknown) {
     : "Estudiante Invictus";
 }
 
-function buildRedirect(request: Request, path: string) {
-  return new URL(path, request.url);
+function buildRedirect(path: string) {
+  return new URL(path, getSiteUrl());
 }
 
 export async function GET(request: Request) {
@@ -48,12 +49,12 @@ export async function GET(request: Request) {
     isRecovery && nextPath === "/reset-password" ? nextPath : "/reset-password";
 
   if (isRecovery && !code && !tokenHash) {
-    return NextResponse.redirect(buildRedirect(request, "/forgot-password"));
+    return NextResponse.redirect(buildRedirect("/forgot-password"));
   }
 
   if (!code && (!tokenHash || !otpType)) {
     return NextResponse.redirect(
-      buildRedirect(request, isRecovery ? "/forgot-password" : "/login"),
+      buildRedirect(isRecovery ? "/forgot-password" : "/login"),
     );
   }
 
@@ -67,7 +68,7 @@ export async function GET(request: Request) {
 
   if (error) {
     return NextResponse.redirect(
-      buildRedirect(request, isRecovery ? "/forgot-password" : "/login"),
+      buildRedirect(isRecovery ? "/forgot-password" : "/login"),
     );
   }
 
@@ -83,7 +84,7 @@ export async function GET(request: Request) {
   }
 
   const response = NextResponse.redirect(
-    buildRedirect(request, isRecovery ? recoveryNextPath : nextPath),
+    buildRedirect(isRecovery ? recoveryNextPath : nextPath),
   );
 
   if (isRecovery) {
