@@ -4,7 +4,7 @@ FASE 8.6B - Purchase paid -> Enrollment active.
 
 ## 1. Decisiones comerciales
 
-Para la mentoria grabada actual:
+Para la formacion profesional actual:
 
 - el acceso concedido por compra es indefinido: `expires_at = null`;
 - si no existe Enrollment, se crea `active`;

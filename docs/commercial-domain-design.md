@@ -158,7 +158,7 @@ Session 101 debe tratarse como beneficio incluido en la compra inicial, no como 
 
 Reglas propuestas:
 
-- Costo: incluido en la mentoria grabada.
+- Costo: incluido en la formacion profesional.
 - Entitlement separado: no necesario para lanzamiento; puede derivarse de purchase + enrollment + requisitos completados.
 - Desbloqueo: automatico cuando se cumplan requisitos del journey.
 - Requisitos:
