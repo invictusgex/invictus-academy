@@ -31,6 +31,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     let isMounted = true;
     let profileRequestId = 0;
+    let recoveryRedirectStarted = false;
+
+    function hasRecoveryHash() {
+      if (typeof window === "undefined") {
+        return false;
+      }
+
+      return new URLSearchParams(window.location.hash.replace(/^#/, "")).get(
+        "type",
+      ) === "recovery";
+    }
+
+    async function redirectToPasswordReset() {
+      if (recoveryRedirectStarted || typeof window === "undefined") {
+        return;
+      }
+
+      recoveryRedirectStarted = true;
+
+      try {
+        const response = await fetch("/api/auth/recovery-session", {
+          method: "POST",
+        });
+
+        window.location.replace(
+          response.ok ? "/reset-password" : "/forgot-password",
+        );
+      } catch {
+        window.location.replace("/forgot-password");
+      }
+    }
 
     function updateAuthState(nextSession: AuthSession | null) {
       if (!isMounted) {
@@ -70,6 +101,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         const authState = await AuthRepository.getSession();
         updateAuthState(authState.session);
+
+        if (authState.session && hasRecoveryHash()) {
+          await redirectToPasswordReset();
+        }
       } catch {
         updateAuthState(null);
       } finally {
@@ -85,6 +120,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // como login, logout o refresh de token cuando existan pantallas que los usen.
     const unsubscribe = AuthRepository.onAuthStateChange((authState) => {
       updateAuthState(authState.session);
+
+      if (authState.session && hasRecoveryHash()) {
+        void redirectToPasswordReset();
+      }
+
       setLoading(false);
       setInitialized(true);
       setAuthAction(null);
