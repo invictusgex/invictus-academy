@@ -14,6 +14,7 @@ const adminNavigation = [
   { href: "/admin", label: "Resumen" },
   { href: "/admin/students", label: "Alumnos" },
   { href: "/admin/access", label: "Accesos" },
+  { href: "/admin/commercial", label: "Promoción" },
   { href: "/admin/content", label: "Contenido" },
   { href: "/admin/scenarios", label: "Biblioteca de Escenarios" },
   { href: "/admin/mentorship", label: "Agenda de mentorías" },

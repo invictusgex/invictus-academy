@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
-
-const promoMessage =
-  "Cupón de descuento de 350 USD para acceder a la academia";
+import type { CommercialPromotion } from "@/lib/types/promotion.types";
 
 export function PublicPromoRibbon() {
   const { initialized, user } = useAuth();
@@ -13,6 +11,38 @@ export function PublicPromoRibbon() {
     hasAcademyAccess: boolean;
     userId: string;
   } | null>(null);
+  const [promotion, setPromotion] = useState<CommercialPromotion | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetch("/api/public/promotion", {
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error("No se pudo cargar la promoción.");
+        }
+
+        return (await response.json()) as {
+          promotion: CommercialPromotion | null;
+        };
+      })
+      .then((payload) => {
+        if (isMounted) {
+          setPromotion(payload.promotion);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setPromotion(null);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -66,7 +96,9 @@ export function PublicPromoRibbon() {
       ? accessCheck.hasAcademyAccess
       : null;
   const shouldShow =
-    initialized && (!user || hasCurrentUserAcademyAccess === false);
+    initialized &&
+    Boolean(promotion?.isActive) &&
+    (!user || hasCurrentUserAcademyAccess === false);
 
   useEffect(() => {
     document.body.classList.toggle("promo-ribbon-active", shouldShow);
@@ -86,7 +118,10 @@ export function PublicPromoRibbon() {
         <div className="public-promo-ribbon-track">
           {Array.from({ length: 4 }, (_, index) => (
             <span className="public-promo-ribbon-message" key={index}>
-              {promoMessage}
+              {promotion?.message}
+              <span className="public-promo-ribbon-code">
+                {promotion?.code}
+              </span>
             </span>
           ))}
         </div>

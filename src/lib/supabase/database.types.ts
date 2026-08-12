@@ -1104,6 +1104,54 @@ export type Database = {
         }
         Relationships: []
       }
+      site_promotions: {
+        Row: {
+          checkout_description: string
+          checkout_instruction: string
+          checkout_title: string
+          code: string
+          created_at: string
+          discount_label: string
+          ends_at: string | null
+          headline: string
+          id: string
+          is_active: boolean
+          message: string
+          starts_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          checkout_description: string
+          checkout_instruction: string
+          checkout_title: string
+          code: string
+          created_at?: string
+          discount_label: string
+          ends_at?: string | null
+          headline: string
+          id: string
+          is_active?: boolean
+          message: string
+          starts_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          checkout_description?: string
+          checkout_instruction?: string
+          checkout_title?: string
+          code?: string
+          created_at?: string
+          discount_label?: string
+          ends_at?: string | null
+          headline?: string
+          id?: string
+          is_active?: boolean
+          message?: string
+          starts_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

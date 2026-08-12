@@ -6,6 +6,7 @@ import { getCurrentServerUser } from "@/lib/auth/server";
 import { academyProductSlug } from "@/lib/academy-product";
 import { ProfileRepository } from "@/lib/repositories/profile.repository";
 import { getAcademyEnrollmentAccess } from "@/lib/services/academy-access.service";
+import { CommercialPromotionService } from "@/lib/services/commercial-promotion.service";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function CheckoutStartRoute() {
@@ -26,5 +27,12 @@ export default async function CheckoutStartRoute() {
     }
   }
 
-  return <CheckoutStartPage productSlug={academyProductSlug} />;
+  const promotion = await CommercialPromotionService.getActivePromotion();
+
+  return (
+    <CheckoutStartPage
+      productSlug={academyProductSlug}
+      promotion={promotion}
+    />
+  );
 }

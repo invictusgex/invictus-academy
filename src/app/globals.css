@@ -213,9 +213,8 @@ a {
   content: "";
 }
 
-.public-promo-ribbon-message::after {
+.public-promo-ribbon-code {
   color: var(--color-cyan);
-  content: "GEX10";
 }
 
 .public-site main > section {
