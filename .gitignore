@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local draft documents
+docs/production-deployment-readiness.md
+docs/student-learning-workflow.md
