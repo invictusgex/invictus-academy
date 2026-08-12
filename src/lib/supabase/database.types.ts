@@ -204,6 +204,100 @@ export type Database = {
           },
         ]
       }
+      academy_mentorship_availability_rules: {
+        Row: {
+          buffer_minutes: number
+          created_at: string
+          created_by: string | null
+          day_of_week: number
+          ends_at_time: string
+          id: string
+          slot_duration_minutes: number
+          starts_at_time: string
+          status: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          buffer_minutes?: number
+          created_at?: string
+          created_by?: string | null
+          day_of_week: number
+          ends_at_time: string
+          id?: string
+          slot_duration_minutes?: number
+          starts_at_time: string
+          status?: string
+          timezone: string
+          updated_at?: string
+        }
+        Update: {
+          buffer_minutes?: number
+          created_at?: string
+          created_by?: string | null
+          day_of_week?: number
+          ends_at_time?: string
+          id?: string
+          slot_duration_minutes?: number
+          starts_at_time?: string
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_mentorship_availability_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_mentorship_blocked_windows: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          ends_at: string
+          id: string
+          reason: string | null
+          starts_at: string
+          status: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          ends_at: string
+          id?: string
+          reason?: string | null
+          starts_at: string
+          status?: string
+          timezone: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string
+          id?: string
+          reason?: string | null
+          starts_at?: string
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_mentorship_blocked_windows_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       academy_mentorship_requirement_overrides: {
         Row: {
           created_at: string

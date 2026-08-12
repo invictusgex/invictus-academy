@@ -10,6 +10,10 @@ export type MentorshipBookingStatus =
   | "completed"
   | "no_show";
 
+export type MentorshipAvailabilityRuleStatus = "active" | "inactive";
+
+export type MentorshipBlockedWindowStatus = "active" | "cancelled";
+
 export type MentorshipSlot = {
   createdAt: string;
   createdBy: string | null;
@@ -46,10 +50,64 @@ export type AdminMentorshipBooking = MentorshipBooking & {
   productTitle: string | null;
 };
 
+export type MentorshipAvailabilityRule = {
+  bufferMinutes: number;
+  createdAt: string;
+  createdBy: string | null;
+  dayOfWeek: number;
+  endsAtTime: string;
+  id: string;
+  slotDurationMinutes: number;
+  startsAtTime: string;
+  status: MentorshipAvailabilityRuleStatus;
+  timezone: string;
+  updatedAt: string;
+};
+
+export type MentorshipBlockedWindow = {
+  createdAt: string;
+  createdBy: string | null;
+  endsAt: string;
+  id: string;
+  reason: string | null;
+  startsAt: string;
+  status: MentorshipBlockedWindowStatus;
+  timezone: string;
+  updatedAt: string;
+};
+
 export type MentorshipSlotCreateInput = {
   endsAt: string;
   startsAt: string;
   timezone: string;
+};
+
+export type MentorshipAvailabilityRuleCreateInput = {
+  bufferMinutes: number;
+  createdBy: string;
+  dayOfWeek: number;
+  endsAtTime: string;
+  slotDurationMinutes: number;
+  startsAtTime: string;
+  timezone: string;
+};
+
+export type MentorshipAvailabilityRuleStatusUpdateInput = {
+  id: string;
+  status: MentorshipAvailabilityRuleStatus;
+};
+
+export type MentorshipBlockedWindowCreateInput = {
+  createdBy: string;
+  endsAt: string;
+  reason: string | null;
+  startsAt: string;
+  timezone: string;
+};
+
+export type MentorshipBlockedWindowStatusUpdateInput = {
+  id: string;
+  status: MentorshipBlockedWindowStatus;
 };
 
 export type MentorshipSlotUpdateInput = {
@@ -69,4 +127,15 @@ export type MentorshipBookingRequest = {
 export type MentorshipBookingAdminStatusUpdateInput = {
   bookingId: string;
   status: Extract<MentorshipBookingStatus, "cancelled" | "completed" | "no_show">;
+};
+
+export type MentorshipSlotGenerationInput = {
+  createdBy: string;
+  endsOn: string;
+  startsOn: string;
+};
+
+export type MentorshipSlotGenerationResult = {
+  createdSlots: MentorshipSlot[];
+  skippedCount: number;
 };

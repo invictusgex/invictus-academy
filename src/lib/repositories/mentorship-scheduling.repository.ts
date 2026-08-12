@@ -6,6 +6,14 @@ import { getSupabaseClient } from "@/lib/database/client";
 import type { Database } from "@/lib/supabase/database.types";
 import type {
   AdminMentorshipBooking,
+  MentorshipAvailabilityRule,
+  MentorshipAvailabilityRuleCreateInput,
+  MentorshipAvailabilityRuleStatus,
+  MentorshipAvailabilityRuleStatusUpdateInput,
+  MentorshipBlockedWindow,
+  MentorshipBlockedWindowCreateInput,
+  MentorshipBlockedWindowStatus,
+  MentorshipBlockedWindowStatusUpdateInput,
   MentorshipBooking,
   MentorshipBookingAdminStatusUpdateInput,
   MentorshipBookingRequest,
@@ -36,6 +44,10 @@ type AdminMentorshipBookingRow = MentorshipBookingWithSlotRow & {
     full_name: string | null;
   } | null;
 };
+type MentorshipAvailabilityRuleRow =
+  Database["public"]["Tables"]["academy_mentorship_availability_rules"]["Row"];
+type MentorshipBlockedWindowRow =
+  Database["public"]["Tables"]["academy_mentorship_blocked_windows"]["Row"];
 
 const slotSelect = `
   id,
@@ -80,6 +92,32 @@ const adminBookingSelect = `
   )
 `;
 
+const availabilityRuleSelect = `
+  id,
+  day_of_week,
+  starts_at_time,
+  ends_at_time,
+  timezone,
+  slot_duration_minutes,
+  buffer_minutes,
+  status,
+  created_by,
+  created_at,
+  updated_at
+`;
+
+const blockedWindowSelect = `
+  id,
+  starts_at,
+  ends_at,
+  timezone,
+  reason,
+  status,
+  created_by,
+  created_at,
+  updated_at
+`;
+
 const mentorshipSlotStatuses: MentorshipSlotStatus[] = [
   "available",
   "booked",
@@ -92,6 +130,16 @@ const mentorshipBookingStatuses: MentorshipBookingStatus[] = [
   "cancelled",
   "completed",
   "no_show",
+];
+
+const mentorshipAvailabilityRuleStatuses: MentorshipAvailabilityRuleStatus[] = [
+  "active",
+  "inactive",
+];
+
+const mentorshipBlockedWindowStatuses: MentorshipBlockedWindowStatus[] = [
+  "active",
+  "cancelled",
 ];
 
 function mapSlotStatus(status: string): MentorshipSlotStatus {
@@ -108,6 +156,32 @@ function mapBookingStatus(status: string): MentorshipBookingStatus {
   }
 
   throw new Error(`UNKNOWN_MENTORSHIP_BOOKING_STATUS:${status}`);
+}
+
+function mapAvailabilityRuleStatus(
+  status: string,
+): MentorshipAvailabilityRuleStatus {
+  if (
+    mentorshipAvailabilityRuleStatuses.includes(
+      status as MentorshipAvailabilityRuleStatus,
+    )
+  ) {
+    return status as MentorshipAvailabilityRuleStatus;
+  }
+
+  throw new Error(`UNKNOWN_MENTORSHIP_AVAILABILITY_RULE_STATUS:${status}`);
+}
+
+function mapBlockedWindowStatus(status: string): MentorshipBlockedWindowStatus {
+  if (
+    mentorshipBlockedWindowStatuses.includes(
+      status as MentorshipBlockedWindowStatus,
+    )
+  ) {
+    return status as MentorshipBlockedWindowStatus;
+  }
+
+  throw new Error(`UNKNOWN_MENTORSHIP_BLOCKED_WINDOW_STATUS:${status}`);
 }
 
 function mapSlot(row: MentorshipSlotRow): MentorshipSlot {
@@ -150,6 +224,38 @@ function mapAdminBooking(row: AdminMentorshipBookingRow): AdminMentorshipBooking
     participantEmail: row.profiles?.email ?? null,
     participantName: row.profiles?.full_name ?? null,
     productTitle: row.products?.title ?? null,
+  };
+}
+
+function mapAvailabilityRule(
+  row: MentorshipAvailabilityRuleRow,
+): MentorshipAvailabilityRule {
+  return {
+    bufferMinutes: row.buffer_minutes,
+    createdAt: row.created_at,
+    createdBy: row.created_by,
+    dayOfWeek: row.day_of_week,
+    endsAtTime: row.ends_at_time,
+    id: row.id,
+    slotDurationMinutes: row.slot_duration_minutes,
+    startsAtTime: row.starts_at_time,
+    status: mapAvailabilityRuleStatus(row.status),
+    timezone: row.timezone,
+    updatedAt: row.updated_at,
+  };
+}
+
+function mapBlockedWindow(row: MentorshipBlockedWindowRow): MentorshipBlockedWindow {
+  return {
+    createdAt: row.created_at,
+    createdBy: row.created_by,
+    endsAt: row.ends_at,
+    id: row.id,
+    reason: row.reason,
+    startsAt: row.starts_at,
+    status: mapBlockedWindowStatus(row.status),
+    timezone: row.timezone,
+    updatedAt: row.updated_at,
   };
 }
 
@@ -210,6 +316,25 @@ export const MentorshipSchedulingRepository = {
     return ((data as MentorshipSlotRow[] | null) ?? []).map(mapSlot);
   },
 
+  async listAdminSlotsBetween(
+    startsAt: string,
+    endsAt: string,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipSlot[]> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_slots")
+      .select(slotSelect)
+      .lt("starts_at", endsAt)
+      .gt("ends_at", startsAt)
+      .order("starts_at", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data as MentorshipSlotRow[] | null) ?? []).map(mapSlot);
+  },
+
   async getSlotById(
     slotId: string,
     supabase: SupabaseClient<Database> = getSupabaseClient(),
@@ -252,6 +377,38 @@ export const MentorshipSchedulingRepository = {
     return mapSlot(data);
   },
 
+  async createAdminSlots(
+    inputs: Array<
+      MentorshipSlotCreateInput & {
+        createdBy: string;
+      }
+    >,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipSlot[]> {
+    if (inputs.length === 0) {
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from("academy_mentorship_slots")
+      .insert(
+        inputs.map((input) => ({
+          created_by: input.createdBy,
+          ends_at: input.endsAt,
+          starts_at: input.startsAt,
+          status: "available",
+          timezone: input.timezone,
+        })),
+      )
+      .select(slotSelect);
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data as MentorshipSlotRow[] | null) ?? []).map(mapSlot);
+  },
+
   async updateAdminSlot(
     input: MentorshipSlotUpdateInput,
     supabase: SupabaseClient<Database> = getSupabaseClient(),
@@ -273,6 +430,28 @@ export const MentorshipSchedulingRepository = {
     }
 
     return mapSlot(data);
+  },
+
+  async blockAvailableSlotsBetween(
+    startsAt: string,
+    endsAt: string,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipSlot[]> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_slots")
+      .update({
+        status: "blocked",
+      })
+      .eq("status", "available")
+      .lt("starts_at", endsAt)
+      .gt("ends_at", startsAt)
+      .select(slotSelect);
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data as MentorshipSlotRow[] | null) ?? []).map(mapSlot);
   },
 
   async listBookingsByProfile(
@@ -309,6 +488,153 @@ export const MentorshipSchedulingRepository = {
     return ((data as AdminMentorshipBookingRow[] | null) ?? []).map(
       mapAdminBooking,
     );
+  },
+
+  async listAvailabilityRules(
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipAvailabilityRule[]> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_availability_rules")
+      .select(availabilityRuleSelect)
+      .order("day_of_week", { ascending: true })
+      .order("starts_at_time", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data as MentorshipAvailabilityRuleRow[] | null) ?? []).map(
+      mapAvailabilityRule,
+    );
+  },
+
+  async createAvailabilityRule(
+    input: MentorshipAvailabilityRuleCreateInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipAvailabilityRule> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_availability_rules")
+      .insert({
+        buffer_minutes: input.bufferMinutes,
+        created_by: input.createdBy,
+        day_of_week: input.dayOfWeek,
+        ends_at_time: input.endsAtTime,
+        slot_duration_minutes: input.slotDurationMinutes,
+        starts_at_time: input.startsAtTime,
+        status: "active",
+        timezone: input.timezone,
+      })
+      .select(availabilityRuleSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapAvailabilityRule(data as MentorshipAvailabilityRuleRow);
+  },
+
+  async updateAvailabilityRuleStatus(
+    input: MentorshipAvailabilityRuleStatusUpdateInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipAvailabilityRule> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_availability_rules")
+      .update({
+        status: input.status,
+      })
+      .eq("id", input.id)
+      .select(availabilityRuleSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapAvailabilityRule(data as MentorshipAvailabilityRuleRow);
+  },
+
+  async listBlockedWindows(
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipBlockedWindow[]> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_blocked_windows")
+      .select(blockedWindowSelect)
+      .order("starts_at", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data as MentorshipBlockedWindowRow[] | null) ?? []).map(
+      mapBlockedWindow,
+    );
+  },
+
+  async listActiveBlockedWindowsBetween(
+    startsAt: string,
+    endsAt: string,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipBlockedWindow[]> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_blocked_windows")
+      .select(blockedWindowSelect)
+      .eq("status", "active")
+      .lt("starts_at", endsAt)
+      .gt("ends_at", startsAt)
+      .order("starts_at", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return ((data as MentorshipBlockedWindowRow[] | null) ?? []).map(
+      mapBlockedWindow,
+    );
+  },
+
+  async createBlockedWindow(
+    input: MentorshipBlockedWindowCreateInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipBlockedWindow> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_blocked_windows")
+      .insert({
+        created_by: input.createdBy,
+        ends_at: input.endsAt,
+        reason: input.reason,
+        starts_at: input.startsAt,
+        status: "active",
+        timezone: input.timezone,
+      })
+      .select(blockedWindowSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapBlockedWindow(data as MentorshipBlockedWindowRow);
+  },
+
+  async updateBlockedWindowStatus(
+    input: MentorshipBlockedWindowStatusUpdateInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipBlockedWindow> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_blocked_windows")
+      .update({
+        status: input.status,
+      })
+      .eq("id", input.id)
+      .select(blockedWindowSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapBlockedWindow(data as MentorshipBlockedWindowRow);
   },
 
   async updateAdminBookingStatus(

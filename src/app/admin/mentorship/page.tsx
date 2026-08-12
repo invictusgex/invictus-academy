@@ -12,6 +12,10 @@ import type { MentorshipPrivateNote } from "@/lib/types/mentorship-note.types";
 import type { MentorshipOutcome } from "@/lib/types/mentorship-outcome.types";
 import type {
   AdminMentorshipBooking,
+  MentorshipAvailabilityRule,
+  MentorshipAvailabilityRuleStatus,
+  MentorshipBlockedWindow,
+  MentorshipBlockedWindowStatus,
   MentorshipBookingStatus,
   MentorshipSlot,
   MentorshipSlotStatus,
@@ -24,6 +28,16 @@ type AdminMentorshipRouteProps = {
 };
 
 const adminMentorshipPath = "/admin/mentorship";
+const defaultMentorshipTimezone = "America/Chicago";
+const dayLabels = [
+  "Domingo",
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+];
 
 function redirectWithMessage(message: string): never {
   redirect(`${adminMentorshipPath}?message=${encodeURIComponent(message)}`);
@@ -143,6 +157,150 @@ async function updateSlotStatusAction(formData: FormData) {
     revalidatePath(adminMentorshipPath);
   } catch {
     message = "No pudimos actualizar ese horario.";
+  }
+
+  redirectWithMessage(message);
+}
+
+async function createAvailabilityRuleAction(formData: FormData) {
+  "use server";
+
+  const { profile, supabase } = await requireAdminServerContext();
+  const dayOfWeek = Number(getString(formData, "dayOfWeek"));
+  const slotDurationMinutes = Number(
+    getString(formData, "slotDurationMinutes") || "60",
+  );
+  const bufferMinutes = Number(getString(formData, "bufferMinutes") || "0");
+  let message = "Regla de disponibilidad creada.";
+
+  try {
+    await MentorshipSchedulingService.createAvailabilityRule(
+      {
+        bufferMinutes,
+        createdBy: profile.id,
+        dayOfWeek,
+        endsAtTime: getString(formData, "endsAtTime"),
+        slotDurationMinutes,
+        startsAtTime: getString(formData, "startsAtTime"),
+        timezone: getString(formData, "timezone"),
+      },
+      supabase,
+    );
+    revalidatePath(adminMentorshipPath);
+  } catch {
+    message = "No pudimos crear la regla de disponibilidad.";
+  }
+
+  redirectWithMessage(message);
+}
+
+async function updateAvailabilityRuleStatusAction(formData: FormData) {
+  "use server";
+
+  const { supabase } = await requireAdminServerContext();
+  const id = getString(formData, "ruleId");
+  const status = getString(
+    formData,
+    "status",
+  ) as MentorshipAvailabilityRuleStatus;
+  let message = "Regla de disponibilidad actualizada.";
+
+  try {
+    await MentorshipSchedulingService.setAvailabilityRuleStatus(
+      {
+        id,
+        status,
+      },
+      supabase,
+    );
+    revalidatePath(adminMentorshipPath);
+  } catch {
+    message = "No pudimos actualizar esa regla.";
+  }
+
+  redirectWithMessage(message);
+}
+
+async function createBlockedWindowAction(formData: FormData) {
+  "use server";
+
+  const { profile, supabase } = await requireAdminServerContext();
+  const date = getString(formData, "blockedDate");
+  const startsAtTime = getString(formData, "blockedStartsAt");
+  const endsAtTime = getString(formData, "blockedEndsAt");
+  const timezone = getString(formData, "blockedTimezone");
+  let message = "Bloqueo aplicado al calendario.";
+
+  try {
+    if (!date || !startsAtTime || !endsAtTime || !timezone) {
+      throw new Error("Completa fecha, horas y zona horaria.");
+    }
+
+    await MentorshipSchedulingService.createBlockedWindow(
+      {
+        createdBy: profile.id,
+        endsAt: zonedDateTimeToUtcIso(date, endsAtTime, timezone),
+        reason: getString(formData, "reason") || null,
+        startsAt: zonedDateTimeToUtcIso(date, startsAtTime, timezone),
+        timezone,
+      },
+      supabase,
+    );
+    revalidatePath(adminMentorshipPath);
+  } catch {
+    message = "No pudimos aplicar ese bloqueo.";
+  }
+
+  redirectWithMessage(message);
+}
+
+async function updateBlockedWindowStatusAction(formData: FormData) {
+  "use server";
+
+  const { supabase } = await requireAdminServerContext();
+  const id = getString(formData, "blockedWindowId");
+  const status = getString(
+    formData,
+    "status",
+  ) as MentorshipBlockedWindowStatus;
+  let message = "Bloqueo actualizado.";
+
+  try {
+    await MentorshipSchedulingService.setBlockedWindowStatus(
+      {
+        id,
+        status,
+      },
+      supabase,
+    );
+    revalidatePath(adminMentorshipPath);
+  } catch {
+    message = "No pudimos actualizar ese bloqueo.";
+  }
+
+  redirectWithMessage(message);
+}
+
+async function generateSlotsFromRulesAction(formData: FormData) {
+  "use server";
+
+  const { profile, supabase } = await requireAdminServerContext();
+  let message = "Calendario generado.";
+
+  try {
+    const result = await MentorshipSchedulingService.generateAvailabilitySlots(
+      {
+        createdBy: profile.id,
+        endsOn: getString(formData, "endsOn"),
+        startsOn: getString(formData, "startsOn"),
+      },
+      supabase,
+    );
+
+    message = `Se generaron ${result.createdSlots.length} horarios. Se omitieron ${result.skippedCount} por bloqueos, solapamientos o fechas pasadas.`;
+    revalidatePath(adminMentorshipPath);
+  } catch {
+    message = "No pudimos generar el calendario con esas reglas.";
   }
 
   redirectWithMessage(message);
@@ -270,6 +428,18 @@ function getBookingTone(status: MentorshipBookingStatus) {
   return "warning";
 }
 
+function getAvailabilityRuleTone(status: MentorshipAvailabilityRuleStatus) {
+  return status === "active" ? "success" : "neutral";
+}
+
+function getBlockedWindowTone(status: MentorshipBlockedWindowStatus) {
+  return status === "active" ? "danger" : "neutral";
+}
+
+function formatRuleTime(value: string) {
+  return value.slice(0, 5);
+}
+
 function findBookingForSlot(
   slot: MentorshipSlot,
   bookings: AdminMentorshipBooking[],
@@ -339,6 +509,48 @@ function SlotActions({
         </form>
       ) : null}
     </div>
+  );
+}
+
+function AvailabilityRuleActions({
+  rule,
+}: {
+  rule: MentorshipAvailabilityRule;
+}) {
+  return (
+    <form action={updateAvailabilityRuleStatusAction}>
+      <input name="ruleId" type="hidden" value={rule.id} />
+      <input
+        name="status"
+        type="hidden"
+        value={rule.status === "active" ? "inactive" : "active"}
+      />
+      <button className="rounded-full border border-[var(--color-border)] px-3 py-2 text-xs font-semibold text-white transition hover:border-[var(--color-cyan)]">
+        {rule.status === "active" ? "Pausar regla" : "Activar regla"}
+      </button>
+    </form>
+  );
+}
+
+function BlockedWindowActions({
+  blockedWindow,
+}: {
+  blockedWindow: MentorshipBlockedWindow;
+}) {
+  return (
+    <form action={updateBlockedWindowStatusAction}>
+      <input name="blockedWindowId" type="hidden" value={blockedWindow.id} />
+      <input
+        name="status"
+        type="hidden"
+        value={blockedWindow.status === "active" ? "cancelled" : "active"}
+      />
+      <button className="rounded-full border border-[var(--color-border)] px-3 py-2 text-xs font-semibold text-white transition hover:border-[var(--color-cyan)]">
+        {blockedWindow.status === "active"
+          ? "Quitar bloqueo"
+          : "Reactivar bloqueo"}
+      </button>
+    </form>
   );
 }
 
@@ -544,9 +756,12 @@ export default async function AdminMentorshipRoute({
 }: AdminMentorshipRouteProps) {
   const { supabase } = await requireAdminServerContext();
   const params = await searchParams;
-  const [slots, bookings] = await Promise.all([
+  const [slots, bookings, availabilityRules, blockedWindows] =
+    await Promise.all([
     MentorshipSchedulingService.listAdminSlots(supabase),
     MentorshipSchedulingService.listAdminBookings(supabase),
+    MentorshipSchedulingService.listAvailabilityRules(supabase),
+    MentorshipSchedulingService.listBlockedWindows(supabase),
   ]);
   const notes = await MentorshipNoteService.listAdminNotesByBookingIds(
     bookings.map((booking) => booking.id),
@@ -576,6 +791,12 @@ export default async function AdminMentorshipRoute({
   const cancelledBookings = bookings.filter(
     (booking) => booking.status === "cancelled",
   );
+  const activeAvailabilityRules = availabilityRules.filter(
+    (rule) => rule.status === "active",
+  );
+  const activeBlockedWindows = blockedWindows.filter(
+    (blockedWindow) => blockedWindow.status === "active",
+  );
 
   return (
     <div className="space-y-6">
@@ -598,10 +819,302 @@ export default async function AdminMentorshipRoute({
         <SummaryCard label="Reservas confirmadas" value={confirmedBookings.length} />
         <SummaryCard label="Completadas" value={completedBookings.length} />
         <SummaryCard label="Cancelaciones" value={cancelledBookings.length} />
+        <SummaryCard
+          label="Reglas activas"
+          value={activeAvailabilityRules.length}
+        />
+        <SummaryCard
+          label="Bloqueos activos"
+          value={activeBlockedWindows.length}
+        />
       </section>
 
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
-        <h2 className="text-xl font-semibold text-white">Crear disponibilidad</h2>
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+          <div className="min-w-0">
+            <h2 className="text-xl font-semibold text-white">
+              Disponibilidad predeterminada
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+              Define los días y rangos habituales en los que estarás disponible.
+              Luego puedes generar horarios reales para las próximas semanas.
+            </p>
+
+            <form
+              action={createAvailabilityRuleAction}
+              className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+            >
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Día
+                <select
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="dayOfWeek"
+                  required
+                >
+                  {dayLabels.map((label, index) => (
+                    <option className="bg-[#08111f]" key={label} value={index}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Hora inicio
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="startsAtTime"
+                  required
+                  type="time"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Hora fin
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="endsAtTime"
+                  required
+                  type="time"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Duración
+                <select
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  defaultValue="60"
+                  name="slotDurationMinutes"
+                  required
+                >
+                  <option className="bg-[#08111f]" value="30">
+                    30 minutos
+                  </option>
+                  <option className="bg-[#08111f]" value="45">
+                    45 minutos
+                  </option>
+                  <option className="bg-[#08111f]" value="60">
+                    60 minutos
+                  </option>
+                  <option className="bg-[#08111f]" value="90">
+                    90 minutos
+                  </option>
+                </select>
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Separación
+                <select
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  defaultValue="0"
+                  name="bufferMinutes"
+                  required
+                >
+                  <option className="bg-[#08111f]" value="0">
+                    Sin pausa
+                  </option>
+                  <option className="bg-[#08111f]" value="15">
+                    15 minutos
+                  </option>
+                  <option className="bg-[#08111f]" value="30">
+                    30 minutos
+                  </option>
+                </select>
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Zona horaria
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  defaultValue={defaultMentorshipTimezone}
+                  name="timezone"
+                  required
+                  type="text"
+                />
+              </label>
+              <button className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-black transition hover:bg-white md:col-span-2 xl:col-span-3 xl:w-fit">
+                Guardar regla
+              </button>
+            </form>
+          </div>
+
+          <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4">
+            <h3 className="text-base font-semibold text-white">
+              Generar calendario
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+              Crea horarios reservables usando las reglas activas y respetando
+              los bloqueos manuales.
+            </p>
+            <form action={generateSlotsFromRulesAction} className="mt-5 grid gap-4">
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Desde
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="startsOn"
+                  required
+                  type="date"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Hasta
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="endsOn"
+                  required
+                  type="date"
+                />
+              </label>
+              <button className="inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--color-cyan)] px-5 text-sm font-semibold text-white transition hover:bg-[var(--color-cyan)] hover:text-black">
+                Generar horarios
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-3">
+          {availabilityRules.map((rule) => (
+            <article
+              className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
+              key={rule.id}
+            >
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-sm font-semibold text-white">
+                      {dayLabels[rule.dayOfWeek]} ·{" "}
+                      {formatRuleTime(rule.startsAtTime)} -{" "}
+                      {formatRuleTime(rule.endsAtTime)}
+                    </h3>
+                    <AdminStatusBadge tone={getAvailabilityRuleTone(rule.status)}>
+                      {rule.status === "active" ? "Activa" : "Pausada"}
+                    </AdminStatusBadge>
+                  </div>
+                  <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                    {rule.slotDurationMinutes} minutos por mentoría ·{" "}
+                    {rule.bufferMinutes} minutos de separación · {rule.timezone}
+                  </p>
+                </div>
+                <AvailabilityRuleActions rule={rule} />
+              </div>
+            </article>
+          ))}
+          {availabilityRules.length === 0 ? (
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              Aún no hay reglas predeterminadas.
+            </p>
+          ) : null}
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          <div className="min-w-0">
+            <h2 className="text-xl font-semibold text-white">
+              Bloqueos manuales
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+              Marca fechas u horarios que no deben estar disponibles aunque
+              coincidan con tu calendario predeterminado.
+            </p>
+            <form
+              action={createBlockedWindowAction}
+              className="mt-5 grid gap-4 md:grid-cols-2"
+            >
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Fecha
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="blockedDate"
+                  required
+                  type="date"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Zona horaria
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  defaultValue={defaultMentorshipTimezone}
+                  name="blockedTimezone"
+                  required
+                  type="text"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Desde
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="blockedStartsAt"
+                  required
+                  type="time"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white">
+                Hasta
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="blockedEndsAt"
+                  required
+                  type="time"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-white md:col-span-2">
+                Motivo interno
+                <input
+                  className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
+                  name="reason"
+                  placeholder="Ej. reunión, viaje, preparación interna"
+                  type="text"
+                />
+              </label>
+              <button className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-black transition hover:bg-white md:col-span-2 md:w-fit">
+                Aplicar bloqueo
+              </button>
+            </form>
+          </div>
+
+          <div className="grid min-w-0 gap-3">
+            {blockedWindows.map((blockedWindow) => (
+              <article
+                className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
+                key={blockedWindow.id}
+              >
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="break-words text-sm font-semibold text-white">
+                        {formatDateTime(
+                          blockedWindow.startsAt,
+                          blockedWindow.timezone,
+                        )}{" "}
+                        -{" "}
+                        {formatDateTime(
+                          blockedWindow.endsAt,
+                          blockedWindow.timezone,
+                        )}
+                      </h3>
+                      <AdminStatusBadge
+                        tone={getBlockedWindowTone(blockedWindow.status)}
+                      >
+                        {blockedWindow.status === "active"
+                          ? "Activo"
+                          : "Cancelado"}
+                      </AdminStatusBadge>
+                    </div>
+                    <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                      {blockedWindow.reason ?? "Sin motivo interno."}
+                    </p>
+                  </div>
+                  <BlockedWindowActions blockedWindow={blockedWindow} />
+                </div>
+              </article>
+            ))}
+            {blockedWindows.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                Aún no hay bloqueos manuales.
+              </p>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
+        <h2 className="text-xl font-semibold text-white">Crear horario puntual</h2>
         <form action={createSlotAction} className="mt-5 grid gap-4 lg:grid-cols-5">
           <label className="grid gap-2 text-sm font-semibold text-white">
             Fecha
