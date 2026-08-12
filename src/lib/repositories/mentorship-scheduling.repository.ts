@@ -10,6 +10,7 @@ import type {
   MentorshipAvailabilityRuleCreateInput,
   MentorshipAvailabilityRuleStatus,
   MentorshipAvailabilityRuleStatusUpdateInput,
+  MentorshipAvailabilityRuleUpdateInput,
   MentorshipBlockedWindow,
   MentorshipBlockedWindowCreateInput,
   MentorshipBlockedWindowStatus,
@@ -552,6 +553,45 @@ export const MentorshipSchedulingRepository = {
     }
 
     return mapAvailabilityRule(data as MentorshipAvailabilityRuleRow);
+  },
+
+  async updateAvailabilityRule(
+    input: MentorshipAvailabilityRuleUpdateInput,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<MentorshipAvailabilityRule> {
+    const { data, error } = await supabase
+      .from("academy_mentorship_availability_rules")
+      .update({
+        buffer_minutes: input.bufferMinutes,
+        day_of_week: input.dayOfWeek,
+        ends_at_time: input.endsAtTime,
+        slot_duration_minutes: input.slotDurationMinutes,
+        starts_at_time: input.startsAtTime,
+        timezone: input.timezone,
+      })
+      .eq("id", input.id)
+      .select(availabilityRuleSelect)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return mapAvailabilityRule(data as MentorshipAvailabilityRuleRow);
+  },
+
+  async deleteAvailabilityRule(
+    id: string,
+    supabase: SupabaseClient<Database> = getSupabaseClient(),
+  ): Promise<void> {
+    const { error } = await supabase
+      .from("academy_mentorship_availability_rules")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      throw error;
+    }
   },
 
   async listBlockedWindows(

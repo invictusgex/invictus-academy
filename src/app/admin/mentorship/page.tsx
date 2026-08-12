@@ -33,10 +33,10 @@ const dayLabels = [
   "Domingo",
   "Lunes",
   "Martes",
-  "Miércoles",
+  "MiÃ©rcoles",
   "Jueves",
   "Viernes",
-  "Sábado",
+  "SÃ¡bado",
 ];
 
 function redirectWithMessage(message: string): never {
@@ -100,6 +100,42 @@ function getString(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function getSlotActionMessage(error: unknown) {
+  if (error instanceof Error) {
+    if (error.message === "MENTORSHIP_SLOT_OVERLAPS_EXISTING") {
+      return "Ya existe un horario creado dentro de ese rango.";
+    }
+
+    return error.message;
+  }
+
+  return "No pudimos publicar el horario.";
+}
+
+function getAvailabilityRuleActionMessage(error: unknown) {
+  if (!(error instanceof Error)) {
+    return "No pudimos guardar esa regla de disponibilidad.";
+  }
+
+  if (error.message === "MENTORSHIP_RULE_OVERLAPS_ACTIVE_RULE") {
+    return "Ya existe una regla activa para ese dÃ­a y horario. Edita la regla existente o pÃ¡usala antes de crear otra.";
+  }
+
+  if (error.message === "MENTORSHIP_RULE_DUPLICATE") {
+    return "Ya existe una regla con ese mismo dÃ­a, horario, duraciÃ³n, separaciÃ³n y zona horaria.";
+  }
+
+  if (error.message === "MENTORSHIP_RULE_TIME_RANGE_INVALID") {
+    return "La hora de fin debe ser posterior a la hora de inicio.";
+  }
+
+  if (error.message === "MENTORSHIP_RULE_NOT_FOUND") {
+    return "No encontramos esa regla de disponibilidad.";
+  }
+
+  return "No pudimos guardar esa regla de disponibilidad.";
+}
+
 async function createSlotAction(formData: FormData) {
   "use server";
 
@@ -129,10 +165,7 @@ async function createSlotAction(formData: FormData) {
     );
     revalidatePath(adminMentorshipPath);
   } catch (error) {
-    message =
-      error instanceof Error
-        ? error.message
-        : "No pudimos publicar el horario.";
+    message = getSlotActionMessage(error);
   }
 
   redirectWithMessage(message);
@@ -187,8 +220,40 @@ async function createAvailabilityRuleAction(formData: FormData) {
       supabase,
     );
     revalidatePath(adminMentorshipPath);
-  } catch {
-    message = "No pudimos crear la regla de disponibilidad.";
+  } catch (error) {
+    message = getAvailabilityRuleActionMessage(error);
+  }
+
+  redirectWithMessage(message);
+}
+
+async function updateAvailabilityRuleAction(formData: FormData) {
+  "use server";
+
+  const { supabase } = await requireAdminServerContext();
+  const dayOfWeek = Number(getString(formData, "dayOfWeek"));
+  const slotDurationMinutes = Number(
+    getString(formData, "slotDurationMinutes") || "60",
+  );
+  const bufferMinutes = Number(getString(formData, "bufferMinutes") || "0");
+  let message = "Regla de disponibilidad editada.";
+
+  try {
+    await MentorshipSchedulingService.updateAvailabilityRule(
+      {
+        bufferMinutes,
+        dayOfWeek,
+        endsAtTime: getString(formData, "endsAtTime"),
+        id: getString(formData, "ruleId"),
+        slotDurationMinutes,
+        startsAtTime: getString(formData, "startsAtTime"),
+        timezone: getString(formData, "timezone"),
+      },
+      supabase,
+    );
+    revalidatePath(adminMentorshipPath);
+  } catch (error) {
+    message = getAvailabilityRuleActionMessage(error);
   }
 
   redirectWithMessage(message);
@@ -214,8 +279,27 @@ async function updateAvailabilityRuleStatusAction(formData: FormData) {
       supabase,
     );
     revalidatePath(adminMentorshipPath);
+  } catch (error) {
+    message = getAvailabilityRuleActionMessage(error);
+  }
+
+  redirectWithMessage(message);
+}
+
+async function deleteAvailabilityRuleAction(formData: FormData) {
+  "use server";
+
+  const { supabase } = await requireAdminServerContext();
+  let message = "Regla de disponibilidad eliminada.";
+
+  try {
+    await MentorshipSchedulingService.deleteAvailabilityRule(
+      getString(formData, "ruleId"),
+      supabase,
+    );
+    revalidatePath(adminMentorshipPath);
   } catch {
-    message = "No pudimos actualizar esa regla.";
+    message = "No pudimos eliminar esa regla.";
   }
 
   redirectWithMessage(message);
@@ -396,6 +480,38 @@ function formatDateTime(value: string, timezone: string) {
   }).format(new Date(value));
 }
 
+function formatDateOnly(value: string, timezone: string) {
+  return new Intl.DateTimeFormat("es", {
+    dateStyle: "medium",
+    timeZone: timezone,
+  }).format(new Date(value));
+}
+
+function formatTimeOnly(value: string, timezone: string) {
+  return new Intl.DateTimeFormat("es", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: timezone,
+  }).format(new Date(value));
+}
+
+function formatDateTimeRange(
+  startsAt: string,
+  endsAt: string,
+  timezone: string,
+) {
+  const startDate = formatDateOnly(startsAt, timezone);
+  const endDate = formatDateOnly(endsAt, timezone);
+  const startTime = formatTimeOnly(startsAt, timezone);
+  const endTime = formatTimeOnly(endsAt, timezone);
+
+  if (startDate === endDate) {
+    return `${startDate} Â· ${startTime} - ${endTime}`;
+  }
+
+  return `${startDate}, ${startTime} - ${endDate}, ${endTime}`;
+}
+
 function getSlotTone(status: MentorshipSlotStatus) {
   if (status === "available") {
     return "success";
@@ -440,6 +556,13 @@ function formatRuleTime(value: string) {
   return value.slice(0, 5);
 }
 
+const slotStatusLabels: Record<MentorshipSlotStatus, string> = {
+  available: "Disponible",
+  booked: "Reservado",
+  blocked: "Bloqueado",
+  cancelled: "Cancelado",
+};
+
 function findBookingForSlot(
   slot: MentorshipSlot,
   bookings: AdminMentorshipBooking[],
@@ -449,6 +572,40 @@ function findBookingForSlot(
       (booking) => booking.slotId === slot.id && booking.status === "confirmed",
     ) ?? null
   );
+}
+
+function getSlotStatusCount(slots: MentorshipSlot[], status: MentorshipSlotStatus) {
+  return slots.filter((slot) => slot.status === status).length;
+}
+
+function groupSlotsByDate(slots: MentorshipSlot[]) {
+  const groups = new Map<
+    string,
+    {
+      dateLabel: string;
+      slots: MentorshipSlot[];
+      timezone: string;
+    }
+  >();
+
+  slots.forEach((slot) => {
+    const dateLabel = formatDateOnly(slot.startsAt, slot.timezone);
+    const key = `${dateLabel}:${slot.timezone}`;
+    const group = groups.get(key);
+
+    if (group) {
+      group.slots.push(slot);
+      return;
+    }
+
+    groups.set(key, {
+      dateLabel,
+      slots: [slot],
+      timezone: slot.timezone,
+    });
+  });
+
+  return Array.from(groups.values());
 }
 
 function SummaryCard({
@@ -518,17 +675,127 @@ function AvailabilityRuleActions({
   rule: MentorshipAvailabilityRule;
 }) {
   return (
-    <form action={updateAvailabilityRuleStatusAction}>
-      <input name="ruleId" type="hidden" value={rule.id} />
-      <input
-        name="status"
-        type="hidden"
-        value={rule.status === "active" ? "inactive" : "active"}
-      />
-      <button className="rounded-full border border-[var(--color-border)] px-3 py-2 text-xs font-semibold text-white transition hover:border-[var(--color-cyan)]">
-        {rule.status === "active" ? "Pausar regla" : "Activar regla"}
-      </button>
-    </form>
+    <div className="grid gap-3">
+      <div className="flex flex-wrap gap-2 lg:justify-end">
+        <form action={updateAvailabilityRuleStatusAction}>
+          <input name="ruleId" type="hidden" value={rule.id} />
+          <input
+            name="status"
+            type="hidden"
+            value={rule.status === "active" ? "inactive" : "active"}
+          />
+          <button className="rounded-full border border-[var(--color-border)] px-3 py-2 text-xs font-semibold text-white transition hover:border-[var(--color-cyan)]">
+            {rule.status === "active" ? "Pausar regla" : "Activar regla"}
+          </button>
+        </form>
+        <form action={deleteAvailabilityRuleAction}>
+          <input name="ruleId" type="hidden" value={rule.id} />
+          <button className="rounded-full border border-red-200/30 px-3 py-2 text-xs font-semibold text-red-200 transition hover:border-red-200">
+            Eliminar regla
+          </button>
+        </form>
+      </div>
+      <details className="group rounded-xl border border-[var(--color-border)] bg-black/20 p-3">
+        <summary className="cursor-pointer list-none text-xs font-semibold text-[var(--color-cyan)] transition hover:text-white">
+          Editar regla
+        </summary>
+        <form
+          action={updateAvailabilityRuleAction}
+          className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3"
+        >
+          <input name="ruleId" type="hidden" value={rule.id} />
+          <label className="grid gap-2 text-xs font-semibold text-white">
+            DÃ­a
+            <select
+              className="min-h-10 rounded-xl border border-[var(--color-border)] bg-[#08111f] px-3 text-sm text-white"
+              defaultValue={rule.dayOfWeek}
+              name="dayOfWeek"
+              required
+            >
+              {dayLabels.map((label, index) => (
+                <option className="bg-[#08111f]" key={label} value={index}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-2 text-xs font-semibold text-white">
+            Inicio
+            <input
+              className="min-h-10 rounded-xl border border-[var(--color-border)] bg-black/20 px-3 text-sm text-white"
+              defaultValue={formatRuleTime(rule.startsAtTime)}
+              name="startsAtTime"
+              required
+              type="time"
+            />
+          </label>
+          <label className="grid gap-2 text-xs font-semibold text-white">
+            Fin
+            <input
+              className="min-h-10 rounded-xl border border-[var(--color-border)] bg-black/20 px-3 text-sm text-white"
+              defaultValue={formatRuleTime(rule.endsAtTime)}
+              name="endsAtTime"
+              required
+              type="time"
+            />
+          </label>
+          <label className="grid gap-2 text-xs font-semibold text-white">
+            DuraciÃ³n
+            <select
+              className="min-h-10 rounded-xl border border-[var(--color-border)] bg-[#08111f] px-3 text-sm text-white"
+              defaultValue={rule.slotDurationMinutes}
+              name="slotDurationMinutes"
+              required
+            >
+              <option className="bg-[#08111f]" value="30">
+                30 minutos
+              </option>
+              <option className="bg-[#08111f]" value="45">
+                45 minutos
+              </option>
+              <option className="bg-[#08111f]" value="60">
+                60 minutos
+              </option>
+              <option className="bg-[#08111f]" value="90">
+                90 minutos
+              </option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-xs font-semibold text-white">
+            SeparaciÃ³n
+            <select
+              className="min-h-10 rounded-xl border border-[var(--color-border)] bg-[#08111f] px-3 text-sm text-white"
+              defaultValue={rule.bufferMinutes}
+              name="bufferMinutes"
+              required
+            >
+              <option className="bg-[#08111f]" value="0">
+                Sin pausa
+              </option>
+              <option className="bg-[#08111f]" value="15">
+                15 minutos
+              </option>
+              <option className="bg-[#08111f]" value="30">
+                30 minutos
+              </option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-xs font-semibold text-white">
+            Zona horaria
+            <input
+              className="min-h-10 rounded-xl border border-[var(--color-border)] bg-black/20 px-3 text-sm text-white"
+              defaultValue={rule.timezone}
+              name="timezone"
+              required
+              type="text"
+            />
+          </label>
+          <button className="inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--color-cyan)] px-4 text-xs font-semibold text-white transition hover:bg-[var(--color-cyan)] hover:text-black md:col-span-2 xl:col-span-3 xl:w-fit">
+            Guardar cambios
+          </button>
+        </form>
+      </details>
+    </div>
   );
 }
 
@@ -607,7 +874,7 @@ function PrivateNotesForm({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <h4 className="text-base font-semibold text-white">
-            Preparación y cierre de mentoría
+            PreparaciÃ³n y cierre de mentorÃ­a
           </h4>
           <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
             Estas notas son internas y no son visibles para el participante.
@@ -635,7 +902,7 @@ function PrivateNotesForm({
               Proximos pasos
             </p>
             <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--color-text-secondary)]">
-              {note?.nextSteps ?? "Sin próximos pasos documentados."}
+              {note?.nextSteps ?? "Sin prÃ³ximos pasos documentados."}
             </p>
           </div>
         </div>
@@ -644,7 +911,7 @@ function PrivateNotesForm({
       <form action={savePrivateNoteAction} className="mt-5 grid gap-4">
         <input name="bookingId" type="hidden" value={booking.id} />
         <label className="grid gap-2 text-sm font-semibold text-white">
-          Preparación de la sesión
+          PreparaciÃ³n de la sesiÃ³n
           <textarea
             className="min-h-32 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
             defaultValue={note?.preparationNotes ?? ""}
@@ -707,8 +974,8 @@ function ParticipantOutcomeForm({
           Cierre visible para el participante
         </h4>
         <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-          Este contenido sí será visible para el participante cuando lo
-          compartas. No se copia automáticamente desde las notas privadas.
+          Este contenido sÃ­ serÃ¡ visible para el participante cuando lo
+          compartas. No se copia automÃ¡ticamente desde las notas privadas.
         </p>
         {outcome?.sharedAt ? (
           <p className="mt-2 text-sm text-[var(--color-cyan)]">
@@ -720,7 +987,7 @@ function ParticipantOutcomeForm({
       <form action={shareParticipantOutcomeAction} className="mt-5 grid gap-4">
         <input name="bookingId" type="hidden" value={booking.id} />
         <label className="grid gap-2 text-sm font-semibold text-white">
-          Resumen de la sesión
+          Resumen de la sesiÃ³n
           <textarea
             className="min-h-56 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
             defaultValue={outcome?.summary ?? ""}
@@ -728,7 +995,7 @@ function ParticipantOutcomeForm({
           />
         </label>
         <label className="grid gap-2 text-sm font-semibold text-white">
-          Próximos pasos
+          PrÃ³ximos pasos
           <textarea
             className="min-h-56 min-w-0 resize-y rounded-xl border border-[var(--color-border)] bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none focus:border-[var(--color-cyan)]"
             defaultValue={outcome?.nextSteps ?? ""}
@@ -797,11 +1064,12 @@ export default async function AdminMentorshipRoute({
   const activeBlockedWindows = blockedWindows.filter(
     (blockedWindow) => blockedWindow.status === "active",
   );
+  const slotDateGroups = groupSlotsByDate(slots);
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader eyebrow="Mentorías" title="Agenda de mentorías">
-        Gestiona la disponibilidad y el historial de reservas de mentoría
+      <AdminPageHeader eyebrow="MentorÃ­as" title="Agenda de mentorÃ­as">
+        Gestiona la disponibilidad y el historial de reservas de mentorÃ­a
         individual.
       </AdminPageHeader>
 
@@ -836,8 +1104,8 @@ export default async function AdminMentorshipRoute({
               Disponibilidad predeterminada
             </h2>
             <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-              Define los días y rangos habituales en los que estarás disponible.
-              Luego puedes generar horarios reales para las próximas semanas.
+              Define los dÃ­as y rangos habituales en los que estarÃ¡s disponible.
+              Luego puedes generar horarios reales para las prÃ³ximas semanas.
             </p>
 
             <form
@@ -845,7 +1113,7 @@ export default async function AdminMentorshipRoute({
               className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3"
             >
               <label className="grid gap-2 text-sm font-semibold text-white">
-                Día
+                DÃ­a
                 <select
                   className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
                   name="dayOfWeek"
@@ -877,7 +1145,7 @@ export default async function AdminMentorshipRoute({
                 />
               </label>
               <label className="grid gap-2 text-sm font-semibold text-white">
-                Duración
+                DuraciÃ³n
                 <select
                   className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
                   defaultValue="60"
@@ -899,7 +1167,7 @@ export default async function AdminMentorshipRoute({
                 </select>
               </label>
               <label className="grid gap-2 text-sm font-semibold text-white">
-                Separación
+                SeparaciÃ³n
                 <select
                   className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
                   defaultValue="0"
@@ -977,7 +1245,7 @@ export default async function AdminMentorshipRoute({
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-sm font-semibold text-white">
-                      {dayLabels[rule.dayOfWeek]} ·{" "}
+                      {dayLabels[rule.dayOfWeek]} Â·{" "}
                       {formatRuleTime(rule.startsAtTime)} -{" "}
                       {formatRuleTime(rule.endsAtTime)}
                     </h3>
@@ -986,8 +1254,8 @@ export default async function AdminMentorshipRoute({
                     </AdminStatusBadge>
                   </div>
                   <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-                    {rule.slotDurationMinutes} minutos por mentoría ·{" "}
-                    {rule.bufferMinutes} minutos de separación · {rule.timezone}
+                    {rule.slotDurationMinutes} minutos por mentorÃ­a Â·{" "}
+                    {rule.bufferMinutes} minutos de separaciÃ³n Â· {rule.timezone}
                   </p>
                 </div>
                 <AvailabilityRuleActions rule={rule} />
@@ -996,7 +1264,7 @@ export default async function AdminMentorshipRoute({
           ))}
           {availabilityRules.length === 0 ? (
             <p className="text-sm text-[var(--color-text-secondary)]">
-              Aún no hay reglas predeterminadas.
+              AÃºn no hay reglas predeterminadas.
             </p>
           ) : null}
         </div>
@@ -1058,7 +1326,7 @@ export default async function AdminMentorshipRoute({
                 <input
                   className="min-h-11 rounded-xl border border-[var(--color-border)] bg-black/20 px-4 text-sm text-white"
                   name="reason"
-                  placeholder="Ej. reunión, viaje, preparación interna"
+                  placeholder="Ej. reuniÃ³n, viaje, preparaciÃ³n interna"
                   type="text"
                 />
               </label>
@@ -1078,12 +1346,8 @@ export default async function AdminMentorshipRoute({
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="break-words text-sm font-semibold text-white">
-                        {formatDateTime(
+                        {formatDateTimeRange(
                           blockedWindow.startsAt,
-                          blockedWindow.timezone,
-                        )}{" "}
-                        -{" "}
-                        {formatDateTime(
                           blockedWindow.endsAt,
                           blockedWindow.timezone,
                         )}
@@ -1106,7 +1370,7 @@ export default async function AdminMentorshipRoute({
             ))}
             {blockedWindows.length === 0 ? (
               <p className="text-sm text-[var(--color-text-secondary)]">
-                Aún no hay bloqueos manuales.
+                AÃºn no hay bloqueos manuales.
               </p>
             ) : null}
           </div>
@@ -1162,47 +1426,92 @@ export default async function AdminMentorshipRoute({
       <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-bg)] p-5 sm:p-6">
         <h2 className="text-xl font-semibold text-white">Horarios</h2>
         <div className="mt-5 grid gap-3">
-          {slots.map((slot) => {
-            const booking = findBookingForSlot(slot, bookings);
+          {slotDateGroups.map((group) => {
+            const availableCount = getSlotStatusCount(group.slots, "available");
+            const bookedCount = getSlotStatusCount(group.slots, "booked");
+            const blockedCount = getSlotStatusCount(group.slots, "blocked");
+            const cancelledCount = getSlotStatusCount(group.slots, "cancelled");
 
             return (
-              <article
-                className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
-                key={slot.id}
+              <details
+                className="group rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-4"
+                key={`${group.dateLabel}:${group.timezone}`}
               >
-                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
+                <summary className="cursor-pointer list-none">
+                  <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+                    <div className="min-w-0">
                       <h3 className="break-words text-sm font-semibold text-white">
-                        {formatDateTime(slot.startsAt, slot.timezone)} -{" "}
-                        {formatDateTime(slot.endsAt, slot.timezone)}
+                        {group.dateLabel}
                       </h3>
-                      <AdminStatusBadge tone={getSlotTone(slot.status)}>
-                        {slot.status}
+                      <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                        {group.slots.length} horarios Â· Zona del mentor:{" "}
+                        {group.timezone}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <AdminStatusBadge tone="success">
+                        {`${availableCount} disponibles`}
+                      </AdminStatusBadge>
+                      <AdminStatusBadge tone="warning">
+                        {`${bookedCount} reservados`}
+                      </AdminStatusBadge>
+                      <AdminStatusBadge tone="neutral">
+                        {`${blockedCount} bloqueados`}
+                      </AdminStatusBadge>
+                      <AdminStatusBadge tone="danger">
+                        {`${cancelledCount} cancelados`}
                       </AdminStatusBadge>
                     </div>
-                    <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-                      Zona del mentor: {slot.timezone}
-                    </p>
-                    {booking ? (
-                      <p className="mt-2 break-words text-sm text-[var(--color-text-secondary)]">
-                        Reserva: {booking.participantName ?? "Participante"} ·{" "}
-                        {booking.participantEmail ?? "Sin email"} ·{" "}
-                        {booking.productTitle ?? "Programa"}
-                      </p>
-                    ) : null}
                   </div>
-                  <SlotActions
-                    isFuture={new Date(slot.startsAt).getTime() > nowTime}
-                    slot={slot}
-                  />
+                </summary>
+
+                <div className="mt-4 grid gap-3 border-t border-[var(--color-border)] pt-4">
+                  {group.slots.map((slot) => {
+                    const booking = findBookingForSlot(slot, bookings);
+
+                    return (
+                      <article
+                        className="min-w-0 rounded-xl border border-[var(--color-border)] bg-black/20 p-4"
+                        key={slot.id}
+                      >
+                        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h4 className="break-words text-sm font-semibold text-white">
+                                {formatDateTimeRange(
+                                  slot.startsAt,
+                                  slot.endsAt,
+                                  slot.timezone,
+                                )}
+                              </h4>
+                              <AdminStatusBadge tone={getSlotTone(slot.status)}>
+                                {slotStatusLabels[slot.status]}
+                              </AdminStatusBadge>
+                            </div>
+                            {booking ? (
+                              <p className="mt-2 break-words text-sm text-[var(--color-text-secondary)]">
+                                Reserva:{" "}
+                                {booking.participantName ?? "Participante"} Â·{" "}
+                                {booking.participantEmail ?? "Sin email"} Â·{" "}
+                                {booking.productTitle ?? "Programa"}
+                              </p>
+                            ) : null}
+                          </div>
+                          <SlotActions
+                            isFuture={new Date(slot.startsAt).getTime() > nowTime}
+                            slot={slot}
+                          />
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
-              </article>
+              </details>
             );
           })}
           {slots.length === 0 ? (
             <p className="text-sm text-[var(--color-text-secondary)]">
-              Aún no hay horarios creados.
+              AÃºn no hay horarios creados.
             </p>
           ) : null}
         </div>
@@ -1231,13 +1540,11 @@ export default async function AdminMentorshipRoute({
                   </p>
                   <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
                     {booking.slotStartsAt && booking.slotEndsAt
-                      ? `${formatDateTime(
+                      ? formatDateTimeRange(
                           booking.slotStartsAt,
-                          booking.participantTimezone,
-                        )} - ${formatDateTime(
                           booking.slotEndsAt,
                           booking.participantTimezone,
-                        )}`
+                        )
                       : "Horario no disponible"}
                   </p>
                   <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
@@ -1272,7 +1579,7 @@ export default async function AdminMentorshipRoute({
           ))}
           {bookings.length === 0 ? (
             <p className="text-sm text-[var(--color-text-secondary)]">
-              Aún no hay reservas registradas.
+              AÃºn no hay reservas registradas.
             </p>
           ) : null}
         </div>

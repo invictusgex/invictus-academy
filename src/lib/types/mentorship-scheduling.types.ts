@@ -92,6 +92,16 @@ export type MentorshipAvailabilityRuleCreateInput = {
   timezone: string;
 };
 
+export type MentorshipAvailabilityRuleUpdateInput = {
+  bufferMinutes: number;
+  dayOfWeek: number;
+  endsAtTime: string;
+  id: string;
+  slotDurationMinutes: number;
+  startsAtTime: string;
+  timezone: string;
+};
+
 export type MentorshipAvailabilityRuleStatusUpdateInput = {
   id: string;
   status: MentorshipAvailabilityRuleStatus;

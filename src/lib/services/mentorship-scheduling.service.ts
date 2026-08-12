@@ -9,6 +9,7 @@ import type {
   MentorshipAvailabilityRule,
   MentorshipAvailabilityRuleCreateInput,
   MentorshipAvailabilityRuleStatusUpdateInput,
+  MentorshipAvailabilityRuleUpdateInput,
   MentorshipBlockedWindow,
   MentorshipBlockedWindowCreateInput,
   MentorshipBlockedWindowStatusUpdateInput,
@@ -186,6 +187,101 @@ function hasExistingSlotOverlap(
   );
 }
 
+function ruleTimesOverlap(
+  candidate: Pick<
+    MentorshipAvailabilityRule,
+    "endsAtTime" | "startsAtTime"
+  >,
+  existing: Pick<MentorshipAvailabilityRule, "endsAtTime" | "startsAtTime">,
+) {
+  return (
+    timeToMinutes(candidate.startsAtTime) < timeToMinutes(existing.endsAtTime) &&
+    timeToMinutes(candidate.endsAtTime) > timeToMinutes(existing.startsAtTime)
+  );
+}
+
+function assertAvailabilityRuleShape(
+  input: Pick<
+    MentorshipAvailabilityRule,
+    | "bufferMinutes"
+    | "dayOfWeek"
+    | "endsAtTime"
+    | "slotDurationMinutes"
+    | "startsAtTime"
+    | "timezone"
+  >,
+) {
+  assertNonEmpty(input.timezone, "MENTORSHIP_RULE_TIMEZONE_REQUIRED");
+  assertTimeValue(input.startsAtTime, "MENTORSHIP_RULE_START_TIME_INVALID");
+  assertTimeValue(input.endsAtTime, "MENTORSHIP_RULE_END_TIME_INVALID");
+
+  if (input.dayOfWeek < 0 || input.dayOfWeek > 6) {
+    throw new Error("MENTORSHIP_RULE_DAY_INVALID");
+  }
+
+  if (input.slotDurationMinutes < 15 || input.slotDurationMinutes > 240) {
+    throw new Error("MENTORSHIP_RULE_DURATION_INVALID");
+  }
+
+  if (input.bufferMinutes < 0 || input.bufferMinutes > 120) {
+    throw new Error("MENTORSHIP_RULE_BUFFER_INVALID");
+  }
+
+  if (timeToMinutes(input.endsAtTime) <= timeToMinutes(input.startsAtTime)) {
+    throw new Error("MENTORSHIP_RULE_TIME_RANGE_INVALID");
+  }
+}
+
+function assertNoActiveAvailabilityRuleOverlap(
+  input: Pick<
+    MentorshipAvailabilityRule,
+    "dayOfWeek" | "endsAtTime" | "id" | "startsAtTime" | "timezone"
+  >,
+  rules: MentorshipAvailabilityRule[],
+) {
+  const overlappingRule = rules.find(
+    (rule) =>
+      rule.id !== input.id &&
+      rule.status === "active" &&
+      rule.dayOfWeek === input.dayOfWeek &&
+      rule.timezone === input.timezone &&
+      ruleTimesOverlap(input, rule),
+  );
+
+  if (overlappingRule) {
+    throw new Error("MENTORSHIP_RULE_OVERLAPS_ACTIVE_RULE");
+  }
+}
+
+function assertNoExactAvailabilityRuleDuplicate(
+  input: Pick<
+    MentorshipAvailabilityRule,
+    | "bufferMinutes"
+    | "dayOfWeek"
+    | "endsAtTime"
+    | "id"
+    | "slotDurationMinutes"
+    | "startsAtTime"
+    | "timezone"
+  >,
+  rules: MentorshipAvailabilityRule[],
+) {
+  const duplicateRule = rules.find(
+    (rule) =>
+      rule.id !== input.id &&
+      rule.dayOfWeek === input.dayOfWeek &&
+      timeToMinutes(rule.startsAtTime) === timeToMinutes(input.startsAtTime) &&
+      timeToMinutes(rule.endsAtTime) === timeToMinutes(input.endsAtTime) &&
+      rule.timezone === input.timezone &&
+      rule.slotDurationMinutes === input.slotDurationMinutes &&
+      rule.bufferMinutes === input.bufferMinutes,
+  );
+
+  if (duplicateRule) {
+    throw new Error("MENTORSHIP_RULE_DUPLICATE");
+  }
+}
+
 function buildSlotsFromRule(
   date: string,
   rule: MentorshipAvailabilityRule,
@@ -268,6 +364,17 @@ export const MentorshipSchedulingService = {
     assertNonEmpty(input.timezone, "MENTORSHIP_SLOT_TIMEZONE_REQUIRED");
     assertFutureRange(input.startsAt, input.endsAt);
 
+    const existingSlots =
+      await MentorshipSchedulingRepository.listAdminSlotsBetween(
+        input.startsAt,
+        input.endsAt,
+        supabase,
+      );
+
+    if (hasExistingSlotOverlap(input.startsAt, input.endsAt, existingSlots)) {
+      throw new Error("MENTORSHIP_SLOT_OVERLAPS_EXISTING");
+    }
+
     return MentorshipSchedulingRepository.createAdminSlot(input, supabase);
   },
 
@@ -282,27 +389,43 @@ export const MentorshipSchedulingService = {
     supabase?: SupabaseClient<Database>,
   ): Promise<MentorshipAvailabilityRule> {
     assertNonEmpty(input.createdBy, "MENTORSHIP_RULE_CREATED_BY_REQUIRED");
-    assertNonEmpty(input.timezone, "MENTORSHIP_RULE_TIMEZONE_REQUIRED");
-    assertTimeValue(input.startsAtTime, "MENTORSHIP_RULE_START_TIME_INVALID");
-    assertTimeValue(input.endsAtTime, "MENTORSHIP_RULE_END_TIME_INVALID");
+    assertAvailabilityRuleShape(input);
 
-    if (input.dayOfWeek < 0 || input.dayOfWeek > 6) {
-      throw new Error("MENTORSHIP_RULE_DAY_INVALID");
-    }
+    const rules =
+      await MentorshipSchedulingRepository.listAvailabilityRules(supabase);
 
-    if (input.slotDurationMinutes < 15 || input.slotDurationMinutes > 240) {
-      throw new Error("MENTORSHIP_RULE_DURATION_INVALID");
-    }
-
-    if (input.bufferMinutes < 0 || input.bufferMinutes > 120) {
-      throw new Error("MENTORSHIP_RULE_BUFFER_INVALID");
-    }
-
-    if (timeToMinutes(input.endsAtTime) <= timeToMinutes(input.startsAtTime)) {
-      throw new Error("MENTORSHIP_RULE_TIME_RANGE_INVALID");
-    }
+    assertNoActiveAvailabilityRuleOverlap(
+      {
+        ...input,
+        id: "",
+      },
+      rules,
+    );
+    assertNoExactAvailabilityRuleDuplicate(
+      {
+        ...input,
+        id: "",
+      },
+      rules,
+    );
 
     return MentorshipSchedulingRepository.createAvailabilityRule(input, supabase);
+  },
+
+  async updateAvailabilityRule(
+    input: MentorshipAvailabilityRuleUpdateInput,
+    supabase?: SupabaseClient<Database>,
+  ): Promise<MentorshipAvailabilityRule> {
+    assertNonEmpty(input.id, "MENTORSHIP_RULE_ID_REQUIRED");
+    assertAvailabilityRuleShape(input);
+
+    const rules =
+      await MentorshipSchedulingRepository.listAvailabilityRules(supabase);
+
+    assertNoActiveAvailabilityRuleOverlap(input, rules);
+    assertNoExactAvailabilityRuleDuplicate(input, rules);
+
+    return MentorshipSchedulingRepository.updateAvailabilityRule(input, supabase);
   },
 
   async setAvailabilityRuleStatus(
@@ -311,10 +434,31 @@ export const MentorshipSchedulingService = {
   ): Promise<MentorshipAvailabilityRule> {
     assertNonEmpty(input.id, "MENTORSHIP_RULE_ID_REQUIRED");
 
+    if (input.status === "active") {
+      const rules =
+        await MentorshipSchedulingRepository.listAvailabilityRules(supabase);
+      const rule = rules.find((availabilityRule) => availabilityRule.id === input.id);
+
+      if (!rule) {
+        throw new Error("MENTORSHIP_RULE_NOT_FOUND");
+      }
+
+      assertNoActiveAvailabilityRuleOverlap(rule, rules);
+    }
+
     return MentorshipSchedulingRepository.updateAvailabilityRuleStatus(
       input,
       supabase,
     );
+  },
+
+  async deleteAvailabilityRule(
+    id: string,
+    supabase?: SupabaseClient<Database>,
+  ): Promise<void> {
+    assertNonEmpty(id, "MENTORSHIP_RULE_ID_REQUIRED");
+
+    await MentorshipSchedulingRepository.deleteAvailabilityRule(id, supabase);
   },
 
   async listBlockedWindows(
