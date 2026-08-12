@@ -248,7 +248,7 @@ export function StudentDashboard({
         <p className="text-sm font-semibold tracking-[0.2em] text-[var(--color-cyan)] uppercase">
           Programa de Formación Profesional
         </p>
-        <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_18rem] lg:items-end">
+        <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_18rem] lg:items-start">
           <div>
             <h1 className="max-w-3xl text-4xl leading-tight font-semibold text-white sm:text-5xl">
               Centro de Formación
@@ -258,7 +258,7 @@ export function StudentDashboard({
               y preparación para la etapa individual.
             </p>
           </div>
-          <div className="border-t border-[var(--color-border)] pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[rgba(5,7,12,0.58)] p-4 backdrop-blur-md lg:justify-self-end">
             <p className="text-sm text-[var(--color-text-secondary)]">
               Programa activo
             </p>
