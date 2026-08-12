@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PublicBackgroundField } from "@/components/public/PublicBackgroundField";
 import { PublicSiteMotion } from "@/components/public/PublicSiteMotion";
+import { PublicTikTokLink } from "@/components/public/PublicTikTokLink";
 import { formationCtaHref } from "@/config/public-cta";
 import { getSupportMailtoHref } from "@/config/site";
 import {
@@ -53,6 +54,7 @@ function PublicProgramHeader() {
         <a className="transition hover:text-white" href={contactHref}>
           Contacto
         </a>
+        <PublicTikTokLink />
       </nav>
       <div className="flex shrink-0 items-center gap-3">
         <a
@@ -61,6 +63,9 @@ function PublicProgramHeader() {
         >
           Contacto
         </a>
+        <div className="block md:hidden">
+          <PublicTikTokLink />
+        </div>
         <Link
           href="/"
           className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PublicBackgroundField } from "@/components/public/PublicBackgroundField";
 import { PublicSiteMotion } from "@/components/public/PublicSiteMotion";
+import { PublicTikTokLink } from "@/components/public/PublicTikTokLink";
 import { formationCtaHref } from "@/config/public-cta";
 import {
   publicFormationJourney,
@@ -104,14 +105,20 @@ function OfferHeader() {
         <a className="transition hover:text-white" href="#faq">
           FAQ
         </a>
+        <PublicTikTokLink />
       </nav>
-      <Link
-        href="/programa"
-        className="shrink-0 rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-      >
-        <span className="sm:hidden">Programa</span>
-        <span className="hidden sm:inline">Ver programa</span>
-      </Link>
+      <div className="flex shrink-0 items-center gap-3">
+        <div className="block md:hidden">
+          <PublicTikTokLink />
+        </div>
+        <Link
+          href="/programa"
+          className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-white transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+        >
+          <span className="sm:hidden">Programa</span>
+          <span className="hidden sm:inline">Ver programa</span>
+        </Link>
+      </div>
     </header>
   );
 }
