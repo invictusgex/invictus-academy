@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 type CheckoutStartPageProps = {
   productSlug: string;
@@ -22,68 +22,66 @@ type CheckoutResponse =
 
 export function CheckoutStartPage({ productSlug }: CheckoutStartPageProps) {
   const router = useRouter();
-  const startedRef = useRef(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isStartingCheckout, setIsStartingCheckout] = useState(false);
   const [pendingCheckoutUrl, setPendingCheckoutUrl] = useState<string | null>(
     null,
   );
 
-  useEffect(() => {
-    if (startedRef.current) {
+  async function startCheckout() {
+    if (isStartingCheckout) {
       return;
     }
 
-    startedRef.current = true;
+    setErrorMessage(null);
+    setIsStartingCheckout(true);
+    setPendingCheckoutUrl(null);
 
-    async function startCheckout() {
-      setErrorMessage(null);
-      setPendingCheckoutUrl(null);
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        body: JSON.stringify({ productSlug }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+      const payload = (await response.json()) as CheckoutResponse;
 
-      try {
-        const response = await fetch("/api/stripe/checkout", {
-          body: JSON.stringify({ productSlug }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-        });
-        const payload = (await response.json()) as CheckoutResponse;
-
-        if ("url" in payload) {
-          if (payload.recoveredPendingSession) {
-            setPendingCheckoutUrl(payload.url);
-            return;
-          }
-
-          window.location.assign(payload.url);
+      if ("url" in payload) {
+        if (payload.recoveredPendingSession) {
+          setPendingCheckoutUrl(payload.url);
+          setIsStartingCheckout(false);
           return;
         }
 
-        if (payload.error.code === "ALREADY_ENROLLED") {
-          router.replace("/academy");
-          return;
-        }
-
-        if (payload.error.code === "UNAUTHENTICATED") {
-          router.replace(
-            `/login?next=${encodeURIComponent("/checkout/start")}`,
-          );
-          return;
-        }
-
-        setErrorMessage(
-          payload.error.message ||
-            "No pudimos iniciar el proceso de pago. Intenta nuevamente.",
-        );
-      } catch {
-        setErrorMessage(
-          "No pudimos conectar con el servidor. Intenta nuevamente.",
-        );
+        window.location.assign(payload.url);
+        return;
       }
-    }
 
-    void startCheckout();
-  }, [productSlug, router]);
+      if (payload.error.code === "ALREADY_ENROLLED") {
+        router.replace("/academy");
+        return;
+      }
+
+      if (payload.error.code === "UNAUTHENTICATED") {
+        router.replace(
+          `/login?next=${encodeURIComponent("/checkout/start")}`,
+        );
+        return;
+      }
+
+      setErrorMessage(
+        payload.error.message ||
+          "No pudimos iniciar el proceso de pago. Intenta nuevamente.",
+      );
+    } catch {
+      setErrorMessage(
+        "No pudimos conectar con el servidor. Intenta nuevamente.",
+      );
+    } finally {
+      setIsStartingCheckout(false);
+    }
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[var(--color-page-bg)] px-5 py-16 text-[var(--color-text-primary)]">
@@ -95,9 +93,33 @@ export function CheckoutStartPage({ productSlug }: CheckoutStartPageProps) {
           Preparando tu formación
         </h1>
         <p className="mt-4 text-sm leading-6 text-[var(--color-text-secondary)]">
-          Estamos abriendo el proceso de pago seguro para continuar con tu
-          acceso a Invictus GEX.
+          Antes de continuar al pago seguro, recuerda aplicar el cupón vigente
+          dentro de Stripe Checkout.
         </p>
+
+        <div className="mt-6 rounded-2xl border border-[var(--color-cyan)]/45 bg-[var(--color-cyan)]/10 px-4 py-5 text-left shadow-[0_0_32px_rgba(34,211,238,0.12)]">
+          <p className="text-xs font-semibold tracking-[0.18em] text-[var(--color-cyan)] uppercase">
+            Descuento disponible
+          </p>
+          <div className="mt-3 flex flex-col gap-3 rounded-xl border border-[var(--color-border)] bg-black/25 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
+                Usa este código antes de finalizar tu compra:
+              </p>
+              <p className="mt-2 text-3xl font-semibold tracking-[0.16em] text-white">
+                GEX10
+              </p>
+            </div>
+            <span className="inline-flex w-fit rounded-full border border-[var(--color-cyan)]/50 px-3 py-1 text-xs font-semibold text-[var(--color-cyan)]">
+              350 USD de descuento
+            </span>
+          </div>
+          <p className="mt-4 text-sm leading-6 text-[var(--color-text-secondary)]">
+            En la pantalla de Stripe, busca el campo de código promocional y
+            escribe <strong className="font-semibold text-white">GEX10</strong>{" "}
+            para acceder a la academia con el descuento aplicado.
+          </p>
+        </div>
 
         {errorMessage ? (
           <div className="mt-6 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm leading-6 text-red-100">
@@ -128,9 +150,16 @@ export function CheckoutStartPage({ productSlug }: CheckoutStartPageProps) {
             </Link>
           </div>
         ) : (
-          <p className="mt-6 text-sm text-[var(--color-cyan)]">
-            Redirigiendo a Stripe Checkout...
-          </p>
+          <button
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={isStartingCheckout}
+            onClick={startCheckout}
+            type="button"
+          >
+            {isStartingCheckout
+              ? "Abriendo Stripe Checkout..."
+              : "Continuar a Stripe Checkout"}
+          </button>
         )}
       </section>
     </main>
