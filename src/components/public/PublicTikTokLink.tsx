@@ -1,11 +1,13 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
 
 const tiktokProfileUrl =
   "https://www.tiktok.com/@in_victus_gex?is_from_webapp=1&sender_device=pc";
+const discordInviteUrl = "https://discord.gg/VRQKuQpj8";
 
 type AcademyAccessCheck = {
   hasAcademyAccess: boolean;
@@ -38,6 +40,58 @@ function TikTokMark() {
         strokeWidth="1.8"
       />
     </svg>
+  );
+}
+
+function DiscordMark() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M8.25 8.7c2.25-.72 5.25-.72 7.5 0M8.8 17.25c-1.35-.18-2.64-.58-3.72-1.2-.42-2.86.18-5.74 1.75-8.3a10.9 10.9 0 0 1 3.24-1.2l.56 1.04M15.2 17.25c1.35-.18 2.64-.58 3.72-1.2.42-2.86-.18-5.74-1.75-8.3a10.9 10.9 0 0 0-3.24-1.2l-.56 1.04M9.15 14.45c.65.46 1.57.82 2.85.82s2.2-.36 2.85-.82"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M9.4 12.15h.02M14.58 12.15h.02"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="2.4"
+      />
+    </svg>
+  );
+}
+
+type PublicSocialButtonProps = {
+  "aria-label": string;
+  href: string;
+  icon: ReactNode;
+  label: string;
+};
+
+function PublicSocialButton({
+  "aria-label": ariaLabel,
+  href,
+  icon,
+  label,
+}: PublicSocialButtonProps) {
+  return (
+    <a
+      aria-label={ariaLabel}
+      className="inline-flex min-h-9 items-center gap-2 rounded-full border border-[var(--color-cyan)]/35 bg-[var(--color-cyan)]/10 px-3 text-xs font-semibold tracking-[0.08em] text-[var(--color-cyan)] uppercase shadow-[0_0_24px_rgba(34,211,238,0.12)] transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-cyan)]/16 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
+      href={href}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      {icon}
+      <span className="hidden sm:inline">{label}</span>
+    </a>
   );
 }
 
@@ -120,15 +174,19 @@ export function PublicTikTokLink() {
   }
 
   return (
-    <a
-      aria-label="Abrir perfil de TikTok de Invictus GEX"
-      className="inline-flex min-h-9 items-center gap-2 rounded-full border border-[var(--color-cyan)]/35 bg-[var(--color-cyan)]/10 px-3 text-xs font-semibold tracking-[0.08em] text-[var(--color-cyan)] uppercase shadow-[0_0_24px_rgba(34,211,238,0.12)] transition hover:border-[var(--color-cyan)] hover:bg-[var(--color-cyan)]/16 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]"
-      href={tiktokProfileUrl}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <TikTokMark />
-      <span className="hidden sm:inline">TikTok</span>
-    </a>
+    <div className="inline-flex items-center gap-2">
+      <PublicSocialButton
+        aria-label="Abrir perfil de TikTok de Invictus GEX"
+        href={tiktokProfileUrl}
+        icon={<TikTokMark />}
+        label="TikTok"
+      />
+      <PublicSocialButton
+        aria-label="Abrir canal de Discord de Invictus GEX"
+        href={discordInviteUrl}
+        icon={<DiscordMark />}
+        label="Discord"
+      />
+    </div>
   );
 }
