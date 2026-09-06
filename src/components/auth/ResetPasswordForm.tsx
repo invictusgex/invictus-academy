@@ -11,6 +11,23 @@ type ResetPasswordFormProps = {
   recoveryVerified: boolean;
 };
 
+type ResetPasswordResponse = {
+  error?: string;
+  message?: string;
+};
+
+function getReadableResetError(error: unknown) {
+  if (error instanceof Error && error.message) {
+    if (error.message.toLowerCase().includes("auth session missing")) {
+      return "Este enlace de recuperación no es válido o ha expirado.";
+    }
+
+    return error.message;
+  }
+
+  return "No pudimos actualizar tu contraseña. Solicita un nuevo enlace e intenta nuevamente.";
+}
+
 export function ResetPasswordForm({
   recoveryVerified,
 }: ResetPasswordFormProps) {
@@ -92,18 +109,37 @@ export function ResetPasswordForm({
     setSubmitting(true);
 
     try {
-      await updatePassword({ password });
+      if (recoveryVerified) {
+        const response = await fetch("/api/auth/reset-password", {
+          body: JSON.stringify({
+            password,
+            passwordConfirmation,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        });
+        const payload = (await response.json()) as ResetPasswordResponse;
+
+        if (!response.ok || payload.error) {
+          setErrorMessage(
+            payload.error ?? "No pudimos actualizar tu contraseña.",
+          );
+          return;
+        }
+      } else {
+        await updatePassword({ password });
+      }
 
       setSuccessMessage("Tu contraseña fue actualizada correctamente.");
       setPassword("");
       setPasswordConfirmation("");
       window.history.replaceState(null, "", "/reset-password");
-      await signOut();
+      await signOut().catch(() => undefined);
       router.refresh();
-    } catch {
-      setErrorMessage(
-        "No pudimos conectar con el servidor. Intenta nuevamente.",
-      );
+    } catch (error) {
+      setErrorMessage(getReadableResetError(error));
     } finally {
       setSubmitting(false);
     }
