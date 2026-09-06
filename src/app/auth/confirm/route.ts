@@ -34,6 +34,48 @@ function buildRedirect(path: string) {
   return new URL(path, getSiteUrl());
 }
 
+function buildRecoveryHashBridge() {
+  const forgotPasswordUrl = buildRedirect("/forgot-password").toString();
+  const resetPasswordPath = "/reset-password";
+
+  return new NextResponse(
+    `<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Validando recuperación de contraseña</title>
+  </head>
+  <body>
+    <p>Validando enlace de recuperación...</p>
+    <script>
+      (function () {
+        var hash = window.location.hash || "";
+        var params = new URLSearchParams(hash.replace(/^#/, ""));
+        var type = params.get("type");
+        var hasAccessToken = Boolean(params.get("access_token"));
+        var hasError = Boolean(params.get("error") || params.get("error_code"));
+
+        if (type === "recovery" && hasAccessToken && !hasError) {
+          window.location.replace(${JSON.stringify(resetPasswordPath)} + hash);
+          return;
+        }
+
+        window.location.replace(${JSON.stringify(forgotPasswordUrl)});
+      })();
+    </script>
+  </body>
+</html>`,
+    {
+      headers: {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/html; charset=utf-8",
+      },
+      status: 200,
+    },
+  );
+}
+
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
@@ -49,10 +91,14 @@ export async function GET(request: Request) {
     isRecovery && nextPath === "/reset-password" ? nextPath : "/reset-password";
 
   if (isRecovery && !code && !tokenHash) {
-    return NextResponse.redirect(buildRedirect("/forgot-password"));
+    return buildRecoveryHashBridge();
   }
 
   if (!code && (!tokenHash || !otpType)) {
+    if (!requestUrl.searchParams.size) {
+      return buildRecoveryHashBridge();
+    }
+
     return NextResponse.redirect(
       buildRedirect(isRecovery ? "/forgot-password" : "/login"),
     );

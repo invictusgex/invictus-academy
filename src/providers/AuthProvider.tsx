@@ -128,10 +128,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Primero cargamos la sesion persistida; despues escuchamos cambios futuros
     // como login, logout o refresh de token cuando existan pantallas que los usen.
-    const unsubscribe = AuthRepository.onAuthStateChange((authState) => {
+    const unsubscribe = AuthRepository.onAuthStateChange((authState, event) => {
       updateAuthState(authState.session);
 
-      if (authState.session && hasRecoveryHash()) {
+      if (
+        authState.session &&
+        (event === "passwordRecovery" || hasRecoveryHash())
+      ) {
         void redirectToPasswordReset();
       }
 
