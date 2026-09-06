@@ -61,16 +61,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       recoveryRedirectStarted = true;
 
       try {
-        const response = await fetch("/api/auth/recovery-session", {
+        await fetch("/api/auth/recovery-session", {
           method: "POST",
         });
-
-        window.location.replace(
-          response.ok ? "/reset-password" : "/forgot-password",
-        );
       } catch {
-        window.location.replace("/forgot-password");
+        // La sesion de recuperacion ya vive en el cliente; la API solo intenta
+        // reflejarla en cookies para el servidor.
       }
+
+      if (window.location.pathname === "/reset-password") {
+        return;
+      }
+
+      window.location.replace("/reset-password");
     }
 
     function updateAuthState(nextSession: AuthSession | null) {

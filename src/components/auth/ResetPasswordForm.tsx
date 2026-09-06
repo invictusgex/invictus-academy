@@ -2,30 +2,72 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { getSupabaseClient } from "@/lib/database/client";
 
 type ResetPasswordFormProps = {
   recoveryVerified: boolean;
-};
-
-type ResetPasswordResponse = {
-  error?: string;
-  message?: string;
 };
 
 export function ResetPasswordForm({
   recoveryVerified,
 }: ResetPasswordFormProps) {
   const router = useRouter();
-  const { initialized, loading, session, signOut } = useAuth();
+  const { initialized, loading, session, signOut, updatePassword } = useAuth();
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const canResetPassword = Boolean(initialized && recoveryVerified && session);
+  const [clientRecoveryVerified, setClientRecoveryVerified] = useState(false);
+  const [checkingRecoveryHash, setCheckingRecoveryHash] = useState(true);
+  const hasRecoveryAccess = recoveryVerified || clientRecoveryVerified;
+  const canResetPassword = Boolean(
+    initialized && hasRecoveryAccess && session,
+  );
+
+  useEffect(() => {
+    async function verifyRecoveryHash() {
+      if (typeof window === "undefined") {
+        setCheckingRecoveryHash(false);
+        return;
+      }
+
+      const hashParams = new URLSearchParams(
+        window.location.hash.replace(/^#/, ""),
+      );
+      const type = hashParams.get("type");
+      const accessToken = hashParams.get("access_token");
+      const refreshToken = hashParams.get("refresh_token");
+
+      if (type !== "recovery" || !accessToken || !refreshToken) {
+        setCheckingRecoveryHash(false);
+        return;
+      }
+
+      try {
+        const supabase = getSupabaseClient();
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+
+        if (!error) {
+          setClientRecoveryVerified(true);
+          await fetch("/api/auth/recovery-session", {
+            method: "POST",
+          }).catch(() => undefined);
+          window.history.replaceState(null, "", "/reset-password");
+        }
+      } finally {
+        setCheckingRecoveryHash(false);
+      }
+    }
+
+    void verifyRecoveryHash();
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -50,28 +92,9 @@ export function ResetPasswordForm({
     setSubmitting(true);
 
     try {
-      const response = await fetch("/api/auth/reset-password", {
-        body: JSON.stringify({
-          password,
-          passwordConfirmation,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-      });
-      const payload = (await response.json()) as ResetPasswordResponse;
+      await updatePassword({ password });
 
-      if (!response.ok || payload.error) {
-        setErrorMessage(
-          payload.error ?? "No pudimos actualizar tu contraseña.",
-        );
-        return;
-      }
-
-      setSuccessMessage(
-        payload.message ?? "Tu contraseña fue actualizada correctamente.",
-      );
+      setSuccessMessage("Tu contraseña fue actualizada correctamente.");
       setPassword("");
       setPasswordConfirmation("");
       window.history.replaceState(null, "", "/reset-password");
@@ -86,7 +109,7 @@ export function ResetPasswordForm({
     }
   }
 
-  if (!successMessage && (!initialized || loading)) {
+  if (!successMessage && (!initialized || loading || checkingRecoveryHash)) {
     return (
       <div className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-card-bg)] p-6 text-center">
         <p className="text-sm font-medium text-white">
