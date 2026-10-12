@@ -63,7 +63,7 @@ function runNextBuild() {
       "bin",
       "next",
     );
-    const child = spawn(process.execPath, [nextCliPath, "build"], {
+    const child = spawn(process.execPath, [nextCliPath, "build", "--webpack"], {
       env: process.env,
       shell: false,
       stdio: "inherit",
