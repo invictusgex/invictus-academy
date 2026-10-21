@@ -20,6 +20,14 @@ function logOfferFailure(stage: string, error: unknown, failedChecks: string[] =
   const knownCodes = ["resource_missing", "api_key_expired", "invalid_api_key", "rate_limit", "permission_denied"];
   const missingVariables = ["STRIPE_LIVE_ROOM_SECRET_KEY", "STRIPE_LIVE_ROOM_PRODUCT_ID", "STRIPE_LIVE_ROOM_PRICE_ID"]
     .filter((name) => !process.env[name]?.trim());
+  const key = process.env.STRIPE_LIVE_ROOM_SECRET_KEY?.trim() ?? "";
+  const message = typeof detail.message === "string" ? detail.message.toLowerCase() : "";
+  const authReason = detail.type !== "StripeAuthenticationError" ? null
+    : /\bip\b/.test(message) && (message.includes("not allowed") || message.includes("unauthorized") || message.includes("not authorized")) ? "ip_restricted"
+    : message.includes("expired") ? "key_expired"
+    : message.includes("revoked") ? "key_revoked"
+    : message.includes("invalid api key") ? "invalid_key"
+    : "authentication_rejected";
   // Never serialize provider errors: their messages/headers can contain credentials or PII.
   console.error("[live-room:offer]", JSON.stringify({
     stage,
@@ -28,6 +36,16 @@ function logOfferFailure(stage: string, error: unknown, failedChecks: string[] =
     httpStatus: typeof detail.statusCode === "number" && detail.statusCode >= 400 && detail.statusCode <= 599 ? detail.statusCode : null,
     missingVariables,
     failedChecks,
+    authReason,
+    requestId: typeof detail.requestId === "string" && /^req_[a-zA-Z0-9]{1,100}$/.test(detail.requestId) ? detail.requestId : null,
+    keyDiagnostics: {
+      family: key.startsWith("sk_live_") ? "sk_live" : key.startsWith("sk_test_") ? "sk_test"
+        : key.startsWith("rk_live_") ? "rk_live" : key.startsWith("rk_test_") ? "rk_test" : "other",
+      formatValid: /^(sk|rk)_(live|test)_[a-zA-Z0-9]+$/.test(key),
+      containsMask: /\*|\u2026|\.{3}/.test(key),
+      containsWhitespace: /\s/.test(key),
+      matchesProgramKey: Boolean(key && process.env.STRIPE_SECRET_KEY?.trim() === key),
+    },
   }));
 }
 

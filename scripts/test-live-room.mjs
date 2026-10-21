@@ -132,14 +132,27 @@ assert.equal(diagnostics.length, 0, "Successful offer does not log errors");
 const retrieveProduct = stripe.products.retrieve;
 stripe.products.retrieve = async () => { throw {
   type: "StripeAuthenticationError", code: "invalid_api_key", statusCode: 401,
-  message: "sk_live_DO_NOT_LOG person@example.com", headers: { authorization: "DO_NOT_LOG" },
+  message: "Invalid API Key provided: sk_live_DO_NOT_LOG person@example.com", headers: { authorization: "DO_NOT_LOG" }, requestId: "req_safe123",
 }; };
 assert.equal((await service.getOffer()).configured, false);
 assert.ok(diagnostics.at(-1).includes('"stage":"stripe_product"'));
 assert.ok(diagnostics.at(-1).includes('"httpStatus":401'));
 assert.ok(diagnostics.at(-1).includes('"errorCode":"invalid_api_key"'));
+assert.ok(diagnostics.at(-1).includes('"authReason":"invalid_key"'));
+assert.ok(diagnostics.at(-1).includes('"requestId":"req_safe123"'));
 assert.ok(!diagnostics.join(" ").includes("DO_NOT_LOG"));
 assert.ok(!diagnostics.join(" ").includes("person@example.com"));
+testEnv.STRIPE_LIVE_ROOM_SECRET_KEY = "sk_live_DO_NOT_LOG***";
+stripe.products.retrieve = async () => { throw { type: "StripeAuthenticationError", statusCode: 401, message: "IP address not allowed: DO_NOT_LOG", requestId: "DO_NOT_LOG" }; };
+assert.equal((await service.getOffer()).configured, false);
+const safeDiagnostic = JSON.parse(diagnostics.at(-1).slice("[live-room:offer] ".length));
+assert.equal(safeDiagnostic.authReason, "ip_restricted");
+assert.equal(safeDiagnostic.keyDiagnostics.family, "sk_live");
+assert.equal(safeDiagnostic.keyDiagnostics.containsMask, true);
+assert.equal(safeDiagnostic.keyDiagnostics.formatValid, false);
+assert.equal(safeDiagnostic.requestId, null);
+assert.ok(!diagnostics.join(" ").includes("DO_NOT_LOG"));
+testEnv.STRIPE_LIVE_ROOM_SECRET_KEY = "test-only";
 stripe.products.retrieve = retrieveProduct;
 const retrievePrice = stripe.prices.retrieve;
 stripe.prices.retrieve = async () => ({ ...await retrievePrice(), currency: "eur" });
