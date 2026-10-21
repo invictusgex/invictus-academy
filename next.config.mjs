@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+// @ts-check
 
 const supabaseHostname = (() => {
   const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
@@ -51,7 +51,8 @@ const cspReportOnly = [
   "frame-ancestors 'none'",
 ].join("; ");
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   async headers() {
     return [
       {
