@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 import { useAuth } from "@/hooks/useAuth";
 import type { CommercialPromotion } from "@/lib/types/promotion.types";
 
 export function PublicPromoRibbon() {
+  const pathname = usePathname();
   const { initialized, user } = useAuth();
   const [accessCheck, setAccessCheck] = useState<{
     hasAcademyAccess: boolean;
@@ -96,6 +98,7 @@ export function PublicPromoRibbon() {
       ? accessCheck.hasAcademyAccess
       : null;
   const shouldShow =
+    !pathname.startsWith("/sala-en-vivo") &&
     initialized &&
     Boolean(promotion?.isActive) &&
     (!user || hasCurrentUserAcademyAccess === false);

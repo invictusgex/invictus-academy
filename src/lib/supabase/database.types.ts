@@ -6,9 +6,23 @@
   | { [key: string]: Json | undefined }
   | Json[]
 
+import type { LiveRoomAccountRow } from "@/lib/types/live-room.types";
+
 export type Database = {
   public: {
     Tables: {
+      live_room_accounts: {
+        Row: LiveRoomAccountRow
+        Insert: Pick<LiveRoomAccountRow, "profile_id" | "livemode"> & Partial<Omit<LiveRoomAccountRow, "profile_id" | "livemode">>
+        Update: Partial<LiveRoomAccountRow>
+        Relationships: []
+      }
+      live_room_settings: {
+        Row: { id: boolean; description: string; updated_at: string }
+        Insert: { id?: boolean; description: string; updated_at?: string }
+        Update: { description?: string; updated_at?: string }
+        Relationships: []
+      }
       academy_form_definitions: {
         Row: {
           created_at: string
@@ -1464,6 +1478,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_live_room_operation: {
+        Args: { p_profile_id: string; p_livemode: boolean; p_token: string }
+        Returns: boolean
+      }
       book_mentorship_slot: {
         Args: {
           p_note?: string

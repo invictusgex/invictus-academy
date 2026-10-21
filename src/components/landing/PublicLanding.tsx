@@ -6,14 +6,17 @@ import { PublicSiteMotion } from "@/components/public/PublicSiteMotion";
 import { PublicTikTokLink } from "@/components/public/PublicTikTokLink";
 import { formationCtaHref } from "@/config/public-cta";
 import { getSupportMailtoHref } from "@/config/site";
+import { liveRoom } from "@/content/live-room";
 import {
   publicProgramAudience,
   publicProgramNonAudience,
 } from "@/content/public-program";
 import type { Course } from "@/types/academy";
+import liveStyles from "./live-room.module.css";
 
 type PublicLandingProps = {
   course: Course;
+  roomDescription?: string;
 };
 
 const principles = [
@@ -103,7 +106,7 @@ function Header() {
   const contactHref = getSupportMailtoHref(CONTACT_SUBJECT);
 
   return (
-    <header className="public-header mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
+    <header className="public-header mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
       <a
         href="#inicio"
         className="flex max-w-[13rem] items-center gap-3 text-xs font-semibold tracking-[0.12em] text-white uppercase sm:max-w-none sm:text-sm"
@@ -128,6 +131,9 @@ function Header() {
         <a className="transition hover:text-white" href="#mentoria">
           Mentoría
         </a>
+        <Link className={`${liveStyles.live} ${liveStyles.link}`} href={liveRoom.publicHref}>
+          Sala en vivo
+        </Link>
         <a className="transition hover:text-white" href={contactHref}>
           Contacto
         </a>
@@ -150,6 +156,9 @@ function Header() {
           Acceder
         </Link>
       </div>
+      <nav aria-label="Sala privada" className="w-full border-t border-[var(--color-border)] pt-3 text-sm md:hidden">
+        <Link href={liveRoom.publicHref} className={`${liveStyles.live} ${liveStyles.link}`}>Sala en vivo</Link>
+      </nav>
     </header>
   );
 }
@@ -663,7 +672,7 @@ function Footer() {
   );
 }
 
-export function PublicLanding({ course }: PublicLandingProps) {
+export function PublicLanding({ course, roomDescription = liveRoom.description }: PublicLandingProps) {
   return (
     <div className="public-site min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text-primary)]">
       <PublicSiteMotion />
@@ -671,6 +680,16 @@ export function PublicLanding({ course }: PublicLandingProps) {
       <main id="inicio">
         <PublicBackgroundField />
         <Hero />
+        <section className="public-flow-section" aria-labelledby="landing-live-room">
+          <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 lg:px-8">
+            <div className={`${liveStyles.live} ${liveStyles.heading}`}>
+              <p className="text-sm font-semibold text-white uppercase">Membresía mensual · Discord</p>
+              <h2 id="landing-live-room" className="mt-4 text-3xl font-semibold text-white">{liveRoom.title}</h2>
+            </div>
+            <p className="mt-5 max-w-2xl whitespace-pre-line text-base leading-8 text-[var(--color-text-secondary)]">{roomDescription}</p>
+            <Link href={liveRoom.publicHref} className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[var(--color-cyan)] px-6 text-sm font-semibold text-[var(--color-page-bg)] transition hover:bg-[var(--color-cyan-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:w-auto">Conocer la sala</Link>
+          </div>
+        </section>
         <LearningCostSection />
         <PositioningSection />
         <TransformationSection />

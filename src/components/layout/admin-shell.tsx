@@ -18,6 +18,7 @@ const adminNavigation = [
   { href: "/admin/content", label: "Contenido" },
   { href: "/admin/scenarios", label: "Biblioteca de Escenarios" },
   { href: "/admin/mentorship", label: "Agenda de mentorías" },
+  { href: "/admin/live-room", label: "Sala privada en vivo" },
 ];
 
 export function AdminShell({ children }: AdminShellProps) {
