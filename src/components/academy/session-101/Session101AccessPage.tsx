@@ -148,7 +148,7 @@ function UnlockedSession101({ workflow }: { workflow: LearningWorkflowEvaluation
           <StudentStatCard
             caption="Fechas unicas registradas"
             label="Trading days"
-            value={`${workflow.tradingDays}/${workflow.requiredTradingDays}`}
+            value={String(workflow.tradingDays)}
           />
         </StudentContentGrid>
       </StudentSection>

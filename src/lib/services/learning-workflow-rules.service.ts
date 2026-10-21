@@ -50,29 +50,6 @@ export const RequiredFormsRule: CompletionRule = {
   },
 };
 
-export const TradingDaysRule: CompletionRule = {
-  key: "trading_days",
-  evaluate(context: CompletionRuleContext): CompletionRuleResult {
-    const satisfied =
-      context.enrollmentActive &&
-      (context.tradingDays >= context.requiredTradingDays ||
-        context.practiceRequirementWaived);
-
-    return {
-      currentValue: context.tradingDays,
-      key: TradingDaysRule.key,
-      label: "Documentar 5 días distintos de práctica",
-      metadata: {
-        enrollmentActive: context.enrollmentActive,
-        practiceRequirementWaived: context.practiceRequirementWaived,
-        requiredTradingDays: context.requiredTradingDays,
-      },
-      requiredValue: context.requiredTradingDays,
-      satisfied,
-    };
-  },
-};
-
 export const CompletionRuleEvaluator = {
   evaluate(
     rules: CompletionRule[],
@@ -96,5 +73,4 @@ export const CompletionRuleEvaluator = {
 export const initialLearningWorkflowRules: CompletionRule[] = [
   ModulesCompletedRule,
   RequiredFormsRule,
-  TradingDaysRule,
 ];

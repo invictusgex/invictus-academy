@@ -1,10 +1,10 @@
 export const academyWorkflowConfig = {
-  requiredTradingDays: 5,
+  requiredTradingDays: 0,
   session101: {
     blocked: {
       ctaLabel: "Ver requisitos",
       dashboardDescription:
-        "Completa los módulos, formularios requeridos y días de trading para desbloquear la siguiente etapa.",
+        "Completa las etapas y los requisitos académicos para preparar tu mentoría.",
       dashboardTitle: "Sesión 101",
       statusLabel: "Bloqueada",
     },

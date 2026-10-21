@@ -8,7 +8,6 @@ import {
   type FormEvent,
 } from "react";
 
-import { academyWorkflowConfig } from "@/config/academy-workflow";
 import { academyProductSlug } from "@/lib/academy-product";
 import type { TradingDay } from "@/lib/types/trading-day.types";
 
@@ -59,17 +58,6 @@ export function TradingDaysPanel() {
   const [editingRows, setEditingRows] = useState<
     Record<string, { notes: string; tradingDate: string }>
   >({});
-
-  const progressLabel = `${Math.min(
-    tradingDays.length,
-    academyWorkflowConfig.requiredTradingDays,
-  )} de ${academyWorkflowConfig.requiredTradingDays} días`;
-  const progressPercent = Math.min(
-    100,
-    Math.round(
-      (tradingDays.length / academyWorkflowConfig.requiredTradingDays) * 100,
-    ),
-  );
 
   const sortedTradingDays = useMemo(
     () =>
@@ -244,29 +232,13 @@ export function TradingDaysPanel() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-sm font-semibold text-white">
-              Progreso de práctica
+              Práctica documentada
             </p>
             <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-              {progressLabel} registrados
+              {tradingDays.length} días registrados. Documentar tu práctica es
+              opcional y no condiciona la reserva de tu mentoría.
             </p>
           </div>
-          <span className="inline-flex w-fit rounded-full border border-cyan-200/25 px-3 py-1 text-sm font-semibold text-[var(--color-cyan)]">
-            {progressPercent}%
-          </span>
-        </div>
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
-          <div
-            aria-label={progressLabel}
-            aria-valuemax={academyWorkflowConfig.requiredTradingDays}
-            aria-valuemin={0}
-            aria-valuenow={Math.min(
-              tradingDays.length,
-              academyWorkflowConfig.requiredTradingDays,
-            )}
-            className="h-full rounded-full bg-[var(--color-cyan)] transition-[width] duration-300 motion-reduce:transition-none"
-            role="progressbar"
-            style={{ width: `${progressPercent}%` }}
-          />
         </div>
       </div>
 

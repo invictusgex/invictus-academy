@@ -233,15 +233,6 @@ export const MentorshipPreparationService = {
         .filter((rule) => !rule.satisfied)
         .map((rule) => `Requisito pendiente: ${rule.label}`),
     ];
-    const missingTradingDays = Math.max(
-      workflow.requiredTradingDays - workflow.tradingDays,
-      0,
-    );
-
-    if (missingTradingDays > 0 && !workflow.practiceRequirementWaived) {
-      pendingItems.push(`Días de práctica faltantes: ${missingTradingDays}`);
-    }
-
     return {
       completedModules: workflow.completedModules,
       completionPercent: workflow.completionPercent,

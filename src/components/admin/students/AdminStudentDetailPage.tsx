@@ -147,7 +147,7 @@ function MentorshipPreparationSection({
             Práctica
           </dt>
           <dd className="mt-2 text-sm font-semibold text-white">
-            {preparation.tradingDays}/{preparation.requiredTradingDays} días
+            {preparation.tradingDays} días documentados · opcional
           </dd>
         </div>
       </dl>
