@@ -7,7 +7,7 @@ import {
   passwordRecoveryCookieValue,
 } from "@/lib/auth/password-recovery";
 import { getSiteUrl } from "@/config/site";
-import { getSafeInternalRedirect } from "@/lib/auth/redirects";
+import { defaultAuthenticatedPath, getSafeInternalRedirect } from "@/lib/auth/redirects";
 import { ProfileRepository } from "@/lib/repositories/profile.repository";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
   const isRecovery = otpType === "recovery" || recoveryFlow;
   const nextPath = getSafeInternalRedirect(
     requestUrl.searchParams.get("next"),
-    isRecovery ? "/reset-password" : "/academy",
+    isRecovery ? "/reset-password" : defaultAuthenticatedPath,
   );
   const recoveryNextPath =
     isRecovery && nextPath === "/reset-password" ? nextPath : "/reset-password";

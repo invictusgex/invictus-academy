@@ -1,4 +1,4 @@
-const defaultAuthenticatedPath = "/academy";
+export const defaultAuthenticatedPath = "/auth/continue";
 const defaultPublicPath = "/";
 
 function startsWithSingleSlash(value: string) {
