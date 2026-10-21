@@ -14,15 +14,52 @@ const blockingStatuses = new Set(["active", "trialing", "past_due", "unpaid", "p
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const objectId = (value: string | { id: string } | null | undefined) => typeof value === "string" ? value : value?.id ?? null;
 
+function logOfferFailure(stage: string, error: unknown, failedChecks: string[] = []) {
+  const detail = error && typeof error === "object" ? error as Record<string, unknown> : {};
+  const knownTypes = ["StripeAuthenticationError", "StripePermissionError", "StripeInvalidRequestError", "StripeConnectionError", "StripeAPIError", "StripeRateLimitError"];
+  const knownCodes = ["resource_missing", "api_key_expired", "invalid_api_key", "rate_limit", "permission_denied"];
+  const missingVariables = ["STRIPE_LIVE_ROOM_SECRET_KEY", "STRIPE_LIVE_ROOM_PRODUCT_ID", "STRIPE_LIVE_ROOM_PRICE_ID"]
+    .filter((name) => !process.env[name]?.trim());
+  // Never serialize provider errors: their messages/headers can contain credentials or PII.
+  console.error("[live-room:offer]", JSON.stringify({
+    stage,
+    errorType: typeof detail.type === "string" && knownTypes.includes(detail.type) ? detail.type : "other",
+    errorCode: typeof detail.code === "string" && knownCodes.includes(detail.code) ? detail.code : "other",
+    httpStatus: typeof detail.statusCode === "number" && detail.statusCode >= 400 && detail.statusCode <= 599 ? detail.statusCode : null,
+    missingVariables,
+    failedChecks,
+  }));
+}
+
+async function offerStep<T>(stage: string, operation: () => Promise<T> | T): Promise<T> {
+  try { return await operation(); } catch (error) {
+    logOfferFailure(stage, error);
+    throw error;
+  }
+}
+
 async function currentPrice() {
-  const stripe = getLiveRoomStripe();
-  const product = await stripe.products.retrieve(liveRoomEnv("STRIPE_LIVE_ROOM_PRODUCT_ID"));
-  if (!product.active) throw new Error("LIVE_ROOM_PRICE_UNAVAILABLE");
-  const priceId = objectId(product.default_price) || liveRoomEnv("STRIPE_LIVE_ROOM_PRICE_ID");
-  const price = await stripe.prices.retrieve(priceId);
-  if (!price.active || price.livemode !== liveRoomIsLive() || objectId(price.product) !== product.id ||
-    price.currency !== "usd" || !price.unit_amount || price.recurring?.interval !== "month" ||
-    price.recurring.interval_count !== 1 || price.recurring.usage_type !== "licensed") {
+  const stripe = await offerStep("stripe_configuration", getLiveRoomStripe);
+  const product = await offerStep("stripe_product", () => stripe.products.retrieve(liveRoomEnv("STRIPE_LIVE_ROOM_PRODUCT_ID")));
+  if (!product.active) {
+    logOfferFailure("product_validation", null, ["product_inactive"]);
+    throw new Error("LIVE_ROOM_PRICE_UNAVAILABLE");
+  }
+  const priceId = await offerStep("price_selection", () => objectId(product.default_price) || liveRoomEnv("STRIPE_LIVE_ROOM_PRICE_ID"));
+  const price = await offerStep("stripe_price", () => stripe.prices.retrieve(priceId));
+  const checks = {
+    price_inactive: !price.active,
+    mode_mismatch: price.livemode !== liveRoomIsLive(),
+    product_mismatch: objectId(price.product) !== product.id,
+    currency_not_usd: price.currency !== "usd",
+    amount_missing_or_zero: !price.unit_amount,
+    interval_not_monthly: price.recurring?.interval !== "month",
+    interval_count_not_one: price.recurring?.interval_count !== 1,
+    usage_type_not_licensed: price.recurring?.usage_type !== "licensed",
+  };
+  const failedChecks = Object.entries(checks).filter(([, failed]) => failed).map(([name]) => name);
+  if (failedChecks.length) {
+    logOfferFailure("price_validation", null, failedChecks);
     throw new Error("LIVE_ROOM_PRICE_UNAVAILABLE");
   }
   return price;
@@ -78,7 +115,7 @@ const cachedOffer = unstable_cache(async (): Promise<LiveRoomOffer> => {
   const price = await currentPrice();
   let description: string = liveRoom.description;
   try {
-    description = await repository.getDescription() ?? description;
+    description = await offerStep("description_storage", () => repository.getDescription()) ?? description;
   } catch (error) {
     if (!(error instanceof Error && error.message === "LIVE_ROOM_SCHEMA_PENDING")) throw error;
   }

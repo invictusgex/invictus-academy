@@ -69,7 +69,10 @@ const mocks = {
   "@/lib/services/live-room-config": { getLiveRoomStripe: () => stripe, liveRoomAppUrl: () => "http://localhost:3000", liveRoomEnv: () => "prod_room", liveRoomIsLive: () => false },
 };
 const code = ts.transpileModule(await readFile(new URL("../src/lib/services/live-room.service.ts", import.meta.url), "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
-const context = { exports: {}, require: (id) => mocks[id] ?? require(id), Date, console, Buffer };
+const diagnostics = [];
+const testEnv = { STRIPE_LIVE_ROOM_SECRET_KEY: "test-only", STRIPE_LIVE_ROOM_PRODUCT_ID: "prod_room", STRIPE_LIVE_ROOM_PRICE_ID: "price_room" };
+const context = { exports: {}, require: (id) => mocks[id] ?? require(id), Date,
+  console: { ...console, error: (...args) => diagnostics.push(args.join(" ")) }, Buffer, process: { env: testEnv } };
 vm.runInNewContext(code, context);
 const service = context.exports.LiveRoomService;
 
@@ -125,4 +128,30 @@ await service.handleWebhook(event);
 assert.equal(roleChanges.at(-1).allowed, false);
 assert.equal(service.canEnter(records.get(profileId)), false);
 assert.equal((await service.getOffer()).amountUsd, 30);
+assert.equal(diagnostics.length, 0, "Successful offer does not log errors");
+const retrieveProduct = stripe.products.retrieve;
+stripe.products.retrieve = async () => { throw {
+  type: "StripeAuthenticationError", code: "invalid_api_key", statusCode: 401,
+  message: "sk_live_DO_NOT_LOG person@example.com", headers: { authorization: "DO_NOT_LOG" },
+}; };
+assert.equal((await service.getOffer()).configured, false);
+assert.ok(diagnostics.at(-1).includes('"stage":"stripe_product"'));
+assert.ok(diagnostics.at(-1).includes('"httpStatus":401'));
+assert.ok(diagnostics.at(-1).includes('"errorCode":"invalid_api_key"'));
+assert.ok(!diagnostics.join(" ").includes("DO_NOT_LOG"));
+assert.ok(!diagnostics.join(" ").includes("person@example.com"));
+stripe.products.retrieve = retrieveProduct;
+const retrievePrice = stripe.prices.retrieve;
+stripe.prices.retrieve = async () => ({ ...await retrievePrice(), currency: "eur" });
+assert.equal((await service.getOffer()).configured, false);
+assert.ok(diagnostics.at(-1).includes('"failedChecks":["currency_not_usd"]'));
+stripe.prices.retrieve = retrievePrice;
+const getDescription = repository.getDescription;
+repository.getDescription = async () => { throw new Error("private database details DO_NOT_LOG"); };
+assert.equal((await service.getOffer()).configured, false);
+assert.ok(diagnostics.at(-1).includes('"stage":"description_storage"'));
+assert.ok(!diagnostics.join(" ").includes("DO_NOT_LOG"));
+repository.getDescription = getDescription;
+assert.equal((await service.getOffer()).configured, true);
+console.log("PASS: offer diagnostics identify Stripe/validation/storage failures without secrets or PII.");
 console.log("PASS: pending/expired checkout, duplicate prevention, paid access, cancellation, failed payment, role retries, webhook replay and account isolation.");
