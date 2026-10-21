@@ -152,6 +152,21 @@ assert.equal(safeDiagnostic.keyDiagnostics.containsMask, true);
 assert.equal(safeDiagnostic.keyDiagnostics.formatValid, false);
 assert.equal(safeDiagnostic.requestId, null);
 assert.ok(!diagnostics.join(" ").includes("DO_NOT_LOG"));
+for (const [key, field] of [
+  ['sk_live_DO_NOT_LOG"', 'containsQuotes'],
+  ['sk_live_DO_NOT_LOG\u200b', 'containsNonAscii'],
+  ['sk_live_DO_NOT_LOG\u0001', 'containsControlCharacters'],
+  ['sk_live_DO_NOT_LOG=extra', 'containsEquals'],
+  ['sk_live_sk_live_DO_NOT_LOG', 'containsRepeatedPrefix'],
+  ['sk_live_${DO_NOT_LOG}', 'containsVariableSyntax'],
+  [' sk_live_DO_NOT_LOG ', 'containsOuterWhitespace'],
+]) {
+  testEnv.STRIPE_LIVE_ROOM_SECRET_KEY = key;
+  assert.equal((await service.getOffer()).configured, false);
+  const logged = JSON.parse(diagnostics.at(-1).slice("[live-room:offer] ".length));
+  assert.equal(logged.keyDiagnostics[field], true, field);
+  assert.ok(!diagnostics.at(-1).includes('DO_NOT_LOG'), 'Never log key characters');
+}
 testEnv.STRIPE_LIVE_ROOM_SECRET_KEY = "test-only";
 stripe.products.retrieve = retrieveProduct;
 const retrievePrice = stripe.prices.retrieve;

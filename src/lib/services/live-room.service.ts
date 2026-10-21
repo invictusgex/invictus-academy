@@ -20,7 +20,9 @@ function logOfferFailure(stage: string, error: unknown, failedChecks: string[] =
   const knownCodes = ["resource_missing", "api_key_expired", "invalid_api_key", "rate_limit", "permission_denied"];
   const missingVariables = ["STRIPE_LIVE_ROOM_SECRET_KEY", "STRIPE_LIVE_ROOM_PRODUCT_ID", "STRIPE_LIVE_ROOM_PRICE_ID"]
     .filter((name) => !process.env[name]?.trim());
-  const key = process.env.STRIPE_LIVE_ROOM_SECRET_KEY?.trim() ?? "";
+  const rawKey = process.env.STRIPE_LIVE_ROOM_SECRET_KEY ?? "";
+  const key = rawKey.trim();
+  const keySuffix = key.replace(/^(sk|rk)_(live|test)_/, "");
   const message = typeof detail.message === "string" ? detail.message.toLowerCase() : "";
   const authReason = detail.type !== "StripeAuthenticationError" ? null
     : /\bip\b/.test(message) && (message.includes("not allowed") || message.includes("unauthorized") || message.includes("not authorized")) ? "ip_restricted"
@@ -44,6 +46,16 @@ function logOfferFailure(stage: string, error: unknown, failedChecks: string[] =
       formatValid: /^(sk|rk)_(live|test)_[a-zA-Z0-9]+$/.test(key),
       containsMask: /\*|\u2026|\.{3}/.test(key),
       containsWhitespace: /\s/.test(key),
+      containsOuterWhitespace: rawKey !== key,
+      containsQuotes: /['"`\u2018\u2019\u201c\u201d]/.test(key),
+      containsNonAscii: /[^\x20-\x7e]/.test(key),
+      containsControlCharacters: /[\x00-\x1f\x7f]/.test(key),
+      containsEquals: key.includes("="),
+      containsVariableSyntax: /\$\{|STRIPE_[A-Z_]+\s*=/.test(key),
+      containsRepeatedPrefix: /(?:sk|rk)_(?:live|test)_/.test(keySuffix),
+      suffixContainsUnderscore: keySuffix.includes("_"),
+      suffixContainsHyphen: keySuffix.includes("-"),
+      containsOtherPunctuation: /[^a-zA-Z0-9_\-'"`\s\u2018\u2019\u201c\u201d]/.test(key),
       matchesProgramKey: Boolean(key && process.env.STRIPE_SECRET_KEY?.trim() === key),
     },
   }));
