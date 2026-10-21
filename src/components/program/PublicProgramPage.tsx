@@ -4,6 +4,8 @@ import Link from "next/link";
 import { PublicBackgroundField } from "@/components/public/PublicBackgroundField";
 import { PublicSiteMotion } from "@/components/public/PublicSiteMotion";
 import { PublicTikTokLink } from "@/components/public/PublicTikTokLink";
+import liveStyles from "@/components/landing/live-room.module.css";
+import { liveRoom } from "@/content/live-room";
 import { formationCtaHref } from "@/config/public-cta";
 import { getSupportMailtoHref } from "@/config/site";
 import {
@@ -26,7 +28,7 @@ function PublicProgramHeader() {
   const contactHref = getSupportMailtoHref(CONTACT_SUBJECT);
 
   return (
-    <header className="public-header mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
+    <header className="public-header mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6 lg:px-8">
       <Link
         href="/"
         className="flex max-w-[13rem] items-center gap-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition hover:text-[var(--color-cyan)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] sm:max-w-none sm:text-sm"
@@ -51,12 +53,15 @@ function PublicProgramHeader() {
         <a className="transition hover:text-white" href="#modulos">
           Módulos
         </a>
+        <Link href={liveRoom.publicHref} className={`${liveStyles.live} ${liveStyles.link}`}>
+          Sala en vivo
+        </Link>
         <a className="transition hover:text-white" href={contactHref}>
           Contacto
         </a>
         <PublicTikTokLink />
       </nav>
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex max-w-full shrink-0 flex-wrap items-center gap-3">
         <a
           href={contactHref}
           className="text-sm font-medium text-[var(--color-text-secondary)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)] md:hidden"
@@ -74,6 +79,11 @@ function PublicProgramHeader() {
           <span className="hidden sm:inline">Volver al inicio</span>
         </Link>
       </div>
+      <nav aria-label="Sala privada" className="w-full border-t border-[var(--color-border)] pt-3 text-sm md:hidden">
+        <Link href={liveRoom.publicHref} className={`${liveStyles.live} ${liveStyles.link}`}>
+          Sala en vivo
+        </Link>
+      </nav>
     </header>
   );
 }
