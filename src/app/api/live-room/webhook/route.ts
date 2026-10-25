@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { getLiveRoomStripe, liveRoomEnv } from "@/lib/services/live-room-config";
 import { LiveRoomService } from "@/lib/services/live-room.service";
+import { LiveRoomAlertsService } from "@/lib/services/live-room-alerts.service";
 
 export const runtime = "nodejs";
 
@@ -14,11 +15,14 @@ export async function POST(request: Request) {
   let event;
   try { event = stripe.webhooks.constructEvent(await request.text(), signature, secret); }
   catch { return new NextResponse(null, { status: 400 }); }
+  let syncFailed = false;
+  try { await LiveRoomService.handleWebhook(event); } catch { syncFailed = true; }
+  // Notifications are independent: email/storage failures must never change Stripe's response.
   try {
-    await LiveRoomService.handleWebhook(event);
-    return NextResponse.json({ received: true });
-  } catch {
-    // Stripe must retry if persistence or Discord synchronization fails.
-    return NextResponse.json({ received: false }, { status: 500 });
-  }
+    after(async () => {
+      try { await LiveRoomAlertsService.captureEvent(event, syncFailed); await LiveRoomAlertsService.deliverPending(); }
+      catch { console.error("[live-room:alerts] pending_notice_unavailable"); }
+    });
+  } catch { console.error("[live-room:alerts] background_unavailable"); }
+  return NextResponse.json({ received: !syncFailed }, { status: syncFailed ? 500 : 200 });
 }

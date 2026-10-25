@@ -1,17 +1,44 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { requireAdminServerContext } from "@/app/admin/admin-auth";
 import { LiveRoomRepository } from "@/lib/repositories/live-room.repository";
 import { liveRoomIsLive } from "@/lib/services/live-room-config";
 import { LiveRoomService } from "@/lib/services/live-room.service";
 import { getLiveRoomAudit } from "@/lib/services/live-room-audit.service";
 import { LiveRoomAccessAudit } from "@/components/admin/live-room/LiveRoomAccessAudit";
+import { getLiveRoomAlertConfig, liveRoomAlertLabels, LiveRoomAlertsService } from "@/lib/services/live-room-alerts.service";
+import { LiveRoomAlertRepository } from "@/lib/repositories/live-room-alert.repository";
+
+async function testAlert() {
+  "use server";
+  await requireAdminServerContext();
+  let sent = false;
+  try { sent = await LiveRoomAlertsService.sendTest(); } catch { /* Report a safe failure in the panel. */ }
+  redirect(`/admin/live-room?status=${sent ? "email_sent" : "email_failed"}`);
+}
+
+async function retryAlerts() {
+  "use server";
+  await requireAdminServerContext();
+  let failed = false;
+  try { await LiveRoomAlertsService.deliverPending(); } catch { failed = true; }
+  revalidatePath("/admin/live-room");
+  redirect(`/admin/live-room?status=${failed ? "email_failed" : "email_retried"}`);
+}
 
 async function refreshAudit(form: FormData) {
   "use server";
   await requireAdminServerContext();
   const page = Math.max(1, Math.min(100000, Math.floor(Number(form.get("page")) || 1)));
   const view = ["issues", "renewals"].includes(String(form.get("view"))) ? String(form.get("view")) : "all";
+  after(async () => {
+    try {
+      const audit = await getLiveRoomAudit(page);
+      await LiveRoomAlertsService.captureAudit(audit.accounts.some((item) => ["missing_role", "unexpected_role"].includes(item.result)), audit.accounts.some((item) => item.result === "unknown"));
+      await LiveRoomAlertsService.deliverPending();
+    } catch { console.error("[live-room:alerts] manual_review_notice_unavailable"); }
+  });
   revalidatePath("/admin/live-room");
   redirect(`/admin/live-room?page=${page}&view=${view}`);
 }
@@ -57,6 +84,9 @@ async function reconcile() {
 export default async function AdminLiveRoomPage({ searchParams }: { searchParams: Promise<{ status?: string; page?: string; view?: string }> }) {
   await requireAdminServerContext();
   const params = await searchParams;
+  const alertConfig = getLiveRoomAlertConfig();
+  let notices: Awaited<ReturnType<typeof LiveRoomAlertRepository.recent>> | null = null;
+  try { notices = await LiveRoomAlertRepository.recent(liveRoomIsLive()); } catch { /* The queue has its own readiness state. */ }
   const page = Math.max(1, Math.min(100000, Math.floor(Number(params.page) || 1)));
   const filter = ["issues", "renewals"].includes(params.view ?? "") ? params.view! : "all";
   const offer = await LiveRoomService.getOffer();
@@ -71,7 +101,7 @@ export default async function AdminLiveRoomPage({ searchParams }: { searchParams
   if (!schemaPending) {
     try { audit = await getLiveRoomAudit(page); } catch { /* The panel reports unavailable verification without inventing results. */ }
   }
-  const statuses: Record<string, string> = { saved: "Descripción actualizada.", synced: "Accesos comprobados.", retry: "Algunos accesos siguen pendientes. Vuelve a comprobarlos.", invalid: "Introduce una descripción de entre 1 y 2000 caracteres." };
+  const statuses: Record<string, string> = { saved: "Descripción actualizada.", synced: "Accesos comprobados.", retry: "Algunos accesos siguen pendientes. Vuelve a comprobarlos.", invalid: "Introduce una descripción de entre 1 y 2000 caracteres.", email_sent: "El proveedor aceptó el correo de prueba. Comprueba tu bandeja y spam.", email_failed: "No se pudo enviar el aviso. Revisa la configuración del correo y los pendientes.", email_retried: "Reintento completado. Revisa el estado de cada aviso en el historial." };
   return (
     <div className="min-w-0 space-y-8">
       <header><h1 className="text-3xl font-semibold text-white">Sala privada en vivo</h1><p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">Descripción pública y sincronización de accesos a Discord.</p></header>
@@ -88,6 +118,13 @@ export default async function AdminLiveRoomPage({ searchParams }: { searchParams
       )}
       <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{offer.configured ? `Tarifa vigente en Stripe: ${offer.amountUsd} USD / mes.` : "Precio de Stripe pendiente de verificar."} Para cambiarla, crea un precio mensual y establécelo como predeterminado del producto. Las suscripciones existentes conservan su tarifa.</p>
       {!schemaPending && (audit ? <LiveRoomAccessAudit audit={audit} page={page} filter={filter} syncAccount={syncAccount} refreshAudit={refreshAudit} /> : <p role="alert" className="text-sm text-amber-300">No se pudo cargar la auditoría de membresías. Vuelve a actualizar; no se ha confirmado ningún acceso.</p>)}
+      <section className="space-y-4 border-t border-[var(--color-border)] pt-6" aria-labelledby="email-alert-heading">
+        <h2 id="email-alert-heading" className="text-xl font-semibold text-white">Avisos por correo</h2>
+        <p className="break-words text-sm text-[var(--color-text-secondary)]">Destino: {alertConfig.to ?? "Falta LIVE_ROOM_ALERT_EMAIL"} · Proveedor: {alertConfig.providerReady ? "Configurado" : "Pendiente"}</p>
+        <p className="text-sm leading-6 text-[var(--color-text-secondary)]">Avisos de facturación recibidos de Stripe y de incidencias detectadas al actualizar la revisión. Sin nombres, identificadores de clientes ni datos bancarios. No hay una alarma automática a las 24 horas: esa revisión sigue en el calendario.</p>
+        <div className="flex flex-wrap gap-3"><form action={testAlert}><button disabled={!alertConfig.to || !alertConfig.providerReady} className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-white disabled:opacity-50" type="submit">Enviar prueba</button></form><form action={retryAlerts}><button disabled={!notices || !alertConfig.to || !alertConfig.providerReady} className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-white disabled:opacity-50" type="submit">Reintentar pendientes</button></form></div>
+        {!notices ? <p className="text-sm text-amber-300">No se pudo consultar la cola de avisos. Falta configurar o verificar su migración.</p> : notices.length ? <ul className="divide-y divide-[var(--color-border)] text-sm">{notices.map((notice, index) => <li key={index} className="flex flex-wrap justify-between gap-2 py-3"><span>{liveRoomAlertLabels[notice.kind] ?? "Aviso de sala"} · {new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Chicago" }).format(new Date(notice.occurred_at))}</span><span className={notice.sent_at ? "text-emerald-300" : "text-amber-300"}>{notice.sent_at ? "Aceptado por el proveedor" : notice.last_failed ? "Envío fallido, pendiente" : "Pendiente"} · Intentos: {notice.attempts}</span></li>)}</ul> : <p className="text-sm text-[var(--color-text-secondary)]">Todavía no hay avisos registrados.</p>}
+      </section>
     </div>
   );
 }

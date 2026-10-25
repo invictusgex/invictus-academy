@@ -3,6 +3,8 @@ import "server-only";
 import { getEmailConfig } from "@/lib/email/email-config";
 
 type SendTransactionalEmailInput = {
+  category?: "welcome" | "operational";
+  idempotencyKey?: string;
   html: string;
   subject: string;
   text: string;
@@ -21,7 +23,7 @@ type ResendEmailPayload = {
 async function sendWithResend(input: SendTransactionalEmailInput) {
   const config = getEmailConfig();
 
-  if (!config || !config.welcomeEnabled) {
+  if (!config || (input.category !== "operational" && !config.welcomeEnabled)) {
     return { sent: false, reason: "email_not_configured" as const };
   }
 
@@ -42,8 +44,10 @@ async function sendWithResend(input: SendTransactionalEmailInput) {
     headers: {
       Authorization: `Bearer ${config.resendApiKey}`,
       "Content-Type": "application/json",
+      ...(input.idempotencyKey ? { "Idempotency-Key": input.idempotencyKey } : {}),
     },
     method: "POST",
+    signal: input.category === "operational" ? AbortSignal.timeout(8_000) : undefined,
   });
 
   if (!response.ok) {

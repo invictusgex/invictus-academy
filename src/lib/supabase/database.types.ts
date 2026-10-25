@@ -7,10 +7,17 @@
   | Json[]
 
 import type { LiveRoomAccountRow } from "@/lib/types/live-room.types";
+import type { LiveRoomAlertRow } from "@/lib/types/live-room-alert.types";
 
 export type Database = {
   public: {
     Tables: {
+      live_room_alert_deliveries: {
+        Row: LiveRoomAlertRow
+        Insert: Pick<LiveRoomAlertRow, "id" | "kind" | "occurred_at" | "livemode"> & Partial<LiveRoomAlertRow>
+        Update: Partial<LiveRoomAlertRow>
+        Relationships: []
+      }
       live_room_accounts: {
         Row: LiveRoomAccountRow
         Insert: Pick<LiveRoomAccountRow, "profile_id" | "livemode"> & Partial<Omit<LiveRoomAccountRow, "profile_id" | "livemode">>
