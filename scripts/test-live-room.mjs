@@ -61,6 +61,11 @@ const discord = {
   },
 };
 const mocks = {
+  "@/lib/services/live-room-access": (() => {
+    const loaded = { exports: {} };
+    vm.runInNewContext(ts.transpileModule(require("node:fs").readFileSync(new URL("../src/lib/services/live-room-access.ts", import.meta.url), "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, loaded);
+    return loaded.exports;
+  })(),
   "server-only": {},
   "next/cache": { unstable_cache: (fn) => fn },
   "@/content/live-room": { liveRoom: { description: "Texto inicial", monthlyAmountUsd: 30 } },

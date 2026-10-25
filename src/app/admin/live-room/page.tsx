@@ -4,6 +4,32 @@ import { requireAdminServerContext } from "@/app/admin/admin-auth";
 import { LiveRoomRepository } from "@/lib/repositories/live-room.repository";
 import { liveRoomIsLive } from "@/lib/services/live-room-config";
 import { LiveRoomService } from "@/lib/services/live-room.service";
+import { getLiveRoomAudit } from "@/lib/services/live-room-audit.service";
+import { LiveRoomAccessAudit } from "@/components/admin/live-room/LiveRoomAccessAudit";
+
+async function refreshAudit(form: FormData) {
+  "use server";
+  await requireAdminServerContext();
+  const page = Math.max(1, Math.min(100000, Math.floor(Number(form.get("page")) || 1)));
+  const view = ["issues", "renewals"].includes(String(form.get("view"))) ? String(form.get("view")) : "all";
+  revalidatePath("/admin/live-room");
+  redirect(`/admin/live-room?page=${page}&view=${view}`);
+}
+
+async function syncAccount(form: FormData) {
+  "use server";
+  await requireAdminServerContext();
+  const profileId = String(form.get("profileId") ?? "");
+  const page = Math.max(1, Math.min(100000, Number(form.get("page")) || 1));
+  if (!/^[0-9a-f-]{36}$/i.test(profileId)) redirect("/admin/live-room?status=invalid");
+  let failed = false;
+  try {
+    if (!await LiveRoomService.getAccount(profileId)) throw new Error("NOT_FOUND");
+    await LiveRoomService.sync(profileId);
+  } catch { failed = true; }
+  revalidatePath("/admin/live-room");
+  redirect(`/admin/live-room?page=${Math.floor(page)}&status=${failed ? "retry" : "synced"}`);
+}
 
 async function saveDescription(form: FormData) {
   "use server";
@@ -28,9 +54,11 @@ async function reconcile() {
   redirect(`/admin/live-room?status=${failed ? "retry" : "synced"}`);
 }
 
-export default async function AdminLiveRoomPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+export default async function AdminLiveRoomPage({ searchParams }: { searchParams: Promise<{ status?: string; page?: string; view?: string }> }) {
   await requireAdminServerContext();
   const params = await searchParams;
+  const page = Math.max(1, Math.min(100000, Math.floor(Number(params.page) || 1)));
+  const filter = ["issues", "renewals"].includes(params.view ?? "") ? params.view! : "all";
   const offer = await LiveRoomService.getOffer();
   let description: string | null = null;
   let schemaPending = false;
@@ -39,9 +67,13 @@ export default async function AdminLiveRoomPage({ searchParams }: { searchParams
     if (error instanceof Error && error.message === "LIVE_ROOM_SCHEMA_PENDING") schemaPending = true;
     else throw error;
   }
+  let audit: Awaited<ReturnType<typeof getLiveRoomAudit>> | null = null;
+  if (!schemaPending) {
+    try { audit = await getLiveRoomAudit(page); } catch { /* The panel reports unavailable verification without inventing results. */ }
+  }
   const statuses: Record<string, string> = { saved: "Descripción actualizada.", synced: "Accesos comprobados.", retry: "Algunos accesos siguen pendientes. Vuelve a comprobarlos.", invalid: "Introduce una descripción de entre 1 y 2000 caracteres." };
   return (
-    <div className="max-w-3xl space-y-8">
+    <div className="min-w-0 space-y-8">
       <header><h1 className="text-3xl font-semibold text-white">Sala privada en vivo</h1><p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">Descripción pública y sincronización de accesos a Discord.</p></header>
       {params.status && statuses[params.status] ? <p role="status" className="text-sm text-[var(--color-cyan)]">{statuses[params.status]}</p> : null}
       {schemaPending ? <p role="status" className="text-sm leading-7 text-[var(--color-text-secondary)]">Falta aplicar la migración de membresías para habilitar la gestión.</p> : (
@@ -55,6 +87,7 @@ export default async function AdminLiveRoomPage({ searchParams }: { searchParams
         </>
       )}
       <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{offer.configured ? `Tarifa vigente en Stripe: ${offer.amountUsd} USD / mes.` : "Precio de Stripe pendiente de verificar."} Para cambiarla, crea un precio mensual y establécelo como predeterminado del producto. Las suscripciones existentes conservan su tarifa.</p>
+      {!schemaPending && (audit ? <LiveRoomAccessAudit audit={audit} page={page} filter={filter} syncAccount={syncAccount} refreshAudit={refreshAudit} /> : <p role="alert" className="text-sm text-amber-300">No se pudo cargar la auditoría de membresías. Vuelve a actualizar; no se ha confirmado ningún acceso.</p>)}
     </div>
   );
 }

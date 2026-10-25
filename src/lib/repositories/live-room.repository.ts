@@ -9,6 +9,27 @@ function check(error: { code?: string } | null) {
 }
 
 export const LiveRoomRepository = {
+  async listForAdmin(livemode: boolean, page: number) {
+    const client = getSupabaseAdminClient();
+    const { data, error, count } = await client.from("live_room_accounts")
+      .select("*", { count: "exact" }).eq("livemode", livemode)
+      .order("profile_id").range((page - 1) * 25, page * 25 - 1);
+    check(error);
+    const ids = (data ?? []).map((row) => row.profile_id);
+    const profiles = ids.length ? await client.from("profiles").select("id,email,full_name").in("id", ids) : { data: [], error: null };
+    check(profiles.error);
+    return { accounts: data ?? [], profiles: profiles.data ?? [], total: count ?? 0 };
+  },
+  async findLinkedDiscordIds(livemode: boolean, ids: string[]) {
+    const linked = new Set<string>();
+    for (let index = 0; index < ids.length; index += 100) {
+      const { data, error } = await getSupabaseAdminClient().from("live_room_accounts")
+        .select("discord_user_id").eq("livemode", livemode).in("discord_user_id", ids.slice(index, index + 100));
+      check(error);
+      for (const row of data ?? []) if (row.discord_user_id) linked.add(row.discord_user_id);
+    }
+    return linked;
+  },
   async get(profileId: string, livemode: boolean) {
     const { data, error } = await getSupabaseAdminClient().from("live_room_accounts")
       .select("*").eq("profile_id", profileId).eq("livemode", livemode).maybeSingle();

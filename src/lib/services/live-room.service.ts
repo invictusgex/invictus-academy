@@ -8,6 +8,7 @@ import { LiveRoomRepository as repository } from "@/lib/repositories/live-room.r
 import { DiscordMembershipService as discord } from "@/lib/services/discord-membership.service";
 import { getLiveRoomStripe, liveRoomAppUrl, liveRoomEnv, liveRoomIsLive } from "@/lib/services/live-room-config";
 import type { LiveRoomAccountRow, LiveRoomOffer } from "@/lib/types/live-room.types";
+import { hasPaidLiveRoomAccess } from "@/lib/services/live-room-access";
 
 const membershipPath = "/sala-en-vivo/suscripcion";
 const blockingStatuses = new Set(["active", "trialing", "past_due", "unpaid", "paused", "incomplete"]);
@@ -124,10 +125,8 @@ async function syncLocked(row: LiveRoomAccountRow, token: string, subscriptionId
     subscription = await stripe.subscriptions.retrieve(id, { expand: ["latest_invoice"] });
     assertSubscription(subscription, row);
   }
-  const invoice = subscription?.latest_invoice;
-  const invoicePaid = invoice && typeof invoice !== "string" && invoice.status === "paid";
   const paidThrough = subscription?.items.data[0]?.current_period_end;
-  const hasAccess = subscription?.status === "active" && Boolean(invoicePaid) && Boolean(paidThrough && paidThrough * 1000 > Date.now());
+  const hasAccess = hasPaidLiveRoomAccess(subscription);
   await repository.update(row.profile_id, row.livemode, token, {
     stripe_subscription_id: subscription?.id ?? null,
     subscription_status: subscription?.status ?? "none",

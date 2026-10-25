@@ -3,7 +3,7 @@ import { liveRoomEnv, liveRoomCallbackUrl } from "@/lib/services/live-room-confi
 
 async function discordRequest(path: string, options: RequestInit = {}) {
   const response = await fetch(`https://discord.com/api/v10${path}`, {
-    ...options, cache: "no-store", signal: AbortSignal.timeout(10_000),
+    ...options, cache: "no-store", signal: options.signal ?? AbortSignal.timeout(10_000),
     headers: { Authorization: `Bot ${liveRoomEnv("DISCORD_BOT_TOKEN")}`, "Content-Type": "application/json", ...options.headers },
   });
   if (options.method === "DELETE" && response.status === 404) return null;
@@ -11,6 +11,33 @@ async function discordRequest(path: string, options: RequestInit = {}) {
   return response.status === 204 ? null : response.json();
 }
 export const DiscordMembershipService = {
+  async inspectMember(discordId: string) {
+    const response = await fetch(`https://discord.com/api/v10/guilds/${liveRoomEnv("DISCORD_GUILD_ID")}/members/${discordId}`, {
+      cache: "no-store", signal: AbortSignal.timeout(4_000),
+      headers: { Authorization: `Bot ${liveRoomEnv("DISCORD_BOT_TOKEN")}` },
+    });
+    if (response.status === 404) return { inServer: false, hasRole: false };
+    if (!response.ok) throw new Error("LIVE_ROOM_DISCORD_UNAVAILABLE");
+    const member = await response.json();
+    if (!Array.isArray(member.roles)) throw new Error("LIVE_ROOM_DISCORD_UNAVAILABLE");
+    return { inServer: true, hasRole: member.roles.includes(liveRoomEnv("DISCORD_MEMBER_ROLE_ID")) };
+  },
+  async listRoleMembers() {
+    const holders: { id: string; name: string }[] = [];
+    let after = "0";
+    const signal = AbortSignal.timeout(12_000);
+    // Report incomplete coverage rather than claiming a large guild was fully audited.
+    for (let page = 0; page < 10; page += 1) {
+      const members = await discordRequest(`/guilds/${liveRoomEnv("DISCORD_GUILD_ID")}/members?limit=1000&after=${after}`, { signal });
+      if (!Array.isArray(members)) throw new Error("LIVE_ROOM_DISCORD_UNAVAILABLE");
+      for (const member of members) {
+        if (member.roles?.includes(liveRoomEnv("DISCORD_MEMBER_ROLE_ID"))) holders.push({ id: member.user.id, name: member.user.username });
+      }
+      if (members.length < 1000) return { holders, complete: true };
+      after = members[members.length - 1].user.id;
+    }
+    return { holders, complete: false };
+  },
   authorizationUrl(state: string) {
     const url = new URL("https://discord.com/oauth2/authorize");
     url.search = new URLSearchParams({
