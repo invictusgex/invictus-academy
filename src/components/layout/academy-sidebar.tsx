@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import liveStyles from "@/components/landing/live-room.module.css";
+import { liveRoom } from "@/content/live-room";
 
 import { useAdminContext } from "@/contexts/AdminContext";
 import type { AcademyNavItem } from "@/types/academy";
@@ -49,6 +51,7 @@ export function AcademySidebar({ navigation }: AcademySidebarProps) {
       >
         {visibleNavigation.map((item, index) => {
           const isCurrentPage = index === currentNavigationIndex;
+          const isLiveRoom = item.href === liveRoom.publicHref;
 
           return (
             <Link
@@ -56,9 +59,12 @@ export function AcademySidebar({ navigation }: AcademySidebarProps) {
               key={item.label}
               href={item.href}
               className={classNames(
-                "min-w-0 rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium break-words text-[var(--color-text-secondary)] transition",
+                "min-w-0 text-sm break-words transition",
+                isLiveRoom
+                  ? `${liveStyles.live} ${liveStyles.link}`
+                  : "rounded-lg border border-transparent px-3 py-2.5 font-medium text-[var(--color-text-secondary)]",
                 "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cyan)]",
-                "hover:border-[var(--color-border)] hover:bg-[var(--color-hover-bg)] hover:text-white",
+                !isLiveRoom && "hover:border-[var(--color-border)] hover:bg-[var(--color-hover-bg)] hover:text-white",
                 isCurrentPage &&
                   "border-[var(--color-border)] bg-[var(--color-hover-bg)] text-white",
               )}
