@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getEmailConfig } from "@/lib/email/email-config";
+import { classifyEmailRejection, EmailDeliveryError } from "@/lib/email/email-errors";
 
 type SendTransactionalEmailInput = {
   category?: "welcome" | "operational";
@@ -39,7 +40,8 @@ async function sendWithResend(input: SendTransactionalEmailInput) {
     payload.reply_to = config.replyTo;
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
+  let response: Response;
+  try { response = await fetch("https://api.resend.com/emails", {
     body: JSON.stringify(payload),
     headers: {
       Authorization: `Bearer ${config.resendApiKey}`,
@@ -48,10 +50,15 @@ async function sendWithResend(input: SendTransactionalEmailInput) {
     },
     method: "POST",
     signal: input.category === "operational" ? AbortSignal.timeout(8_000) : undefined,
-  });
+  }); } catch (error) {
+    const name = error instanceof Error ? error.name : "";
+    throw new EmailDeliveryError(["TimeoutError", "AbortError"].includes(name) ? "timeout" : "network");
+  }
 
   if (!response.ok) {
-    throw new Error("Transactional email provider rejected the message.");
+    let body: unknown = null;
+    try { body = await response.json(); } catch { /* Keep diagnostics safe even for non-JSON provider failures. */ }
+    throw new EmailDeliveryError(classifyEmailRejection(response.status, body), response.status);
   }
 
   return { sent: true, reason: null };

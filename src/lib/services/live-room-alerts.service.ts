@@ -2,6 +2,7 @@ import "server-only";
 import { createHash, randomUUID } from "node:crypto";
 import type Stripe from "stripe";
 import { getEmailConfig } from "@/lib/email/email-config";
+import { emailFailureCode, type EmailFailureCode } from "@/lib/email/email-errors";
 import { escapeHtml } from "@/lib/email/email-template-utils";
 import { TransactionalEmailService } from "@/lib/email/transactional-email.service";
 import { LiveRoomAlertRepository as deliveries } from "@/lib/repositories/live-room-alert.repository";
@@ -75,15 +76,19 @@ export const LiveRoomAlertsService = {
     if (unknown) await queue(`audit:${mode}:${bucket}:unknown`, "verification_failed", now.toISOString(), mode);
   },
   async deliverPending() {
+    const report: { sent: number; failed: number; busy: number; error: EmailFailureCode | null } = { sent: 0, failed: 0, busy: 0, error: null };
     const config = getLiveRoomAlertConfig();
-    if (!config.to || !config.providerReady) return;
+    if (!config.to || !config.providerReady) return { ...report, error: "configuration" as const };
     for (const row of await deliveries.pending(liveRoomIsLive())) {
       const token = randomUUID();
-      if (!await deliveries.claim(row, token)) continue;
+      if (!await deliveries.claim(row, token)) { report.busy += 1; continue; }
       let sent = false;
       try { sent = await sendMinimal(row.kind, row.occurred_at, row.id); }
-      catch { /* Keep the notice pending; never serialize provider errors. */ }
+      catch (error) { report.error = emailFailureCode(error); }
       await deliveries.finish(row.id, token, sent);
+      if (sent) report.sent += 1;
+      else { report.failed += 1; report.error ??= "configuration"; }
     }
+    return report;
   },
 };

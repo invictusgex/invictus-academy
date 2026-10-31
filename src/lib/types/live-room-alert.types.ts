@@ -10,3 +10,5 @@ export type LiveRoomAlertRow = {
   last_attempt_at: string | null;
   last_failed: boolean;
 };
+
+export type LiveRoomEmailActionState = { status: "idle" | "success" | "error"; message: string };

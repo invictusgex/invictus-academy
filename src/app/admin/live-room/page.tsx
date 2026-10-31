@@ -9,23 +9,8 @@ import { getLiveRoomAudit } from "@/lib/services/live-room-audit.service";
 import { LiveRoomAccessAudit } from "@/components/admin/live-room/LiveRoomAccessAudit";
 import { getLiveRoomAlertConfig, liveRoomAlertLabels, LiveRoomAlertsService } from "@/lib/services/live-room-alerts.service";
 import { LiveRoomAlertRepository } from "@/lib/repositories/live-room-alert.repository";
-
-async function testAlert() {
-  "use server";
-  await requireAdminServerContext();
-  let sent = false;
-  try { sent = await LiveRoomAlertsService.sendTest(); } catch { /* Report a safe failure in the panel. */ }
-  redirect(`/admin/live-room?status=${sent ? "email_sent" : "email_failed"}`);
-}
-
-async function retryAlerts() {
-  "use server";
-  await requireAdminServerContext();
-  let failed = false;
-  try { await LiveRoomAlertsService.deliverPending(); } catch { failed = true; }
-  revalidatePath("/admin/live-room");
-  redirect(`/admin/live-room?status=${failed ? "email_failed" : "email_retried"}`);
-}
+import { testLiveRoomEmail, retryLiveRoomEmails } from "@/app/admin/live-room/email-actions";
+import { LiveRoomEmailControls } from "@/components/admin/live-room/LiveRoomEmailControls";
 
 async function refreshAudit(form: FormData) {
   "use server";
@@ -122,7 +107,7 @@ export default async function AdminLiveRoomPage({ searchParams }: { searchParams
         <h2 id="email-alert-heading" className="text-xl font-semibold text-white">Avisos por correo</h2>
         <p className="break-words text-sm text-[var(--color-text-secondary)]">Destino: {alertConfig.to ?? "Falta LIVE_ROOM_ALERT_EMAIL"} · Proveedor: {alertConfig.providerReady ? "Configurado" : "Pendiente"}</p>
         <p className="text-sm leading-6 text-[var(--color-text-secondary)]">Avisos de facturación recibidos de Stripe y de incidencias detectadas al actualizar la revisión. Sin nombres, identificadores de clientes ni datos bancarios. No hay una alarma automática a las 24 horas: esa revisión sigue en el calendario.</p>
-        <div className="flex flex-wrap gap-3"><form action={testAlert}><button disabled={!alertConfig.to || !alertConfig.providerReady} className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-white disabled:opacity-50" type="submit">Enviar prueba</button></form><form action={retryAlerts}><button disabled={!notices || !alertConfig.to || !alertConfig.providerReady} className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-white disabled:opacity-50" type="submit">Reintentar pendientes</button></form></div>
+        <LiveRoomEmailControls ready={Boolean(alertConfig.to && alertConfig.providerReady)} queueReady={Boolean(notices)} testAction={testLiveRoomEmail} retryAction={retryLiveRoomEmails} />
         {!notices ? <p className="text-sm text-amber-300">No se pudo consultar la cola de avisos. Falta configurar o verificar su migración.</p> : notices.length ? <ul className="divide-y divide-[var(--color-border)] text-sm">{notices.map((notice, index) => <li key={index} className="flex flex-wrap justify-between gap-2 py-3"><span>{liveRoomAlertLabels[notice.kind] ?? "Aviso de sala"} · {new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Chicago" }).format(new Date(notice.occurred_at))}</span><span className={notice.sent_at ? "text-emerald-300" : "text-amber-300"}>{notice.sent_at ? "Aceptado por el proveedor" : notice.last_failed ? "Envío fallido, pendiente" : "Pendiente"} · Intentos: {notice.attempts}</span></li>)}</ul> : <p className="text-sm text-[var(--color-text-secondary)]">Todavía no hay avisos registrados.</p>}
       </section>
     </div>

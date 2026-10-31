@@ -10,9 +10,11 @@ async function load(path, mocks = {}, extra = {}) {
   vm.runInNewContext(code, scope); return scope.exports;
 }
 const sent = []; let providerFails = false;
+const emailErrors = await load("../src/lib/email/email-errors.ts");
 const config = { provider: "resend", from: "alerts@example.test", resendApiKey: "test-secret", welcomeEnabled: false };
 const email = await load("../src/lib/email/transactional-email.service.ts", {
   "server-only": {}, "@/lib/email/email-config": { getEmailConfig: () => config },
+  "@/lib/email/email-errors": emailErrors,
 }, { fetch: async (_url, options) => { if (providerFails) throw new Error("secret provider detail"); sent.push({ payload: JSON.parse(options.body), headers: options.headers }); return { ok: true }; } });
 assert.equal((await email.TransactionalEmailService.send({ to: "operator@example.test", html: "x", text: "x", subject: "x" })).sent, false, "Welcome toggle still applies to welcome mail");
 const rows = new Map();
@@ -25,6 +27,7 @@ const deliveries = {
 const profile = "11111111-1111-4111-8111-111111111111";
 const subscription = { id: "sub_private", livemode: true, customer: "cus_private", metadata: { app_product: "live-room", profile_id: profile } };
 const alerts = await load("../src/lib/services/live-room-alerts.service.ts", {
+  "@/lib/email/email-errors": emailErrors,
   "server-only": {}, "@/lib/email/email-config": { getEmailConfig: () => config },
   "@/lib/email/email-template-utils": { escapeHtml: (value) => value.replaceAll("<", "&lt;") },
   "@/lib/email/transactional-email.service": email,
