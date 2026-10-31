@@ -5,6 +5,7 @@ import { ServerAuthError } from "@/lib/auth/server-errors";
 export function liveRoomError(error: unknown) {
   const code = error instanceof Error ? error.message : "";
   const messages: Record<string, string> = {
+    LIVE_ROOM_ENROLLMENT_CLOSED: "Las inscripciones abrirán pronto. Puedes unirte a la lista de interesados.",
     LIVE_ROOM_SCHEMA_PENDING: "La sala está en configuración. Todavía no se ha habilitado la suscripción.",
     LIVE_ROOM_NOT_CONFIGURED: "La suscripción todavía no está disponible.",
     LIVE_ROOM_BUSY: "Tu membresía se está actualizando. Intenta de nuevo en unos segundos.",

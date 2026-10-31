@@ -6,6 +6,7 @@ import { getCurrentServerUser } from "@/lib/auth/server";
 import { LiveRoomService } from "@/lib/services/live-room.service";
 import { DiscordMembershipService } from "@/lib/services/discord-membership.service";
 import { LiveRoomMembershipPanel } from "@/components/live-room/LiveRoomMembershipPanel";
+import { liveRoomEnrollmentOpen } from "@/lib/services/live-room-enrollment";
 
 export const metadata = { robots: { index: false, follow: false } };
 
@@ -13,6 +14,7 @@ export default async function LiveRoomSubscriptionPage({ searchParams }: { searc
   const user = await getCurrentServerUser();
 
   if (!user) {
+    if (!liveRoomEnrollmentOpen) redirect(liveRoom.publicHref);
     redirect(`/registro?next=${encodeURIComponent(liveRoom.subscriptionHref)}`);
   }
 
@@ -27,6 +29,7 @@ export default async function LiveRoomSubscriptionPage({ searchParams }: { searc
   }
   const active = LiveRoomService.canEnter(account);
   const hasSubscription = Boolean(account && !["none", "canceled", "incomplete_expired"].includes(account.subscription_status));
+  if (!liveRoomEnrollmentOpen && !hasSubscription) redirect(liveRoom.publicHref);
   return (
     <AuthPageShell eyebrow="Sala privada en vivo" title={active ? "Tu acceso a la sala" : "Tu membresía mensual"} description="Gestiona tu suscripción y el acceso de tu cuenta de Discord a la sala privada.">
       <LiveRoomMembershipPanel discordName={account?.discord_name ?? null} active={active} hasSubscription={hasSubscription}

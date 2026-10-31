@@ -253,6 +253,19 @@ a {
   mask-image: linear-gradient(180deg, #000, #000 70%, transparent 96%);
 }
 
+.room-coming-soon > .public-scroll-field {
+  mask-image: none;
+}
+
+.room-coming-soon main > section:first-child,
+.room-coming-soon main > #lista-interesados {
+  max-width: 72rem;
+}
+
+.room-coming-soon #lista-interesados form {
+  max-width: 36rem;
+}
+
 .scroll-market-layer {
   position: absolute;
   inset-inline: -32vw;

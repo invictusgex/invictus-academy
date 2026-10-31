@@ -13,6 +13,12 @@ import type { MentorshipEmailDeliveryRow } from "@/lib/types/mentorship-email.ty
 export type Database = {
   public: {
     Tables: {
+      live_room_waitlist: {
+        Row: { email: string; created_at: string; consent_version: string }
+        Insert: { email: string; created_at?: string; consent_version: string }
+        Update: { consent_version?: string }
+        Relationships: []
+      }
       mentorship_email_deliveries: {
         Row: MentorshipEmailDeliveryRow
         Insert: Pick<MentorshipEmailDeliveryRow, "booking_id" | "booked_at" | "starts_at" | "ends_at"> & Partial<MentorshipEmailDeliveryRow>

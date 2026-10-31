@@ -11,6 +11,7 @@ import { getLiveRoomAlertConfig, liveRoomAlertLabels, LiveRoomAlertsService } fr
 import { LiveRoomAlertRepository } from "@/lib/repositories/live-room-alert.repository";
 import { testLiveRoomEmail, retryLiveRoomEmails } from "@/app/admin/live-room/email-actions";
 import { LiveRoomEmailControls } from "@/components/admin/live-room/LiveRoomEmailControls";
+import { LiveRoomWaitlist } from "@/components/admin/live-room/LiveRoomWaitlist";
 
 async function refreshAudit(form: FormData) {
   "use server";
@@ -91,6 +92,7 @@ export default async function AdminLiveRoomPage({ searchParams }: { searchParams
     <div className="min-w-0 space-y-8">
       <header><h1 className="text-3xl font-semibold text-white">Sala privada en vivo</h1><p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">Descripción pública y sincronización de accesos a Discord.</p></header>
       {params.status && statuses[params.status] ? <p role="status" className="text-sm text-[var(--color-cyan)]">{statuses[params.status]}</p> : null}
+      <LiveRoomWaitlist />
       {schemaPending ? <p role="status" className="text-sm leading-7 text-[var(--color-text-secondary)]">Falta aplicar la migración de membresías para habilitar la gestión.</p> : (
         <>
           <form action={saveDescription} className="space-y-5">

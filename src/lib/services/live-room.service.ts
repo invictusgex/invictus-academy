@@ -9,6 +9,7 @@ import { DiscordMembershipService as discord } from "@/lib/services/discord-memb
 import { getLiveRoomStripe, liveRoomAppUrl, liveRoomEnv, liveRoomIsLive } from "@/lib/services/live-room-config";
 import type { LiveRoomAccountRow, LiveRoomOffer } from "@/lib/types/live-room.types";
 import { hasPaidLiveRoomAccess } from "@/lib/services/live-room-access";
+import { liveRoomEnrollmentOpen } from "@/lib/services/live-room-enrollment";
 
 const membershipPath = "/sala-en-vivo/suscripcion";
 const blockingStatuses = new Set(["active", "trialing", "past_due", "unpaid", "paused", "incomplete"]);
@@ -172,6 +173,7 @@ export const LiveRoomService = {
     });
   },
   async startCheckout(profileId: string, email: string | null) {
+    if (!liveRoomEnrollmentOpen) throw new Error("LIVE_ROOM_ENROLLMENT_CLOSED");
     return locked(profileId, async (row, token) => {
       if (!row.discord_user_id) throw new Error("LIVE_ROOM_DISCORD_REQUIRED");
       await discord.assertMember(row.discord_user_id);

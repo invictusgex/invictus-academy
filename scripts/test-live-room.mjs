@@ -61,6 +61,7 @@ const discord = {
   },
 };
 const mocks = {
+  "@/lib/services/live-room-enrollment": { liveRoomEnrollmentOpen: true },
   "@/lib/services/live-room-access": (() => {
     const loaded = { exports: {} };
     vm.runInNewContext(ts.transpileModule(require("node:fs").readFileSync(new URL("../src/lib/services/live-room-access.ts", import.meta.url), "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, loaded);
@@ -80,6 +81,11 @@ const context = { exports: {}, require: (id) => mocks[id] ?? require(id), Date,
   console: { ...console, error: (...args) => diagnostics.push(args.join(" ")) }, Buffer, process: { env: testEnv } };
 vm.runInNewContext(code, context);
 const service = context.exports.LiveRoomService;
+
+mocks["@/lib/services/live-room-enrollment"].liveRoomEnrollmentOpen = false;
+await assert.rejects(service.startCheckout(profileId, null), /LIVE_ROOM_ENROLLMENT_CLOSED/);
+assert.equal(checkoutCreates, 0);
+mocks["@/lib/services/live-room-enrollment"].liveRoomEnrollmentOpen = true;
 
 await assert.rejects(service.startCheckout(profileId, null), /DISCORD_REQUIRED/);
 await service.linkDiscord(profileId, { id: "123456789012345678", username: "participante", accessToken: "test-only" });
