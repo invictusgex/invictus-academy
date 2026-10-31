@@ -8,6 +8,9 @@ import { AdminStatusBadge } from "@/components/admin/ui/AdminStatusBadge";
 import { MentorshipNoteService } from "@/lib/services/mentorship-note.service";
 import { MentorshipOutcomeService } from "@/lib/services/mentorship-outcome.service";
 import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
+import { getMentorshipEmailConfig, MentorshipEmailService } from "@/lib/services/mentorship-email.service";
+import { MentorshipEmailRepository } from "@/lib/repositories/mentorship-email.repository";
+import { emailFailureMessages, type EmailFailureCode } from "@/lib/email/email-errors";
 import type { MentorshipPrivateNote } from "@/lib/types/mentorship-note.types";
 import type { MentorshipOutcome } from "@/lib/types/mentorship-outcome.types";
 import type {
@@ -29,6 +32,18 @@ type AdminMentorshipRouteProps = {
 
 const adminMentorshipPath = "/admin/mentorship";
 const defaultMentorshipTimezone = "America/Chicago";
+
+async function retryBookingEmails() {
+  "use server";
+  await requireAdminServerContext();
+  let message = "No se pudo consultar la cola de avisos de mentoría.";
+  try {
+    const result = await MentorshipEmailService.retryPending();
+    message = `Avisos aceptados por el proveedor: ${result.sent}. Pendientes: ${result.pending}. Omitidos por cambio de estado: ${result.skipped}.`;
+  } catch { /* Keep diagnostics private; the panel exposes allowlisted reasons only. */ }
+  revalidatePath(adminMentorshipPath);
+  redirectWithMessage(message);
+}
 const dayLabels = [
   "Domingo",
   "Lunes",
@@ -1023,6 +1038,9 @@ export default async function AdminMentorshipRoute({
 }: AdminMentorshipRouteProps) {
   const { supabase } = await requireAdminServerContext();
   const params = await searchParams;
+  const emailConfig = getMentorshipEmailConfig();
+  let emailNotices: Awaited<ReturnType<typeof MentorshipEmailRepository.recent>> | null = null;
+  try { emailNotices = await MentorshipEmailRepository.recent(); } catch { /* Reservations remain visible if the notification queue is unavailable. */ }
   const [slots, bookings, availabilityRules, blockedWindows] =
     await Promise.all([
     MentorshipSchedulingService.listAdminSlots(supabase),
@@ -1078,6 +1096,13 @@ export default async function AdminMentorshipRoute({
           {params.message}
         </div>
       ) : null}
+
+      <section className="space-y-3 border-y border-[var(--color-border)] py-5">
+        <h2 className="text-xl font-semibold text-white">Avisos de nuevas reservas</h2>
+        <p className="break-words text-sm text-[var(--color-text-secondary)]">Destino: {emailConfig.to ?? "Sin configurar"} · Proveedor: {emailConfig.providerReady ? "Configurado, pendiente de verificar el envío" : "Sin configurar"}</p>
+        <form action={retryBookingEmails}><button disabled={!emailConfig.to || !emailConfig.providerReady || !emailNotices} className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-white disabled:opacity-50" type="submit">Reintentar avisos pendientes</button></form>
+        {!emailNotices ? <p className="text-sm text-amber-300">No se pudo consultar la cola de avisos. Revisa su migración.</p> : emailNotices.length ? <ul className="divide-y divide-[var(--color-border)] text-sm">{emailNotices.map((notice) => <li key={notice.booking_id} className="space-y-1 py-3"><p>{new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short", timeZone: defaultMentorshipTimezone }).format(new Date(notice.starts_at))} · America/Chicago · {notice.status === "sent" ? "Aceptado por el proveedor" : notice.status === "skipped" ? "Omitido: reserva no confirmada" : "Pendiente de envío"} · Intentos: {notice.attempts}</p>{notice.last_error && <p className="text-amber-300">{Object.prototype.hasOwnProperty.call(emailFailureMessages, notice.last_error) ? emailFailureMessages[notice.last_error as EmailFailureCode] : emailFailureMessages.unknown}</p>}</li>)}</ul> : <p className="text-sm text-[var(--color-text-secondary)]">No hay avisos de reservas registrados. Se notificarán las nuevas reservas, no el historial anterior.</p>}
+      </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <SummaryCard

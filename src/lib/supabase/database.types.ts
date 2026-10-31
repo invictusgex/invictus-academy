@@ -8,10 +8,17 @@
 
 import type { LiveRoomAccountRow } from "@/lib/types/live-room.types";
 import type { LiveRoomAlertRow } from "@/lib/types/live-room-alert.types";
+import type { MentorshipEmailDeliveryRow } from "@/lib/types/mentorship-email.types";
 
 export type Database = {
   public: {
     Tables: {
+      mentorship_email_deliveries: {
+        Row: MentorshipEmailDeliveryRow
+        Insert: Pick<MentorshipEmailDeliveryRow, "booking_id" | "booked_at" | "starts_at" | "ends_at"> & Partial<MentorshipEmailDeliveryRow>
+        Update: Partial<MentorshipEmailDeliveryRow>
+        Relationships: []
+      }
       live_room_alert_deliveries: {
         Row: LiveRoomAlertRow
         Insert: Pick<LiveRoomAlertRow, "id" | "kind" | "occurred_at" | "livemode"> & Partial<LiveRoomAlertRow>

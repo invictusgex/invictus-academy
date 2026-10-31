@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 
 import {
   SERVER_AUTH_ERROR_CODES,
@@ -14,6 +14,7 @@ import {
 import { getAcademyEnrollmentAccess } from "@/lib/services/academy-access.service";
 import { MentorshipPreparationService } from "@/lib/services/mentorship-preparation.service";
 import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
+import { MentorshipEmailService } from "@/lib/services/mentorship-email.service";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type {
   MentorshipBooking,
@@ -259,6 +260,12 @@ export async function POST(request: Request) {
       payload,
       supabase,
     );
+    try {
+      after(async () => {
+        try { await MentorshipEmailService.notifyBooking(booking.id, profile.id); }
+        catch { console.error("[mentorship:email] notification_pending_unavailable"); }
+      });
+    } catch { console.error("[mentorship:email] background_unavailable"); }
     const [slots, bookings] = await Promise.all([
       MentorshipSchedulingService.listAvailableSlots(supabase),
       MentorshipSchedulingService.listStudentBookings(booking.profileId, supabase),
