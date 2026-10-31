@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 
 import { getSafeInternalRedirect } from "@/lib/auth/redirects";
 import { ProfileRepository } from "@/lib/repositories/profile.repository";
@@ -9,6 +10,8 @@ import {
 } from "@/lib/security/rate-limit";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getSiteUrl } from "@/config/site";
+import { createSupabaseRegistrationClient } from "@/lib/supabase/registration";
+import { classifyRegistrationError } from "@/lib/auth/registration-errors";
 
 export const runtime = "nodejs";
 
@@ -22,12 +25,28 @@ type RegisterResponseBody =
     }
   | {
       error: string;
+      code?: string;
+      requestId?: string;
     };
 
 const ambiguousConfirmationMessage =
   "Si esta dirección puede registrarse, recibirás un enlace para confirmar tu cuenta.";
 const accountHelpMessage =
   "Si ya utilizaste este correo para registrarte, inicia sesión. Si no recuerdas tu contraseña, puedes recuperarla.";
+
+function confirmationResponse(registered = false) {
+  return jsonResponse({ accountHelpMessage, accountHelpTitle: "¿Ya habías creado una cuenta?", message: ambiguousConfirmationMessage,
+    status: registered ? "registered" : "confirmation_required", title: "Revisa tu correo" }, 200);
+}
+
+function providerFailure(error: unknown) {
+  const failure = classifyRegistrationError(error);
+  if (failure.kind === "existing_account") return confirmationResponse();
+  const requestId = randomUUID();
+  // Never log provider messages, emails, names, passwords, tokens or request bodies.
+  console.error("[auth:register]", JSON.stringify({ requestId, code: failure.kind, status: failure.status }));
+  return jsonResponse({ error: failure.message, code: failure.kind, requestId }, failure.status);
+}
 
 function jsonResponse(body: RegisterResponseBody, status: number) {
   return NextResponse.json(body, {
@@ -111,67 +130,38 @@ export async function POST(request: Request) {
     return jsonResponse({ error: "Las contraseñas no coinciden." }, 400);
   }
 
-  const supabase = getSupabaseAdminClient();
-  const redirectTo = `${getSiteUrl()}/auth/confirm?next=${encodeURIComponent(
-    next,
-  )}`;
-
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-      },
-      emailRedirectTo: redirectTo,
-    },
-  });
-
-  if (error) {
-    const message = error.message.toLowerCase();
-
-    if (
-      message.includes("already registered") ||
-      message.includes("already exists") ||
-      message.includes("user already")
-    ) {
-      return jsonResponse(
-        {
-          accountHelpMessage,
-          accountHelpTitle: "¿Ya habías creado una cuenta?",
-          message: ambiguousConfirmationMessage,
-          status: "confirmation_required",
-          title: "Revisa tu correo",
-        },
-        200,
-      );
-    }
-
-    return jsonResponse(
-      { error: "No pudimos crear la cuenta. Revisa los datos e intenta otra vez." },
-      400,
-    );
-  }
-
-  const isNewIdentity =
-    data.user?.identities === undefined || data.user.identities.length > 0;
-
-  if (data.user && isNewIdentity) {
-    await ProfileRepository.upsertStudentProfile(supabase, {
+  try {
+    const supabase = createSupabaseRegistrationClient();
+    const redirectTo = `${getSiteUrl()}/auth/confirm?next=${encodeURIComponent(next)}`;
+    const { data, error } = await supabase.auth.signUp({
       email,
-      fullName,
-      profileId: data.user.id,
+      password,
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: redirectTo,
+      },
     });
-  }
 
-  return jsonResponse(
-    {
-      accountHelpMessage,
-      accountHelpTitle: "¿Ya habías creado una cuenta?",
-      message: ambiguousConfirmationMessage,
-      status: data.session ? "registered" : "confirmation_required",
-      title: "Revisa tu correo",
-    },
-    200,
-  );
+    if (error) return providerFailure(error);
+
+    const isNewIdentity =
+      data.user?.identities === undefined || data.user.identities.length > 0;
+
+    if (data.user && isNewIdentity) {
+      try {
+        await ProfileRepository.upsertStudentProfile(getSupabaseAdminClient(), {
+          email,
+          fullName,
+          profileId: data.user.id,
+        });
+      } catch {
+        const requestId = randomUUID();
+        console.error("[auth:register]", JSON.stringify({ requestId, code: "profile_sync_failed", status: 503 }));
+        return jsonResponse({ code: "profile_sync_failed", requestId, error: "El servicio recibió el registro, pero no pudo preparar el perfil. Si recibiste un correo de confirmación, consérvalo y contacta con soporte." }, 503);
+      }
+    }
+    return confirmationResponse(Boolean(data.session));
+  } catch (error) {
+    return providerFailure(error);
+  }
 }

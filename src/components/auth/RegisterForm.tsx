@@ -11,6 +11,7 @@ type RegisterResponse = {
   accountHelpMessage?: string;
   accountHelpTitle?: string;
   error?: string;
+  requestId?: string;
   message?: string;
   title?: string;
 };
@@ -59,9 +60,9 @@ export function RegisterForm({ nextPath }: RegisterFormProps) {
       const payload = await readResponse(response);
 
       if (!response.ok || payload.error) {
+        const reference = typeof payload.requestId === "string" && /^[0-9a-f-]{36}$/i.test(payload.requestId) ? ` Referencia: ${payload.requestId}` : "";
         setErrorMessage(
-          payload.error ??
-            "No pudimos crear tu cuenta. Intenta nuevamente en unos minutos.",
+          (payload.error ?? "No pudimos crear tu cuenta. Intenta nuevamente en unos minutos.") + reference,
         );
         return;
       }
