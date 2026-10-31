@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { checkRateLimit, getRateLimitIdentity } from "@/lib/security/rate-limit";
+import { getSiteUrl } from "@/config/site";
 
 const reply = (body: object, status = 200) => NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
 
 export async function POST(request: Request) {
-  if (request.headers.get("origin") !== new URL(request.url).origin) return reply({ error: "Solicitud no permitida." }, 403);
+  // Hostinger may expose an internal host in request.url; trust only configured public origins.
+  const publicOrigin = new URL(getSiteUrl()).origin;
+  const origins = new Set([publicOrigin]);
+  if (["https://invictusgex.com", "https://www.invictusgex.com"].includes(publicOrigin)) {
+    origins.add("https://invictusgex.com");
+    origins.add("https://www.invictusgex.com");
+  }
+  if (!origins.has(request.headers.get("origin") ?? "")) return reply({ error: "Solicitud no permitida." }, 403);
   const limit = checkRateLimit({ key: `room-waitlist:${getRateLimitIdentity(request)}`, limit: 5, windowMs: 60 * 60_000 });
   if (!limit.allowed) return reply({ error: "Demasiados intentos. Vuelve a probar más tarde." }, 429);
   if (Number(request.headers.get("content-length")) > 2048) return reply({ error: "Solicitud demasiado grande." }, 413);

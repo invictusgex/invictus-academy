@@ -4,7 +4,9 @@ import vm from "node:vm";
 import ts from "typescript";
 
 let stored = []; let failure = null; let allowed = true;
+let siteUrl = "https://example.test";
 const mocks = {
+  "@/config/site": { getSiteUrl: () => siteUrl },
   "next/server": { NextResponse: { json: (body, options) => Response.json(body, options) } },
   "@/lib/supabase/admin": { getSupabaseAdminClient: () => ({ from: () => ({ insert: async row => { if (!failure) stored.push(row); return { error: failure }; } }) }) },
   "@/lib/security/rate-limit": { getRateLimitIdentity: () => "test", checkRateLimit: () => ({ allowed }) },
@@ -19,6 +21,14 @@ assert.equal(stored.length, 0);
 assert.equal((await post({ email: " HELLO@example.test ", consent: true })).status, 200);
 assert.equal(stored[0].email, "hello@example.test");
 assert.equal(stored[0].consent_version, "opening-notice-v1");
+siteUrl = "https://invictusgex.com";
+const behindProxy = origin => context.exports.POST(new Request("http://0.0.0.0:3000/api/live-room/waitlist", { method: "POST", headers: { origin, "Content-Type": "application/json", "x-forwarded-host": "evil.test" }, body: JSON.stringify({ email: "proxy@example.test", consent: true }) }));
+assert.equal((await behindProxy("https://invictusgex.com")).status, 200);
+assert.equal((await behindProxy("https://www.invictusgex.com")).status, 200);
+assert.equal((await behindProxy("https://evil.test")).status, 403);
+assert.equal((await behindProxy("null")).status, 403);
+assert.equal((await context.exports.POST(new Request("http://0.0.0.0:3000/api/live-room/waitlist", { method: "POST" }))).status, 403);
+siteUrl = "https://example.test";
 failure = { code: "23505" };
 assert.equal((await post({ email: "hello@example.test", consent: true })).status, 200);
 failure = { code: "42P01", message: "private diagnostic" };
