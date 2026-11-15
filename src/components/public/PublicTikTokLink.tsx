@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const tiktokProfileUrl =
   "https://www.tiktok.com/@in_victus_gex?is_from_webapp=1&sender_device=pc";
-const discordInviteUrl = "https://discord.gg/VRQKuQpj8";
+const discordInviteUrl = "https://discord.gg/5v3gCMWDWU";
 
 type AcademyAccessCheck = {
   hasAcademyAccess: boolean;
