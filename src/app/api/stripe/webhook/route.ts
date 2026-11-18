@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { sendPurchaseDiscordAlert } from "@/lib/services/purchase-discord-alert.service";
 
 import { getStripeWebhookConfig } from "@/lib/stripe/stripe-config";
 import {
@@ -76,6 +77,16 @@ export async function POST(request: Request) {
 
   try {
     const result = await StripeWebhookService.processEvent(event);
+
+    if (event.livemode && event.type === "payment_intent.succeeded" && result.status === "processed" && result.purchaseId) {
+      const purchaseId = result.purchaseId;
+      try {
+        after(async () => {
+          try { await sendPurchaseDiscordAlert(purchaseId); }
+          catch { console.error("[academy:discord] purchase_alert_failed"); }
+        });
+      } catch { console.error("[academy:discord] purchase_alert_schedule_failed"); }
+    }
 
     return jsonResponse(
       {
