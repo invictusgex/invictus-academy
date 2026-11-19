@@ -48,7 +48,7 @@ await service.notifyBooking(booking.id, booking.profile_id);
 booking.status = "cancelled"; providerFails = false;
 assert.equal((await service.retryPending()).skipped, 1);
 
-let background; let bookFails = false; let backgroundFails = false;
+let background; let bookFails = false; let backgroundFails = false; let dateBlocked = false;
 const route = await load("../src/app/api/academy/mentorship-scheduling/route.ts", {
   "next/server": { NextResponse: Response, after: (callback) => { if (backgroundFails) throw Error("unavailable"); background = callback; } },
   "@/lib/auth/server-errors": { SERVER_AUTH_ERROR_CODES: {}, ServerAuthError: class extends Error {} },
@@ -56,7 +56,7 @@ const route = await load("../src/app/api/academy/mentorship-scheduling/route.ts"
   "@/lib/academy-product": { academyProductSlug: "academy" },
   "@/lib/security/rate-limit": { checkRateLimit: () => ({ allowed: true }), getRateLimitIdentity: () => "fixture" },
   "@/lib/services/academy-access.service": {}, "@/lib/services/mentorship-preparation.service": {},
-  "@/lib/services/mentorship-scheduling.service": { MentorshipSchedulingService: { bookSlot: async () => { if (bookFails) throw Error("SLOT_NOT_AVAILABLE"); return { id: "booking", profileId: "student" }; }, listAvailableSlots: async () => [], listStudentBookings: async () => [] } },
+  "@/lib/services/mentorship-scheduling.service": { MentorshipSchedulingService: { bookSlot: async () => { if (dateBlocked) throw { message: "MENTORSHIP_NEXT_DAY_REQUIRED", code: "P0001" }; if (bookFails) throw Error("SLOT_NOT_AVAILABLE"); return { id: "booking", profileId: "student" }; }, listAvailableSlots: async () => [], listStudentBookings: async () => [] } },
   "@/lib/services/mentorship-email.service": { MentorshipEmailService: { notifyBooking: async () => { throw Error("email failure"); } } },
   "@/lib/services/mentorship-discord.service": { MentorshipDiscordService: { notifyBooking: async () => { throw Error("discord failure"); } } },
   "@/lib/supabase/server": { createSupabaseServerClient: async () => ({}) },
@@ -69,4 +69,8 @@ assert.equal((await route.POST(request())).status, 201);
 bookFails = true; background = null;
 assert.notEqual((await route.POST(request())).status, 201);
 assert.equal(background, null);
+dateBlocked = true;
+const dateResponse = await route.POST(request());
+assert.equal(dateResponse.status, 409);
+assert.equal((await dateResponse.json()).error.code, "MENTORSHIP_NEXT_DAY_REQUIRED");
 console.log("PASS: one notification per booking, concurrent dedup, safe payload, retry, cancellation suppression and booking isolation from mail failures.");

@@ -33,3 +33,16 @@ Un resultado aceptado por el proveedor no confirma lectura ni llegada a bandeja.
 
 Pruebas: `node scripts/test-mentorship-email.mjs` y
 `node scripts/test-mentorship-discord.mjs`.
+
+## Antelacion de la reserva
+
+No se pueden confirmar nuevas reservas para el mismo dia en America/Chicago.
+El primer horario reservable es el dia siguiente del calendario del mentor,
+no necesariamente 24 horas despues. La zona del alumno no cambia esta regla.
+La lista publica filtra esos horarios, el servicio valida solicitudes antiguas
+y un trigger privado protege tambien el RPC y las inserciones directas.
+No se cancelan ni modifican reservas confirmadas previamente; completar o cancelar
+una reserva existente sigue permitido. Reactivar o cambiar de horario una reserva
+confirmada exige de nuevo una fecha desde el dia siguiente.
+Migracion: `20261119020000_mentorship_next_day_booking.sql`.
+Prueba: `node scripts/test-mentorship-booking-window.mjs`.

@@ -1,4 +1,5 @@
 import "server-only";
+import { isMentorshipBookingDateAllowed } from "@/lib/services/mentorship-booking-window";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -344,7 +345,7 @@ export const MentorshipSchedulingService = {
       );
 
     return slots.filter(
-      (slot) => !isBlockedSlot(slot.startsAt, slot.endsAt, blockedWindows),
+      (slot) => isMentorshipBookingDateAllowed(slot.startsAt) && !isBlockedSlot(slot.startsAt, slot.endsAt, blockedWindows),
     );
   },
 
@@ -665,6 +666,9 @@ export const MentorshipSchedulingService = {
       "MENTORSHIP_PARTICIPANT_TIMEZONE_REQUIRED",
     );
 
+    const slot = await MentorshipSchedulingRepository.getSlotById(input.slotId, supabase);
+    if (!slot || slot.status !== "available") throw new Error("SLOT_NOT_AVAILABLE");
+    if (!isMentorshipBookingDateAllowed(slot.startsAt)) throw new Error("MENTORSHIP_NEXT_DAY_REQUIRED");
     return MentorshipSchedulingRepository.bookSlot(input, supabase);
   },
 

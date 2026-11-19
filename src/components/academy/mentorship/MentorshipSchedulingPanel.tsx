@@ -404,7 +404,7 @@ export function MentorshipSchedulingPanel({
 
   return (
     <StudentSection
-      description="Selecciona un horario futuro disponible. La reserva se confirma con tu zona horaria real."
+      description="Reservas desde el día siguiente, según America/Chicago. Los horarios se muestran en tu zona horaria."
       title="Agenda de mentoría"
     >
       <StudentCard elevated>

@@ -136,6 +136,10 @@ function mapError(error: unknown) {
 
   const message = error instanceof Error ? error.message : "";
 
+  if (message.includes("MENTORSHIP_NEXT_DAY_REQUIRED") || (typeof error === "object" && error !== null && "message" in error && error.message === "MENTORSHIP_NEXT_DAY_REQUIRED")) {
+    return { code: "MENTORSHIP_NEXT_DAY_REQUIRED", message: "Las mentorías deben reservarse para el día siguiente o una fecha posterior, según America/Chicago. No se permiten reservas para el mismo día.", status: 409 };
+  }
+
   if (
     message.includes("SLOT_NOT_AVAILABLE") ||
     message.includes("SLOT_ALREADY_BOOKED")
