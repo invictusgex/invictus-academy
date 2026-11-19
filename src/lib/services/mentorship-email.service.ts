@@ -5,6 +5,7 @@ import { emailFailureCode, type EmailFailureCode } from "@/lib/email/email-error
 import { escapeHtml } from "@/lib/email/email-template-utils";
 import { TransactionalEmailService } from "@/lib/email/transactional-email.service";
 import { MentorshipEmailRepository as repository } from "@/lib/repositories/mentorship-email.repository";
+import { getMentorshipNotice } from "@/lib/services/mentorship-notice";
 
 export function getMentorshipEmailConfig() {
   const to = (process.env.MENTORSHIP_ALERT_EMAIL || process.env.LIVE_ROOM_ALERT_EMAIL)?.trim() ?? "";
@@ -19,14 +20,13 @@ async function deliver(bookingId: string) {
   let result: "pending" | "sent" | "skipped" = "pending";
   let errorCode: EmailFailureCode | null = null;
   try {
-    const booking = await repository.getBooking(bookingId);
-    if (!booking || booking.status !== "confirmed") result = "skipped";
+    const notice = await getMentorshipNotice(bookingId);
+    if (!notice) result = "skipped";
     else {
       const config = getMentorshipEmailConfig();
       if (!config.to || !config.providerReady) errorCode = "configuration";
       else {
-        const format = (value: string) => new Intl.DateTimeFormat("es", { dateStyle: "full", timeStyle: "short", timeZone: "America/Chicago" }).format(new Date(value));
-        const text = `Se ha agendado una mentoría.\n\nInicio: ${format(row.starts_at)}\nFin: ${format(row.ends_at)}\nZona horaria: America/Chicago\n\nConsulta el alumno y el estado actual de la reserva en tu agenda privada:\nhttps://invictusgex.com/admin/mentorship\n\nEste aviso no incluye nombres, correos, notas ni identificadores del alumno. Si la reserva cambia después, consulta siempre el panel.`;
+        const text = notice.text;
         const hash = createHash("sha256").update(`${config.to}:${bookingId}`).digest("hex");
         const sent = await TransactionalEmailService.send({ category: "operational", to: config.to, subject: "[Invictus GEX] Nueva mentoría agendada", text,
           html: `<div style="font-family:Arial,sans-serif;line-height:1.6;white-space:pre-wrap">${escapeHtml(text)}</div>`, idempotencyKey: `mentorship-${hash}` });

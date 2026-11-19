@@ -9,7 +9,9 @@ import { MentorshipNoteService } from "@/lib/services/mentorship-note.service";
 import { MentorshipOutcomeService } from "@/lib/services/mentorship-outcome.service";
 import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
 import { getMentorshipEmailConfig, MentorshipEmailService } from "@/lib/services/mentorship-email.service";
-import { MentorshipEmailRepository } from "@/lib/repositories/mentorship-email.repository";
+import { MentorshipEmailRepository, MentorshipDiscordRepository } from "@/lib/repositories/mentorship-email.repository";
+import { getMentorshipDiscordConfig, MentorshipDiscordService, sendMentorshipDiscordMessage } from "@/lib/services/mentorship-discord.service";
+import { TransactionalEmailService } from "@/lib/email/transactional-email.service";
 import { emailFailureMessages, type EmailFailureCode } from "@/lib/email/email-errors";
 import type { MentorshipPrivateNote } from "@/lib/types/mentorship-note.types";
 import type { MentorshipOutcome } from "@/lib/types/mentorship-outcome.types";
@@ -32,6 +34,32 @@ type AdminMentorshipRouteProps = {
 
 const adminMentorshipPath = "/admin/mentorship";
 const defaultMentorshipTimezone = "America/Chicago";
+
+async function retryBookingDiscord() {
+  "use server";
+  await requireAdminServerContext();
+  let message = "No se pudo consultar la cola de Discord.";
+  try {
+    const result = await MentorshipDiscordService.retryPending();
+    message = `Discord: ${result.sent} enviados, ${result.pending} pendientes, ${result.skipped} omitidos.`;
+  } catch { /* Keep provider responses and student data private. */ }
+  revalidatePath(adminMentorshipPath);
+  redirectWithMessage(message);
+}
+
+async function testBookingNotices() {
+  "use server";
+  await requireAdminServerContext();
+  const text = "PRUEBA de aviso de mentoría | Invictus GEX\nAlumno ficticio: Alumno de prueba\nCorreo ficticio: alumno@example.test\nEste mensaje comprueba el canal de avisos. No se ha creado ni reservado ninguna cita.\nAgenda: https://invictusgex.com/admin/mentorship";
+  const config = getMentorshipEmailConfig();
+  const results = await Promise.allSettled([
+    sendMentorshipDiscordMessage(text, `test:${Date.now()}`),
+    config.to && config.providerReady ? TransactionalEmailService.send({ category: "operational", to: config.to,
+      subject: "[Invictus GEX] Prueba de aviso de mentoría", text, html: "<p>Prueba de avisos de mentoría. No se ha reservado ninguna cita.</p>" }) : Promise.reject(new Error("configuration")),
+  ]);
+  const emailSent = results[1].status === "fulfilled" && results[1].value.sent;
+  redirectWithMessage(`Prueba: Discord ${results[0].status === "fulfilled" ? "aceptado" : "fallido; revisa configuración y mensajes privados"}. Correo ${emailSent ? "aceptado por Resend; revisa bandeja y spam" : "fallido; revisa configuración"}.`);
+}
 
 async function retryBookingEmails() {
   "use server";
@@ -1039,6 +1067,9 @@ export default async function AdminMentorshipRoute({
   const { supabase } = await requireAdminServerContext();
   const params = await searchParams;
   const emailConfig = getMentorshipEmailConfig();
+  const discordConfig = getMentorshipDiscordConfig();
+  let discordNotices: Awaited<ReturnType<typeof MentorshipDiscordRepository.recent>> | null = null;
+  try { discordNotices = await MentorshipDiscordRepository.recent(); } catch { /* Keep scheduling available without the delivery queue. */ }
   let emailNotices: Awaited<ReturnType<typeof MentorshipEmailRepository.recent>> | null = null;
   try { emailNotices = await MentorshipEmailRepository.recent(); } catch { /* Reservations remain visible if the notification queue is unavailable. */ }
   const [slots, bookings, availabilityRules, blockedWindows] =
@@ -1102,6 +1133,16 @@ export default async function AdminMentorshipRoute({
         <p className="break-words text-sm text-[var(--color-text-secondary)]">Destino: {emailConfig.to ?? "Sin configurar"} · Proveedor: {emailConfig.providerReady ? "Configurado, pendiente de verificar el envío" : "Sin configurar"}</p>
         <form action={retryBookingEmails}><button disabled={!emailConfig.to || !emailConfig.providerReady || !emailNotices} className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-white disabled:opacity-50" type="submit">Reintentar avisos pendientes</button></form>
         {!emailNotices ? <p className="text-sm text-amber-300">No se pudo consultar la cola de avisos. Revisa su migración.</p> : emailNotices.length ? <ul className="divide-y divide-[var(--color-border)] text-sm">{emailNotices.map((notice) => <li key={notice.booking_id} className="space-y-1 py-3"><p>{new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short", timeZone: defaultMentorshipTimezone }).format(new Date(notice.starts_at))} · America/Chicago · {notice.status === "sent" ? "Aceptado por el proveedor" : notice.status === "skipped" ? "Omitido: reserva no confirmada" : "Pendiente de envío"} · Intentos: {notice.attempts}</p>{notice.last_error && <p className="text-amber-300">{Object.prototype.hasOwnProperty.call(emailFailureMessages, notice.last_error) ? emailFailureMessages[notice.last_error as EmailFailureCode] : emailFailureMessages.unknown}</p>}</li>)}</ul> : <p className="text-sm text-[var(--color-text-secondary)]">No hay avisos de reservas registrados. Se notificarán las nuevas reservas, no el historial anterior.</p>}
+      </section>
+
+      <section className="space-y-3 border-b border-[var(--color-border)] pb-5">
+        <h2 className="text-xl font-semibold text-white">Avisos privados de Discord</h2>
+        <p className="text-sm text-[var(--color-text-secondary)]">{discordConfig.ready ? `Destinatario: ${discordConfig.recipient}` : "Falta configurar el destinatario o el bot."} · Incluyen alumno, correo, horario, duración, zonas horarias y nota de la reserva. Los avisos por correo incluyen los mismos detalles.</p>
+        <div className="flex flex-wrap gap-3">
+          <form action={testBookingNotices}><button className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-white" type="submit">Probar Discord y correo</button></form>
+          <form action={retryBookingDiscord}><button disabled={!discordConfig.ready || !discordNotices} className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm text-white disabled:opacity-50" type="submit">Reintentar Discord pendiente</button></form>
+        </div>
+        {!discordNotices ? <p className="text-sm text-amber-300">No se pudo consultar la cola de Discord. Revisa su migración.</p> : <ul className="divide-y divide-[var(--color-border)] text-sm">{discordNotices.map(notice => <li key={notice.booking_id} className="py-3">{new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short", timeZone: defaultMentorshipTimezone }).format(new Date(notice.starts_at))} · {notice.status === "sent" ? "Aceptado por Discord" : notice.status === "skipped" ? "Omitido: reserva no confirmada" : "Pendiente"} · Intentos: {notice.attempts}{notice.last_error ? " · No se pudo enviar: comprueba el bot, el destinatario y los permisos de mensajes privados." : ""}</li>)}</ul>}
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

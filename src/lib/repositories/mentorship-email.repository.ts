@@ -3,9 +3,10 @@ import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { MentorshipEmailDeliveryRow } from "@/lib/types/mentorship-email.types";
 
 function check(error: unknown) { if (error) throw new Error("MENTORSHIP_EMAIL_STORAGE_UNAVAILABLE"); }
-const table = () => getSupabaseAdminClient().from("mentorship_email_deliveries");
+function createDeliveryRepository(name: "mentorship_email_deliveries" | "mentorship_discord_deliveries") {
+const table = () => getSupabaseAdminClient().from(name);
 
-export const MentorshipEmailRepository = {
+return {
   async getBooking(id: string) {
     const { data, error } = await getSupabaseAdminClient().from("academy_mentorship_bookings")
       .select("id,status,profile_id,slot_id,booked_at").eq("id", id).maybeSingle();
@@ -45,3 +46,7 @@ export const MentorshipEmailRepository = {
     check(error);
   },
 };
+}
+
+export const MentorshipEmailRepository = createDeliveryRepository("mentorship_email_deliveries");
+export const MentorshipDiscordRepository = createDeliveryRepository("mentorship_discord_deliveries");

@@ -25,6 +25,7 @@ const service = (await load("../src/lib/services/mentorship-email.service.ts", {
   "@/lib/email/email-errors": { emailFailureCode: () => "sender_domain" },
   "@/lib/email/email-template-utils": { escapeHtml: (value) => value },
   "@/lib/repositories/mentorship-email.repository": { MentorshipEmailRepository: repository },
+  "@/lib/services/mentorship-notice": { getMentorshipNotice: async () => booking.status === "confirmed" ? { text: "Nueva mentoría. Alumno: Prueba. Correo: alumno@example.test. America/Chicago https://invictusgex.com/admin/mentorship" } : null },
   "@/lib/email/transactional-email.service": { TransactionalEmailService: { send: async (input) => { if (providerFails) throw Error("secret provider detail"); messages.push(input); return { sent: true }; } } },
 }, { process: { env: { LIVE_ROOM_ALERT_EMAIL: "operator@example.test" } } })).MentorshipEmailService;
 await service.notifyBooking(booking.id, "other-student");
@@ -34,6 +35,7 @@ assert.equal(messages.length, 1);
 assert.equal(records.get(booking.id).status, "sent");
 for (const value of [booking.id, booking.profile_id, booking.slot_id]) assert.ok(!JSON.stringify(messages[0]).includes(value));
 assert.ok(messages[0].text.includes("America/Chicago"));
+assert.ok(messages[0].text.includes("alumno@example.test"));
 assert.ok(messages[0].text.includes("https://invictusgex.com/admin/mentorship"));
 assert.match(messages[0].idempotencyKey, /^mentorship-[a-f0-9]{64}$/);
 booking.id = "retry-booking"; providerFails = true;
@@ -56,6 +58,7 @@ const route = await load("../src/app/api/academy/mentorship-scheduling/route.ts"
   "@/lib/services/academy-access.service": {}, "@/lib/services/mentorship-preparation.service": {},
   "@/lib/services/mentorship-scheduling.service": { MentorshipSchedulingService: { bookSlot: async () => { if (bookFails) throw Error("SLOT_NOT_AVAILABLE"); return { id: "booking", profileId: "student" }; }, listAvailableSlots: async () => [], listStudentBookings: async () => [] } },
   "@/lib/services/mentorship-email.service": { MentorshipEmailService: { notifyBooking: async () => { throw Error("email failure"); } } },
+  "@/lib/services/mentorship-discord.service": { MentorshipDiscordService: { notifyBooking: async () => { throw Error("discord failure"); } } },
   "@/lib/supabase/server": { createSupabaseServerClient: async () => ({}) },
 }, { Response });
 const request = () => new Request("https://example.test/book", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slotId: "slot", participantTimezone: "America/Chicago" }) });

@@ -15,6 +15,7 @@ import { getAcademyEnrollmentAccess } from "@/lib/services/academy-access.servic
 import { MentorshipPreparationService } from "@/lib/services/mentorship-preparation.service";
 import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
 import { MentorshipEmailService } from "@/lib/services/mentorship-email.service";
+import { MentorshipDiscordService } from "@/lib/services/mentorship-discord.service";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type {
   MentorshipBooking,
@@ -262,8 +263,10 @@ export async function POST(request: Request) {
     );
     try {
       after(async () => {
-        try { await MentorshipEmailService.notifyBooking(booking.id, profile.id); }
-        catch { console.error("[mentorship:email] notification_pending_unavailable"); }
+        await Promise.allSettled([
+          MentorshipEmailService.notifyBooking(booking.id, profile.id).catch(() => { console.error("[mentorship:email] notification_pending_unavailable"); }),
+          MentorshipDiscordService.notifyBooking(booking.id, profile.id).catch(() => { console.error("[mentorship:discord] notification_pending_unavailable"); }),
+        ]);
       });
     } catch { console.error("[mentorship:email] background_unavailable"); }
     const [slots, bookings] = await Promise.all([
