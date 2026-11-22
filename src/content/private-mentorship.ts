@@ -2,7 +2,7 @@ export const privateMentorship = {
   title: "Mentoría privada Invictus GEX",
   amountUsd: 349,
   amountMinor: 34900,
-  description: "Aprende a interpretar el mercado directamente con tu mentor. Sesiones privadas en vivo, coordinadas entre profesor y alumno, hasta completar el contenido acordado.",
+  description: "Aprende a interpretar el mercado directamente con tu mentor. Sesiones privadas en vivo de hasta dos horas, coordinadas entre profesor y alumno, hasta completar todo el contenido acordado.",
   topics: [
     { title: "Criterio y contexto", text: "Construir una lectura estructurada antes de evaluar una decisión." },
     { title: "Estructura del mercado", text: "Comprender instrumentos, participantes, liquidez y condiciones de mercado." },

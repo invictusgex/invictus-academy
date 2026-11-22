@@ -3,7 +3,8 @@
 La oferta publica y el espacio del alumno ahora describen una mentoria privada
 individual por 349 USD, pago unico, sin descuentos, videos grabados, modulos ni
 requisitos academicos previos. No hay un numero fijo de sesiones: profesor y alumno
-acuerdan fechas, duracion y contenido. Se conserva el slug interno del producto
+acuerdan fechas y contenido; cada encuentro en vivo tiene una duracion maxima de
+dos horas. No se fija un numero total de sesiones. Se conserva el slug interno del producto
 para no romper pagos, reembolsos, cuentas ni acceso existente.
 
 ## Reservas

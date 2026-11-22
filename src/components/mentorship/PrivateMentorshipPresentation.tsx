@@ -27,8 +27,8 @@ export function PrivateMentorshipPresentation() {
       </section>
       <section className="border-y border-[var(--color-border)]"><div className="mentorship-contained mx-auto px-5 py-12 sm:px-6"><h2 className="text-3xl font-semibold">Una mentoría, varias sesiones.</h2><div className="mt-8 grid gap-8 md:grid-cols-3">
         <article><h3 className="text-lg font-semibold">Compra directa</h3><p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">Tu pago activa el espacio privado para coordinar con el mentor y consultar la agenda.</p></article>
-        <article><h3 className="text-lg font-semibold">Disponibilidad acordada</h3><p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">Profesor y alumno acuerdan las fechas y la duración de cada encuentro. Las reservas se realizan desde el día siguiente, según America/Chicago.</p></article>
-        <article><h3 className="text-lg font-semibold">Hasta cubrir el contenido</h3><p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">No hay un número fijo de sesiones. Se continúa hasta trabajar el contenido acordado; el mentor registra el cierre del acompañamiento.</p></article>
+        <article><h3 className="text-lg font-semibold">Encuentros de hasta dos horas</h3><p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">Profesor y alumno acuerdan las fechas y la duración de cada encuentro, con un máximo de dos horas por sesión en vivo. Las reservas se realizan desde el día siguiente, según America/Chicago.</p></article>
+        <article><h3 className="text-lg font-semibold">Hasta cubrir el contenido</h3><p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">No hay un número fijo de sesiones. Se realizan los encuentros necesarios, de hasta dos horas cada uno, hasta completar todo el contenido acordado.</p></article>
       </div></div></section>
       <section id="contenido" className="mentorship-contained mx-auto px-5 py-14 sm:px-6"><h2 className="text-3xl font-semibold">Qué trabajaremos juntos</h2><p className="mt-5 max-w-2xl leading-8 text-[var(--color-text-secondary)]">Un alcance compartido desde el inicio, adaptando las explicaciones y los ejemplos a tus necesidades. No es una promesa de disponibilidad permanente ni de resultados financieros.</p>
         <Image className="mt-8 h-auto w-full border-y border-[var(--color-border)] py-5" src="/visuals/sala-en-vivo-mercado.png" alt="Gráficos de mercado, perfil de volumen, flujo de órdenes y exposición gamma." width={3472} height={1301} />
@@ -36,8 +36,8 @@ export function PrivateMentorshipPresentation() {
       </section>
       <section className="border-y border-[var(--color-border)]"><div className="mentorship-contained mx-auto px-5 py-12 sm:px-6"><h2 className="text-3xl font-semibold">Antes de comenzar</h2><div className="mt-7 divide-y divide-[var(--color-border)]">
         {[
-          ["¿Cuántas sesiones incluye?", "No se fija un número de encuentros. El compromiso es cubrir el contenido acordado entre profesor y alumno."],
-          ["¿Cuánto dura cada sesión?", "La duración se coordina según el contenido y la disponibilidad de ambos. Cada reserva tendrá inicio y fin acordados para organizar la agenda."],
+          ["¿Cuántas sesiones incluye?", "No hay un número fijo de encuentros. La mentoría continúa con sesiones de hasta dos horas hasta completar todo el contenido acordado entre profesor y alumno."],
+          ["¿Cuánto dura cada sesión?", "Cada sesión en vivo dura como máximo dos horas. Su duración concreta y su horario se coordinan entre profesor y alumno, dentro de ese límite."],
           ["¿Hay vídeos o módulos obligatorios?", "No. La formación es privada y directa en vivo; no hay vídeos grabados ni etapas obligatorias antes de reservar."],
           ["¿Necesito una evaluación para comprar?", "No. Puedes adquirir la mentoría directamente por 349 USD en un único pago."],
           ["¿Incluye la sala privada en vivo?", "No. La sala compartida de Discord es un producto independiente con su propia suscripción. La mentoría es individual."],

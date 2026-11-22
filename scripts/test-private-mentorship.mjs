@@ -34,6 +34,8 @@ const input = { profileId: "student", userEmail: "student@example.test", interna
 await createCheckoutSession(input);
 assert.equal(created[0].allow_promotion_codes, false);
 assert.equal(created[0].metadata.offering, "private_mentorship_v1");
+assert.match(created[0].custom_text.submit.message, /hasta dos horas cada una/);
+assert.match(offer.description, /hasta dos horas/);
 amount = 69900;
 await assert.rejects(createCheckoutSession(input), /349 USD/);
 assert.equal(created.length, 1);
