@@ -9,6 +9,6 @@ export const privateMentorship = {
     { title: "Volumen y flujo de órdenes", text: "Relacionar el precio con el volumen, la participación y la reacción del mercado." },
     { title: "Exposición gamma", text: "Integrar el posicionamiento y sus posibles efectos en el contexto de la sesión." },
     { title: "Escenarios y riesgo", text: "Preparar hipótesis, reconocer invalidaciones y trabajar la gestión del riesgo." },
-    { title: "Aplicación y revisión", text: "Revisar ejemplos y dudas contigo hasta cubrir el alcance acordado de la mentoría." },
+    { title: "Aplicación y revisión", text: "Trabajar con ejemplos prácticos y resolver tus dudas durante los encuentros en vivo." },
   ],
 } as const;
