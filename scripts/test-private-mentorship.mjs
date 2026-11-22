@@ -40,6 +40,13 @@ const presentation = await readFile(new URL("../src/components/mentorship/Privat
 assert.doesNotMatch(presentation, /Hasta cubrir el contenido|alcance compartido|contenido acordado|Consultar antes de comprar/i);
 assert.doesNotMatch(JSON.stringify(offer), /alcance acordado|contenido acordado/i);
 assert.match(presentation, /Sin un número fijo de sesiones/);
+const scheduling = await readFile(new URL("../src/components/academy/mentorship/MentorshipSchedulingPanel.tsx", import.meta.url), "utf8");
+assert.match(scheduling, /showModal/);
+assert.match(scheduling, /Agendar mentoría/);
+assert.match(scheduling, /isMentorshipBookingDateAllowed\(slot.startsAt\)/);
+assert.match(scheduling, /daySlots.some/);
+assert.match(scheduling, /cache: "no-store"/);
+assert.doesNotMatch(await readFile(new URL("../src/app/academy/page.tsx", import.meta.url), "utf8"), /Contactar al mentor/);
 amount = 69900;
 await assert.rejects(createCheckoutSession(input), /349 USD/);
 assert.equal(created.length, 1);
