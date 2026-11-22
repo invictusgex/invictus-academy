@@ -11,7 +11,7 @@ export function LiveRoomComingSoon({ offer }: { offer: LiveRoomOffer }) {
     <PublicSiteMotion /><PublicBackgroundField />
     <header className="relative z-10 mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5 px-5 py-6">
       <Link href="/" className="flex items-center gap-3 font-semibold"><Image src="/brand/invictus-gex-logo.png" width={36} height={36} alt="" />Invictus GEX</Link>
-      <nav className="flex flex-wrap gap-5 text-sm text-[var(--color-text-secondary)]" aria-label="Sala en vivo"><Link href="/">Inicio</Link><Link href="/programa">Formación</Link><Link href={liveRoom.subscriptionHref}>Mi membresía</Link></nav>
+      <nav className="flex flex-wrap gap-5 text-sm text-[var(--color-text-secondary)]" aria-label="Sala en vivo"><Link href="/">Inicio</Link><Link href="/programa">Mentoría privada</Link><Link href={liveRoom.subscriptionHref}>Mi membresía</Link></nav>
     </header>
     <main className="relative z-10">
       <section className="mx-auto w-full max-w-6xl px-5 pt-12 pb-14 sm:pt-20">
@@ -22,7 +22,7 @@ export function LiveRoomComingSoon({ offer }: { offer: LiveRoomOffer }) {
         <p className="mt-5 max-w-2xl whitespace-pre-line text-base leading-8 text-[var(--color-text-secondary)]">{offer.description}</p>
         <p className="mt-6 text-2xl font-semibold">{offer.amountUsd} USD <span className="text-base font-normal text-[var(--color-text-secondary)]">/ mes al abrir las inscripciones</span></p>
         <a href="#lista-interesados" className="mt-7 inline-flex min-h-12 items-center rounded-lg bg-[var(--color-cyan)] px-6 font-semibold text-[#051019]">Estoy interesado</a>
-        <p className="mt-4 text-sm text-[var(--color-text-secondary)]">Membresía independiente del Programa de Formación.</p>
+        <p className="mt-4 text-sm text-[var(--color-text-secondary)]">Membresía independiente de la mentoría privada.</p>
       </section>
       <section className="border-y border-[var(--color-border)]" aria-labelledby="room-experience">
         <div className="mx-auto max-w-6xl px-5 py-12"><h2 id="room-experience" className="text-2xl font-semibold">La metodología, en diálogo con el mercado.</h2>

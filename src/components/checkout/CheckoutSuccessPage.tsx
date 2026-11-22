@@ -16,9 +16,10 @@ function CheckoutRecoveryState() {
         Estamos terminando de preparar tu acceso.
       </h1>
       <p className="mt-4 text-sm leading-6 text-[var(--color-text-secondary)]">
-        En unos segundos deberías ver tu programa activo. Puedes actualizar
+        En unos segundos deberías ver tu mentoría activa. Puedes actualizar
         esta pantalla para volver a comprobarlo.
       </p>
+      <p className="mt-4 text-sm leading-6 text-[var(--color-text-secondary)]">Si ya pagaste, no repitas la compra. Si tu acceso sigue pendiente, contacta con invictusgex@gmail.com indicando el correo de tu cuenta.</p>
       <form action="/checkout/success" className="mt-8">
         <button
           type="submit"
@@ -58,7 +59,7 @@ function CheckoutConfirmedState({ products }: CheckoutSuccessPageProps) {
           href="/academy"
           className="inline-flex min-h-11 items-center justify-center rounded-md bg-[var(--color-cyan)] px-5 text-sm font-semibold text-[var(--color-page-bg)] transition-colors hover:bg-[var(--color-cyan-hover)] focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-page-bg)] focus-visible:outline-none"
         >
-          Ir a la Academia
+          Ir a mi mentoría
         </Link>
       </div>
     </section>

@@ -45,10 +45,10 @@ export function AcademyHeader() {
     <header className="app-shell-header flex flex-col gap-5 border-b border-[var(--color-border)] px-5 py-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
       <div>
         <p className="text-2xl font-semibold text-white sm:text-3xl">
-          Centro de control
+          Mi mentoría
         </p>
         <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
-          Gestiona tu formación y accede al programa principal.
+          Sesiones privadas, agenda y seguimiento con tu mentor.
         </p>
       </div>
 

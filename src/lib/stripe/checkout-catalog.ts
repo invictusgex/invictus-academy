@@ -27,7 +27,7 @@ export function getCheckoutProductConfig(
 
   return {
     slug,
-    name: "Invictus Trading Academy",
+    name: "Mentoría privada Invictus GEX",
     priceId: checkoutConfig.mentorshipPriceId,
   };
 }

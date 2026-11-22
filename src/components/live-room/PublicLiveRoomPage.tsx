@@ -17,7 +17,7 @@ export function PublicLiveRoomPage({ offer }: { offer: LiveRoomOffer }) {
           Invictus GEX
         </Link>
         <nav aria-label="Navegación de la sala" className="flex w-full flex-wrap items-center gap-x-6 gap-y-3 sm:w-auto">
-          <Link href="/programa" className={textLink}>Formación</Link>
+          <Link href="/programa" className={textLink}>Mentoría privada</Link>
           <a href="#membresia" className={textLink}>Membresía</a>
           <a href={getSupportMailtoHref("Consulta sobre la sala privada en vivo")} className={textLink} style={{ display: "inline-flex" }}>Contacto</a>
         </nav>
@@ -32,7 +32,7 @@ export function PublicLiveRoomPage({ offer }: { offer: LiveRoomOffer }) {
             <Link href={liveRoom.subscriptionHref} className={primaryLink}>Unirme a la sala</Link>
             <p className="text-sm text-[var(--color-text-secondary)]"><span className="font-semibold text-white">{offer.amountUsd} USD</span> / mes</p>
           </div>
-          <p className="mt-4 text-sm leading-6 text-[var(--color-text-muted)]">Membresía mensual independiente del Programa de Formación.</p>
+          <p className="mt-4 text-sm leading-6 text-[var(--color-text-muted)]">Membresía mensual independiente de la mentoría privada.</p>
         </section>
 
         <div className="mx-auto w-full max-w-6xl px-5 pb-14 sm:px-6 lg:px-8">
@@ -63,7 +63,7 @@ export function PublicLiveRoomPage({ offer }: { offer: LiveRoomOffer }) {
             <p className="text-sm font-semibold text-[var(--color-cyan)] uppercase">Tu membresía</p>
             <h2 id="membership-title" className="mt-4 text-3xl leading-tight font-semibold text-white">Un espacio al que volver cada mes.</h2>
             <p className="mt-5 max-w-xl text-base leading-8 text-[var(--color-text-secondary)]">Accede a la sala privada en Discord y comparte el análisis en vivo junto al mentor. La membresía tiene renovación mensual automática.</p>
-            <p className="mt-5 max-w-xl text-sm leading-7 text-[var(--color-text-secondary)]">La sala es una experiencia compartida. La mentoría privada individual 1 a 1 sigue formando parte del Programa de Formación.</p>
+            <p className="mt-5 max-w-xl text-sm leading-7 text-[var(--color-text-secondary)]">La sala es una experiencia compartida. La mentoría privada individual se adquiere por separado.</p>
           </div>
           <div className="min-w-0 border-t border-[var(--color-border)] pt-7 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
             <p className="text-sm text-[var(--color-text-secondary)]">Sala privada en vivo · Discord</p>
@@ -76,7 +76,7 @@ export function PublicLiveRoomPage({ offer }: { offer: LiveRoomOffer }) {
       </main>
       <footer className="mx-auto flex w-full max-w-6xl flex-col gap-3 border-t border-[var(--color-border)] px-5 py-8 text-sm text-[var(--color-text-muted)] sm:flex-row sm:justify-between sm:px-6 lg:px-8">
         <p>Invictus GEX</p>
-        <Link href="/programa" className={textLink}>Conocer el Programa de Formación</Link>
+        <Link href="/programa" className={textLink}>Conocer la mentoría privada</Link>
       </footer>
     </div>
   );

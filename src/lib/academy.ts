@@ -10,8 +10,8 @@ export const getAcademyModuleResources =
   AcademyContentService.getModuleResources;
 
 export const academyNavigation: AcademyNavItem[] = [
-  { label: "Inicio", href: "/academy" },
-  { label: "Mi programa", href: "/academy/programa" },
-  { label: "Biblioteca de Escenarios", href: "/academy/escenarios" },
+  { label: "Mi mentoría", href: "/academy" },
+  { label: "Agenda de sesiones", href: "/academy/mentoria" },
+  { label: "Inicio", href: "/" },
   { label: "Sala en vivo", href: liveRoom.publicHref },
 ];

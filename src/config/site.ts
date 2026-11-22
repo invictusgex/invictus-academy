@@ -5,7 +5,7 @@ const fallbackSupportEmail = "invictusgex@gmail.com";
 export const siteName = "Invictus GEX";
 
 export const siteDescription =
-  "Programa de Formación Profesional para desarrollar criterio de lectura de mercado, con formación estructurada y mentoría privada en vivo 1 a 1.";
+  "Mentoría privada Invictus GEX: sesiones individuales en vivo hasta completar el contenido acordado. Pago único de 349 USD, sin vídeos grabados ni descuentos.";
 
 export function getSiteUrl() {
   const appUrl =

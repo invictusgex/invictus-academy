@@ -1030,6 +1030,7 @@ export type Database = {
       }
       enrollments: {
         Row: {
+          mentorship_completed_at: string | null
           access_source: string
           created_at: string
           expires_at: string | null
@@ -1043,6 +1044,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          mentorship_completed_at?: string | null
           access_source?: string
           created_at?: string
           expires_at?: string | null
@@ -1056,6 +1058,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          mentorship_completed_at?: string | null
           access_source?: string
           created_at?: string
           expires_at?: string | null
@@ -1504,6 +1507,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      set_private_mentorship_completed: {
+        Args: { p_enrollment_id: string; p_completed: boolean }
+        Returns: boolean
+      }
       claim_live_room_operation: {
         Args: { p_profile_id: string; p_livemode: boolean; p_token: string }
         Returns: boolean

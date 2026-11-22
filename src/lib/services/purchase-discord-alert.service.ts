@@ -28,7 +28,7 @@ export async function sendPurchaseDiscordAlert(purchaseId: string) {
     throw new Error("DISCORD_DM_INVALID");
   }
   const response = await post(`/channels/${channel.id}/messages`, {
-    content: `**Nueva compra · Academia Invictus GEX**\nCompra: ${purchase.purchaseNumber}\nImporte: ${amount}\nCorreo de la cuenta compradora: ${email || "No disponible"}\nPago confirmado · Acceso activado`,
+    content: `**Nueva compra · Mentoría privada Invictus GEX**\nCompra: ${purchase.purchaseNumber}\nImporte: ${amount}\nCorreo de la cuenta compradora: ${email || "No disponible"}\nPago confirmado · Acceso activado`,
     allowed_mentions: { parse: [] },
     nonce: `academy-${purchase.purchaseNumber}`,
     enforce_nonce: true,

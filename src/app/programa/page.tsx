@@ -1,10 +1,7 @@
-import { PublicProgramPage } from "@/components/program/PublicProgramPage";
-import { getAcademyProgram } from "@/lib/academy";
+import { PrivateMentorshipPresentation } from "@/components/mentorship/PrivateMentorshipPresentation";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProgramPage() {
-  const course = await getAcademyProgram();
-
-  return <PublicProgramPage course={course} />;
+  return <PrivateMentorshipPresentation />;
 }

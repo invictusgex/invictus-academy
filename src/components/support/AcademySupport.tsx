@@ -93,7 +93,7 @@ export function AcademySupport() {
             ¿Necesitas asistencia?
           </h2>
           <p className="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">
-            Recibe ayuda con el acceso, el Programa de Formación o el
+            Recibe ayuda con el acceso, la mentoría privada o el
             funcionamiento de la plataforma.
           </p>
 

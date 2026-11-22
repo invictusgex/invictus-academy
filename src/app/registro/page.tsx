@@ -14,7 +14,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
 
   return (
     <AuthPageShell
-      description="Crea tu cuenta de estudiante para continuar con tu acceso y proceso de formación."
+      description="Crea tu cuenta para adquirir la mentoría privada y coordinar tus sesiones con el mentor."
       eyebrow="Registro de estudiantes"
       title="Crear cuenta"
     >

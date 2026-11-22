@@ -25,8 +25,8 @@ const adminCards = [
     description: "Base futura para administrar productos formativos.",
   },
   {
-    title: "Progreso",
-    description: "Vista futura para supervisar avance académico.",
+    title: "Sesiones privadas",
+    description: "Agenda, historial y seguimiento del acompañamiento individual.",
   },
 ];
 

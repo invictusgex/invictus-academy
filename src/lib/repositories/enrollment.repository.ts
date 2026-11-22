@@ -29,6 +29,7 @@ type EnrollmentByProductIdInput = {
 };
 
 const enrollmentSelect = `
+  mentorship_completed_at,
   id,
   profile_id,
   product_id,

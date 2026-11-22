@@ -257,6 +257,11 @@ a {
   mask-image: none;
 }
 
+.mentorship-presentation main > .mentorship-contained,
+.mentorship-presentation .mentorship-contained {
+  max-width: 72rem;
+}
+
 .room-coming-soon main > section:first-child,
 .room-coming-soon main > #lista-interesados {
   max-width: 72rem;

@@ -1,4 +1,5 @@
 import "server-only";
+import { privateMentorship } from "@/content/private-mentorship";
 
 import type Stripe from "stripe";
 
@@ -17,8 +18,6 @@ import {
 } from "@/lib/stripe/stripe-errors";
 import { getStripeServer } from "@/lib/stripe/stripe-server";
 import type { Purchase } from "@/lib/types/commercial.types";
-
-const pendingPurchaseWindowMs = 15 * 60 * 1000;
 
 export type CreateCheckoutSessionInput = {
   profileId: string;
@@ -82,10 +81,10 @@ function isUniqueConstraintError(error: unknown) {
 async function getPurchasablePrice(stripe: Stripe, priceId: string) {
   const price = await stripe.prices.retrieve(priceId);
 
-  if (!price.active || price.type !== "one_time" || price.recurring) {
+  if (!price.active || price.type !== "one_time" || price.recurring || price.unit_amount !== privateMentorship.amountMinor || price.currency !== "usd") {
     throw new StripeCheckoutError(
       STRIPE_CHECKOUT_ERROR_CODES.PRICE_NOT_PURCHASABLE,
-      "El precio configurado no está habilitado para pago único.",
+      "Configura el precio de la mentoría en 349 USD, pago único.",
       {
         status: 500,
       },
@@ -186,13 +185,17 @@ async function recoverPendingCheckoutSession(
     purchase.providerCheckoutSessionId,
   );
 
-  if (session.status === "open" && session.url) {
+  if (session.status === "complete" || session.payment_status === "paid") {
+    return { url: buildCheckoutUrl("/checkout/success"), recoveredPendingSession: false };
+  }
+  if (session.status === "open" && session.url && session.metadata?.offering === "private_mentorship_v1" && session.allow_promotion_codes === false && session.amount_subtotal === privateMentorship.amountMinor && session.currency === "usd" && !session.total_details?.amount_discount) {
     return {
       url: session.url,
       recoveredPendingSession: true,
     };
   }
 
+  if (session.status === "open") await tryExpireCheckoutSession(stripe, session.id, session.status);
   await PurchaseService.markCheckoutCreationFailed(
     {
       purchaseId: purchase.id,
@@ -213,9 +216,6 @@ export async function createCheckoutSession(
     const supabase = getSupabaseAdminClient();
     const stripe = getStripeServer();
     const price = await getPurchasablePrice(stripe, productConfig.priceId);
-    const pendingPurchaseCutoff = new Date(
-      Date.now() - pendingPurchaseWindowMs,
-    );
     const existingPendingPurchase =
       await PurchaseService.getPendingPurchaseForProfileAndProduct(
         {
@@ -226,27 +226,8 @@ export async function createCheckoutSession(
       );
 
     if (existingPendingPurchase) {
-      const pendingCreatedAt = new Date(existingPendingPurchase.createdAt);
-
-      if (pendingCreatedAt >= pendingPurchaseCutoff) {
-        const recoveredCheckoutSession = await recoverPendingCheckoutSession(
-          stripe,
-          existingPendingPurchase,
-        );
-
-        if (recoveredCheckoutSession) {
-          return recoveredCheckoutSession;
-        }
-      }
-
-      await PurchaseService.markCheckoutCreationFailed(
-        {
-          purchaseId: existingPendingPurchase.id,
-          summary:
-            "Expired pending purchase canceled before creating a new Checkout.",
-        },
-        supabase,
-      );
+      const recoveredCheckoutSession = await recoverPendingCheckoutSession(stripe, existingPendingPurchase);
+      if (recoveredCheckoutSession) return recoveredCheckoutSession;
     }
 
     let purchase: Purchase;
@@ -309,6 +290,7 @@ export async function createCheckoutSession(
     }
 
     const metadata = {
+      offering: "private_mentorship_v1",
       purchase_id: purchase.id,
       purchase_number: purchase.purchaseNumber,
       profile_id: input.profileId,
@@ -319,7 +301,8 @@ export async function createCheckoutSession(
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      allow_promotion_codes: true,
+      allow_promotion_codes: false,
+      custom_text: { submit: { message: "Mentoría privada individual en vivo. Varias sesiones hasta completar el contenido acordado. Pago único de 349 USD, sin descuentos." } },
       line_items: [
         {
           price: productConfig.priceId,

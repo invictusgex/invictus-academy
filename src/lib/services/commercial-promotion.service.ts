@@ -83,7 +83,7 @@ function normalizeInput(
 
 export const CommercialPromotionService = {
   async getActivePromotion(): Promise<CommercialPromotion | null> {
-    return CommercialPromotionRepository.getActivePromotion();
+    return null;
   },
 
   async getPrimaryPromotionForAdmin(): Promise<CommercialPromotion> {

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PrivateMentorshipEngagements } from "@/components/admin/mentorship/PrivateMentorshipEngagements";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -1128,6 +1129,7 @@ export default async function AdminMentorshipRoute({
         </div>
       ) : null}
 
+      <PrivateMentorshipEngagements />
       <section className="space-y-3 border-y border-[var(--color-border)] py-5">
         <h2 className="text-xl font-semibold text-white">Avisos de nuevas reservas</h2>
         <p className="break-words text-sm text-[var(--color-text-secondary)]">Destino: {emailConfig.to ?? "Sin configurar"} · Proveedor: {emailConfig.providerReady ? "Configurado, pendiente de verificar el envío" : "Sin configurar"}</p>

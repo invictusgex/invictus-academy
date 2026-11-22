@@ -12,7 +12,6 @@ import {
   getRateLimitIdentity,
 } from "@/lib/security/rate-limit";
 import { getAcademyEnrollmentAccess } from "@/lib/services/academy-access.service";
-import { MentorshipPreparationService } from "@/lib/services/mentorship-preparation.service";
 import { MentorshipSchedulingService } from "@/lib/services/mentorship-scheduling.service";
 import { MentorshipEmailService } from "@/lib/services/mentorship-email.service";
 import { MentorshipDiscordService } from "@/lib/services/mentorship-discord.service";
@@ -134,9 +133,15 @@ function mapError(error: unknown) {
     }
   }
 
-  const message = error instanceof Error ? error.message : "";
+  const message = error instanceof Error ? error.message : typeof error === "object" && error !== null && "message" in error && typeof error.message === "string" ? error.message : "";
 
-  if (message.includes("MENTORSHIP_NEXT_DAY_REQUIRED") || (typeof error === "object" && error !== null && "message" in error && error.message === "MENTORSHIP_NEXT_DAY_REQUIRED")) {
+  if (message.includes("ACTIVE_ENROLLMENT_REQUIRED")) {
+    return { code: "ACTIVE_ENROLLMENT_REQUIRED", message: "Necesitas un acceso activo a la mentoría para reservar.", status: 403 };
+  }
+  if (message.includes("BOOKING_NOT_FOUND")) {
+    return { code: "BOOKING_NOT_FOUND", message: "No se encontró una reserva de tu cuenta.", status: 404 };
+  }
+  if (message.includes("MENTORSHIP_NEXT_DAY_REQUIRED")) {
     return { code: "MENTORSHIP_NEXT_DAY_REQUIRED", message: "Las mentorías deben reservarse para el día siguiente o una fecha posterior, según America/Chicago. No se permiten reservas para el mismo día.", status: 409 };
   }
 
@@ -165,7 +170,7 @@ function mapError(error: unknown) {
     return {
       code: "MENTORSHIP_ALREADY_COMPLETED",
       message:
-        "Esta mentoría ya fue completada. Puedes revisar el cierre publicado en tu sección de mentoría.",
+        "El acompañamiento está finalizado. Consulta el historial o contacta con el mentor.",
       status: 409,
     };
   }
@@ -210,15 +215,10 @@ export async function GET() {
       return jsonResponse({ bookings: [], slots: [] }, 200);
     }
 
-    const preparation = await MentorshipPreparationService.getStudentPreparation(
-      {
-        productId: academyProduct.productId,
-        profileId: profile.id,
-      },
-      supabase,
-    );
+    const { data: enrollment, error } = await supabase.from("enrollments").select("mentorship_completed_at").eq("id", academyProduct.enrollmentId).single();
+    if (error) throw new Error("MENTORSHIP_STATE_UNAVAILABLE");
     const [slots, bookings] = await Promise.all([
-      preparation.requirementsSatisfied
+      !enrollment.mentorship_completed_at
         ? MentorshipSchedulingService.listAvailableSlots(supabase)
         : Promise.resolve([]),
       MentorshipSchedulingService.listStudentBookings(profile.id, supabase),
