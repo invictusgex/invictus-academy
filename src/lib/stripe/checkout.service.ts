@@ -302,7 +302,7 @@ export async function createCheckoutSession(
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       allow_promotion_codes: false,
-      custom_text: { submit: { message: "Mentoría privada individual en vivo. Sin número fijo de sesiones, de hasta dos horas cada una, hasta completar todo el contenido acordado. Pago único de 349 USD, sin descuentos." } },
+      custom_text: { submit: { message: "Mentoría privada individual en vivo. Sin número fijo de sesiones, de hasta dos horas cada una, hasta completar la mentoría. Pago único de 349 USD, sin descuentos." } },
       line_items: [
         {
           price: productConfig.priceId,

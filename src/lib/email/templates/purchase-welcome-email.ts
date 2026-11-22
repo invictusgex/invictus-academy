@@ -39,7 +39,7 @@ export function buildPurchaseWelcomeEmail(input: PurchaseWelcomeEmailInput) {
     <h1 style="margin:0;color:#ffffff;font-size:30px;line-height:1.18;font-weight:800;">Bienvenido a Invictus GEX</h1>
     <p style="margin:20px 0 0;color:#f8fafc;font-size:16px;line-height:1.65;">${greeting}.</p>
     <p style="margin:14px 0 0;color:#cbd5e1;font-size:15px;line-height:1.75;">Tu acceso a <strong style="color:#ffffff;">${productTitle}</strong> ya fue activado correctamente.</p>
-    <p style="margin:14px 0 26px;color:#cbd5e1;font-size:15px;line-height:1.75;">Ya puedes entrar en Mi mentoría y coordinar tus sesiones privadas con el mentor hasta completar el contenido acordado. No hay vídeos ni módulos obligatorios.</p>
+    <p style="margin:14px 0 26px;color:#cbd5e1;font-size:15px;line-height:1.75;">Ya puedes entrar en Mi mentoría y coordinar tus sesiones privadas con el mentor hasta completar la mentoría. No hay vídeos ni módulos obligatorios.</p>
     <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 24px;">
       <tr>
         <td style="border-radius:999px;background:#22d3ee;box-shadow:0 14px 34px rgba(34,211,238,0.22);">

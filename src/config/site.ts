@@ -5,7 +5,7 @@ const fallbackSupportEmail = "invictusgex@gmail.com";
 export const siteName = "Invictus GEX";
 
 export const siteDescription =
-  "Mentoría privada Invictus GEX: sesiones individuales en vivo hasta completar el contenido acordado. Pago único de 349 USD, sin vídeos grabados ni descuentos.";
+  "Mentoría privada Invictus GEX: sesiones individuales en vivo hasta completar la mentoría. Pago único de 349 USD, sin vídeos grabados ni descuentos.";
 
 export function getSiteUrl() {
   const appUrl =
